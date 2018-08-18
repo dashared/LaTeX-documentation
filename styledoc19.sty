@@ -1,0 +1,265 @@
+% Этот шаблон документа разработан в 2014 году
+% Данилом Фёдоровых (danil@fedorovykh.ru) 
+% для использования в курсе 
+% <<Документы и презентации в \LaTeX>>, записанном НИУ ВШЭ
+% для Coursera.org: http://coursera.org/course/latex .
+% Исходная версия шаблона --- 
+% https://www.writelatex.com/coursera/latex/3.2
+
+
+%%% Работа с русским языком
+\usepackage{cmap}					% поиск в PDF
+\usepackage{mathtext} 				% русские буквы в формулах
+\usepackage[T2A]{fontenc}			% кодировка
+\usepackage[utf8]{inputenc}			% кодировка исходного текста
+\usepackage[english,russian]{babel}	% локализация и переносы
+
+%%% Дополнительная работа с математикой
+\usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools} % AMS
+\usepackage{icomma} % "Умная" запятая: $0,2$ --- число, $0, 2$ --- перечисление
+
+%% Номера формул
+\mathtoolsset{showonlyrefs=true} % Показывать номера только у тех формул, на которые есть \eqref{} в тексте.
+%\usepackage{leqno} % Нумерация формул слева
+
+%% Перенос знаков в формулах (по Львовскому)
+\newcommand*{\hm}[1]{#1\nobreak\discretionary{}
+{\hbox{$\mathsurround=0pt #1$}}{}}
+
+%%% Работа с картинками
+\usepackage{graphicx}  % Для вставки рисунков
+\graphicspath{{images/}{images2/}}  % папки с картинками
+\setlength\fboxsep{3pt} % Отступ рамки \fbox{} от рисунка
+\setlength\fboxrule{1pt} % Толщина линий рамки \fbox{}
+\usepackage{wrapfig} % Обтекание рисунков текстом
+
+%%% Работа с таблицами
+\usepackage{array,tabularx,tabulary,booktabs} % Дополнительная работа с таблицами
+\usepackage{longtable}  % Длинные таблицы
+\usepackage{multirow} % Слияние строк в таблице
+
+%%% Теоремы
+\theoremstyle{plain} % Это стиль по умолчанию, его можно не переопределять.
+\newtheorem{theorem}{Теорема}[section]
+\newtheorem{proposition}[theorem]{Утверждение}
+ 
+\theoremstyle{definition} % "Определение"
+\newtheorem{corollary}{Следствие}[theorem]
+\newtheorem{problem}{Задача}[section]
+ 
+\theoremstyle{remark} % "Примечание"
+\newtheorem*{nonum}{Решение}
+\usepackage{array} % aligning text inside the tabular 
+
+%%% Программирование
+\usepackage{etoolbox} % логические операторы
+\usepackage{layout}
+%%% Страница
+\usepackage{extsizes} % Возможность сделать 14-й шрифт
+\usepackage{geometry} % Простой способ задавать поля
+	\geometry{top=2cm}
+	\geometry{bottom=20mm}
+	\geometry{left=30mm}
+	\geometry{right=15mm}
+	\geometry{bindingoffset=0cm}
+	\geometry{bottom = 1in}
+ %
+\usepackage{fancybox}
+\usepackage{fancyhdr} % Колонтитулы
+ 	\pagestyle{fancy}
+ 	\renewcommand{\headrulewidth}{0mm}  % Толщина линейки, отчеркивающей верхний колонтитул
+ 	%\lfoot{Нижний левый}
+ 	%\rfoot{Нижний правый}
+ 	%\rhead{Верхний правый}
+ 	%\chead{Верхний в центре}
+ 	%\lhead{Верхний левый}
+    \cfoot{--- Москва 2018 ---} % По умолчанию здесь номер страницы
+
+\usepackage{setspace} % Интерлиньяж
+%\onehalfspacing % Интерлиньяж 1.5
+%\doublespacing % Интерлиньяж 2
+\singlespacing % Интерлиньяж 1
+
+\usepackage{lastpage} % Узнать, сколько всего страниц в документе.
+
+\usepackage{soulutf8} % Модификаторы начертания
+
+\usepackage{hyperref}
+\usepackage[usenames,dvipsnames,svgnames,table,rgb]{xcolor}
+\hypersetup{				% Гиперссылки
+    unicode=true,           % русские буквы в раздела PDF
+    pdftitle={Заголовок},   % Заголовок
+    pdfauthor={Автор},      % Автор
+    pdfsubject={Тема},      % Тема
+    pdfcreator={Создатель}, % Создатель
+    pdfproducer={Производитель}, % Производитель
+    pdfkeywords={keyword1} {key2} {key3}, % Ключевые слова
+    colorlinks=true,       	% false: ссылки в рамках; true: цветные ссылки
+    linkcolor=black,          % внутренние ссылки
+    citecolor=green,        % на библиографию
+    filecolor=magenta,      % на файлы
+    urlcolor=cyan           % на URL
+}
+
+%% Свои команды
+\DeclareMathOperator{\sgn}{\mathop{sgn}}
+\newcommand{\tabForFirstPage}
+{\reversemarginpar\marginpar{\rotatebox{90}{\begin{tabular}{|l|l|l|l|l|}
+				\hline
+				Инв. \text{№} подл & Подп. и дата & Взам. инв. \text{№} & Инв. \text{№} дубл.&Подп. и дата\\
+				\hline
+				&   &   &   &  \\
+				\hline
+\end{tabular}}}}
+\setlength{\oddsidemargin}{0mm}
+\newcommand{\itsHSE}{\begin{center}
+		\scshape \bfseries правительство российской федерации\\
+		национальный исследовательский университет \\
+		«высшая школа экономики»
+		\par\vspace{5mm} 
+		\upshape\mdseries
+		\rmfamily\normalsize
+		Факультет компьютерных наук\\
+		Департамент программной инженерии
+	\end{center}}
+\newcommand{\academicTeacher}[2]{
+	\begin{table}[h]
+		\begin{center}
+			\begin{tabular}{ >{\centering\arraybackslash}p{0.5\textwidth}  >{\centering\arraybackslash}p{0.45\textwidth} }
+				
+				\textsl{СОГЛАСОВАНО} &  \textsl{УТВЕРЖДАЮ}\\  
+				#1 & Академический руководитель образовательной программы «Программная инженерия» 
+				профессор департамента программной инженерии, канд. техн. наук\\ 
+				& \\
+				\underline{\hspace{4cm}} #2	&  \underline{\hspace{4cm}} В. В. Шилов\\ 
+				<<\underline{\hspace{1cm}}>> \underline{\hspace{3cm}} 2018 г.&<<\underline{\hspace{1cm}}>> \underline{\hspace{3cm}} 2018 г.\\
+			\end{tabular}
+		\end{center}
+	\end{table}
+}
+\newcommand{\projectName}[1]{\begin{center}
+		\large{\textsc{\textbf{#1}}}
+	\end{center}}
+%\renewcommand{\familydefault}{\sfdefault} % Начертание шрифта
+\newcommand{\titleList}[2]{
+	\begin{center}
+\par\vspace{4mm}
+\textbf{#1}
+\par\vspace{6mm}
+\textbf{
+	ЛИСТ УТВЕРЖДЕНИЯ}
+\par\vspace{6mm}
+\textbf{#2}
+\end{center}}
+
+\newcommand{\nameOfAuthor}[2]{
+	\hfill\begin{tabular}{c}
+		\\ 
+		Исполнитель: студент группы #1
+		\\ 
+		\underline{\hspace{4cm}} #2
+		\\ 
+		<<\underline{\hspace{1cm}}>> \underline{\hspace{4cm}} 2018 г.  
+	\end{tabular} 
+}
+\newcommand{\listNumber}[1]{\textbf{Листов #1}}
+\newcommand{\listRegistration}{%
+\begin{tabular}{|p{0.05\linewidth}|p{0.04\linewidth}|p{0.06\linewidth}|p{0.06\linewidth}|p{0.06\linewidth}|p{0.1\linewidth}|p{0.1\linewidth}|p{0.12\linewidth}|p{0.05\linewidth}|p{0.05\linewidth}|}
+	
+	\hline
+	\multicolumn{10}{|c|}{\textbf{Лист регистрации изменений}}\\
+	\hline
+	\multirow{2}{*}{Изм.} & \multicolumn{4}{c|}{Номера листов} & Всего листов в документе& $\text{№}$ документа& Входящий $\text{№}$ сопроводит. докум. и дата& Под-пись& Дата\\[5ex] \cline{2-5}
+	&из-ме-нен-ных&заме-нен-ных&но-вых&аннул-лиро-ван-ных&  &  &  &  & \\[10ex]  
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+	& & & & & & & & & \\[5ex]
+	\hline
+\end{tabular}
+
+}
+
+\newcommand{\tabForTZ}{%
+\begin{tabular}{|p{0.31\linewidth}|p{0.15\linewidth}|p{0.16\linewidth}|p{0.16\linewidth}|p{0.15\linewidth}|}
+		\hline
+		Изм. & Лист & $\text{№}$  докум. & Подп. & Дата\\
+		\hline
+		\small{RU.17701729.04.15-01 ТЗ 01-1}& & & &\\
+		\hline
+		Инв. $\text{№}$ подл. & Подп. и дата & Взам. инв. $\text{№}$ & Инв. $\text{№}$ дубл.& Подп. и дата \\
+		\hline
+	\end{tabular}
+}
+\usepackage{multicol} % Несколько колонок
+
