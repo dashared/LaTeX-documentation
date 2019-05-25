@@ -1,0 +1,287 @@
+\subsection*{Описание классов и структур}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Класс или структура} & \textbf{Описание} \\ \hline
+\texttt{class ChannelController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UISearchBarDelegate} & {Класс, координирующий перемещение в слое каналов приложения} \\ \hline
+\texttt{class TabBarCoordinator: BaseCoordinator} & {Класс, отвечающий за координацию Main Flow программы, управляет ChannelsCoordinator, MessagesCoordinator, ProfileCoordinator} \\ \hline
+\texttt{class NewPostViewController: UIViewController, UITextViewDelegate, TagsReceiver} & {Класс, отвечающий за создание и публикация нового поста} \\ \hline
+\texttt{class DialogCell: UITableViewCell} & {Класс ячейки для представления списка сообщений в диалогах} \\ \hline
+\texttt{class DialogViewController: UIViewController, UpdatableGroup, UITableViewDelegate, UITableViewDataSource} & {Класс, содержащий таблицу для отображения сообщений и поле для ввода сообщений} \\ \hline
+\texttt{class MessagesViewController: UITableViewController} & {Класс, координирующий перемещение в слое сообщений приложения} \\ \hline
+\texttt{class TaggsSelectionViewController: UIViewController} & {Класс, отвечающий за выбор хэштегов} \\ \hline
+\texttt{final class TabbarController: UITabBarController, UITabBarControllerDelegate, TabbarView} & {Класс, отвечающий за перемещение между tabBar в приложении} \\ \hline
+\texttt{class ChannelsCoordinator: BaseCoordinator} & {Класс, координирующий работу слоя каналов приложения} \\ \hline
+\texttt{class SimplifiedChannelsList: UITableViewController} & {Класс, отвечающий за представление списка каналов в упрощенном виде} \\ \hline
+\texttt{class PeopleToWriteViewController: UITableViewController} & {Класс, отвечающий за выбор людей} \\ \hline
+\texttt{class MyStackView: UIStackView} & {Класс, содержащий переопределение методов для класса StackView} \\ \hline
+	\texttt{struct CompletionTree: Codable} & {Класс дерева хэштегов, отвечающий за представление подсказок хэштегов в приложении} \\ \hline
+\texttt{class AppDelegate: UIResponder, UIApplicationDelegate} & {Главный класс приложения. Точка запуска} \\ \hline
+\texttt{class LogInCoordinator: BaseCoordinator} & {Класс, отвечающий за логику регистрации и авторизации} \\ \hline
+\texttt{class ProfileViewController: UIViewController} & {Класс, отвечающий за представление профилей пользователей в приложении} \\ \hline
+\texttt{class Model} & {Класс, отвечающий за общение с сервером: отправку запросов, получения данных} \\ \hline
+\texttt{class ChannelViewController: UITableViewController, UpdatableName, UpdatableChannel, TagsReceiver} & {Класс, отвечающий за представление канала в режиме редактирования и создания} \\ \hline
+\texttt{class InfoCell: UITableViewCell} & {Класс, отвечающий за кастомизацию ячейки таблицы информации о пользователе на станице пользователя} \\ \hline
+\texttt{class DataStorage} & {Класс, хранящий данные в хранилище приложения о пользователе (токен для запросов и id)} \\ \hline
+\texttt{class MessagesCoordinator: BaseCoordinator} & {Класс, координирующий работу слоя приложений} \\ \hline
+\texttt{class BaseCoordinator: Coordinator} & {Базовый класс координаторов} \\ \hline
+\texttt{class LogInViewController: UIViewController} & {Класс, отвечающий за ввод почты пользователя} \\ \hline
+\texttt{class NewsController: UIViewController, UISearchControllerDelegate, UpdateableWithChannel, UISearchResultsUpdating} & {Класс, отвечающий за отображения новостной ленты} \\ \hline
+\texttt{class ChatInfoViewController: UITableViewController} & {Класс, отвечающий за отображение информации о беседе} \\ \hline
+\texttt{class ProfileCoordinator: BaseCoordinator} & {Класс, координирующий работу слоя профиля приложения} \\ \hline
+\texttt{class PostViewCell: UITableViewCell} & {Класс, отвечающий за представление ячейки таблицы поста в новостной ленте} \\ \hline
+\texttt{class BasicInfoController: UIViewController, UITableViewDelegate, UITableViewDataSource} & {Класс, отвечающий за предоставление базовой информации о пользователе на его странице} \\ \hline
+\texttt{class ChannelListController: UITableViewController} & {Класс, отвечающий за представлене списка каналов в профиле пользователя} \\ \hline
+\texttt{class NewsVC: UIViewController, UITableViewDelegate, UITableViewDataSource} & {Класс, отвечающий за предоставление информации о новостной ленте на странице пользователя, в ленте, в ленте каналов} \\ \hline
+\texttt{class FullPostController: UITableViewController} & {Класс, отвечающий за представление полного размера поста} \\ \hline
+\texttt{final class ApplicationCoordinator: BaseCoordinator} & {Класс, координирующий работу приложения} \\ \hline
+\end{longtable}
+
+
+\subsection*{Описание полей классов и структур}
+
+\subsubsection*{\texttt{class TabBarCoordinator: BaseCoordinator}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var didEndFlow: (()->())?} & {Лямбда, отвечающая за окончание работы слоя} \\ \hline
+\texttt{private let tabbarView: TabbarView} & {Приватное поле, содержащее объект таббара} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class NewPostViewController: UIViewController, UITextViewDelegate, TagsReceiver}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{@IBOutlet weak var view1: UIView!} & {Экран написания поста} \\ \hline
+\texttt{var currentTags: [String] } & {Добавленные к посту тэги} \\ \hline
+\texttt{static var draft: String } & {Черновик, сохраняющийся при выходе из режима написания поста} \\ \hline
+\texttt{var textView: UITextView!} & {Поле для ввода текста поста} \\ \hline
+\texttt{var moveBackToParentVC: (()->())?} & {Переход обратно в ленту} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class DialogCell: UITableViewCell}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{let nameLabel: UIButton } & {Имя пользователя, написавшего сообщение} \\ \hline
+\texttt{var onUserDisplay: ((Int)->())?} & {Лямбда-действие, происходящее при нажатии на имя пользователя} \\ \hline
+\texttt{let timeLabel: UILabel } & {Время отправки ообщения} \\ \hline
+\texttt{var user: Model.Users?} & {Объект пользователя, написавшего сообщение} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class DialogViewController: UIViewController, UpdatableGroup,\\ UITableViewDelegate, UITableViewDataSource}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var tableView: UITableView } & {Таблица для отображения сообщений в диалоге} \\ \hline
+\texttt{let cellId } & {reuseIdentifier ячейки} \\ \hline
+\texttt{var onInfoShow: (()->())?} & {Лямбда - что делать при нажатии на кнопку <<Info>>} \\ \hline
+\texttt{var dialog: Model.Dialog?} & {Диалог, отображенный в таблице сообщений} \\ \hline
+\texttt{var groupChat: Model.GroupChat?} & {Групповой чат, отображенный в таблице сообщений} \\ \hline
+\texttt{var userChat: Model.UserChat?} & {Чат, отображенный в таблице сообщений} \\ \hline
+\texttt{var users: [Int: Model.Users]?} & {Словарь пользователей, участвующих в беседе} \\ \hline
+\texttt{var messageSendView: UIView } & {Окно для отправки сообщения} \\ \hline
+\texttt{var messageTextView: UITextView } & {Место для ввода сообщения} \\ \hline
+\texttt{var sendButton: UIButton } & {Кнопка для отправки сообщения} \\ \hline
+\texttt{var bottomConstraint: NSLayoutConstraint!} & {Constraint для окна для отправки сообщения} \\ \hline
+\texttt{var currentMessagesInChat: [Model.LastMessage]?} & {Сообщения, отображенные в чате} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class MessagesViewController: UITableViewController}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var currentActiveDialogs: [Model.Dialog] } & {Диалоги, отображенные в списке диалогов} \\ \hline
+\texttt{var users: [Int: Model.Users] } & {Пользователи, учствующие в диалогах} \\ \hline
+\texttt{var onUserDisplayList: (()->())?} & {Лябда, определяющая что делать при нажати на кнопку <<Write>>} \\ \hline
+\texttt{var onDialogDisplay: (((dialog: Model.Dialog, users: [Int:Model.Users]))->())?} & {Лямбда, определеяющая открытие окна отображения диалога} \\ \hline
+\texttt{let searchC } & {searchController для поиска в списке диалогов} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class ChannelsCoordinator: BaseCoordinator}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{let storyboard } & {Инстанс сториборда} \\ \hline
+\texttt{private weak var navigationController: UINavigationController?} & {navigationController для этого слоя} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{struct CompletionTree: Codable}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var value: String?} & {Либо принимает значение null в случае неполного слова, либо - слово-хэштег} \\ \hline
+\texttt{var subtree: [String : CompletionTree]} & {Поддерево хэштегов} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class ProfileViewController: UIViewController}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{@IBOutlet weak var segmentedControl: UISegmentedControl!} & {Определяющий контрол для отображения базовой информации о пользователе на старнцие, либо его постов} \\ \hline
+\texttt{@IBOutlet weak var profileView: UIView!} & {Окно для отображения пользователя} \\ \hline
+\texttt{@IBOutlet weak var tableView: UITableView!} & {Таблица, отвечающая за отображение постов пользователя} \\ \hline
+\texttt{@IBOutlet weak var profileImageView: UIImageView!} & {Фотография пользователя} \\ \hline
+\texttt{@IBOutlet weak var surnameLabel: UILabel!} & {Лэйбл для фамилии пользователя} \\ \hline
+\texttt{@IBOutlet weak var nameLabel: UILabel!} & {Лэйбл для имени пользователя} \\ \hline
+\texttt{@IBOutlet weak var facultyLabel: UILabel!} & {Лэйбл для факультета пользователя} \\ \hline
+\texttt{@IBOutlet weak var placeLabel: UILabel!} & {Лэйбл для места работы пользователя} \\ \hline
+\texttt{@IBOutlet weak var newMessageButton: UIButton!} & {Кнопка для написания сообщения пользователю} \\ \hline
+
+\end{longtable}
+
+\subsubsection*{\texttt{class Model}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{static let invalidTocken } & {Константа статус кода, означающего invalidTocken} \\ \hline
+\texttt{static var hashTagTree: CompletionTree?} & {Экземпляр дерева хэштегов} \\ \hline
+\texttt{private static var isValidTocken: ((Int)->())? } & {Проверка на валидность токена с помощью переданного статус кода запроса} \\ \hline
+\texttt{private static let baseUrl } & {Базовый URL сервера} \\ \hline
+\texttt{static let authenticationURL } & {URL для аутентификации в социальной сети} \\ \hline
+\texttt{static let postsLastURL } & {URL для запроса постов в общей ленте} \\ \hline
+\texttt{static let postsForUserURL } & {URL для запроса постов на странице пользователя} \\ \hline
+\texttt{static let postsPublishURL } & {URL для опубликования нового поста} \\ \hline
+\texttt{static let usersURL } & {URL для получения объекта пользователя по его id} \\ \hline
+\texttt{static let usersAllURL } & {URL для получения всех объектов пользователей соцаильной сети} \\ \hline
+\texttt{static let channelsGetURL } & {URL для получения канала} \\ \hline
+\texttt{static let channelsUpdateURL } & {URL для обновления объекта канала} \\ \hline
+\texttt{static let channelsListURL } & {URL для получения списка всех каналов} \\ \hline
+\texttt{static let channelsCreateURL } & {URL для создания канала} \\ \hline
+\texttt{static let channelsDeleteURL } & {URL для удаления канала} \\ \hline
+\texttt{static let channelsGetAnonURL } & {URL для запроса анонимного канала по структуре канала без id} \\ \hline
+\texttt{static let complexURL } & {URL для сложных запросов} \\ \hline
+\texttt{static let hashTagTreeURL } & {URL для запроса дерева хэштегов} \\ \hline
+\texttt{static let createGroupChatURL } & {URL для создания беседы} \\ \hline
+\texttt{static let chatsGetAllURL } & {URL для получения списка всех чатов} \\ \hline
+\texttt{static let getGroupChatURL } & {URL для получения объекта чата} \\ \hline
+\texttt{static let leaveGroupChatURL } & {URL для покидания группового чата} \\ \hline
+\texttt{static let updateGroupChatURL } & {URL для обновления группового чата} \\ \hline
+\texttt{static let messagesGetGroupChatURL } & {URL для запроса сообщений в беседе} \\ \hline
+\texttt{static let messagesSendURL } & {URL для отправки сообщения} \\ \hline
+\texttt{static let messagesGetUserChatURL } & {URL для запроса сообщений в чате с пользователем} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class ChannelViewController: UITableViewController, UpdatableName,\\ UpdatableChannel, TagsReceiver}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var onChoosingHashTags: (([String]?)->())?} & {Действие при нажатии на ячейку для выбора людей} \\ \hline
+\texttt{var onChoosingPeople: ((Model.Channels?)->())?} & {Действие при нажатии на ячейку для выбора хэштегов} \\ \hline
+\texttt{var channel: Model.Channels?} & {Отображенный канал} \\ \hline
+\texttt{var onShowingPreview: ((Model.Channels)->())?} & {Действие при нажатии на кнопку отображения предпросмотра} \\ \hline
+\end{longtable}
+
+
+
+\subsubsection*{\texttt{class LogInViewController: UIViewController}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var authenticate: ((Int)->())?} & {Лямбда для входа в приложение} \\ \hline
+\texttt{let logInLabel: UILabel } & {Лэйбл Log In} \\ \hline
+\texttt{let mailTextField: UITextField } & {textField для почты пользователя} \\ \hline
+\texttt{let logInButton: UIButton } & {Кнопка для входа в приложение} \\ \hline
+\texttt{private lazy var keyboardBar } & {Панель для кнопки} \\ \hline
+\texttt{private lazy var contentView } & {Содержимое для поля для почты и лэйбла} \\ \hline
+\texttt{private var bottomConstraint: NSLayoutConstraint?} & {Нижний constraint панели для кнопки} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class NewsController: UIViewController, UISearchControllerDelegate,\\ UpdateableWithChannel, UISearchResultsUpdating}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var changedChannelName: ((String)->())?} & {Действие при нажатии на ячейку для изменения имени} \\ \hline
+\texttt{@IBOutlet weak var tableView: UITableView!} & {Таблица для отображения постов} \\ \hline
+\texttt{var channel: Model.Channels?} & {Отображенный канал} \\ \hline
+\texttt{var anonymousChannel: (users: [Int: Model.Users], posts: [Model.Posts])?} & {Анонимный канал} \\ \hline
+\texttt{var onSelectChannel: (() -> Void)?} & {Действие при выборе другого канала} \\ \hline
+\texttt{var searchController: UISearchController?} & {Поисковая строка} \\ \hline
+\texttt{var news: [Model.Posts] } & {Массив новостей} \\ \hline
+\texttt{var type: HeaderType? } & {Тип новостной ленты} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class ChatInfoViewController: UITableViewController}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{weak var delegate: UpdatableGroup?} & {Объект-делегат для обновления информации о группе при успешном изменении данных} \\ \hline
+\texttt{var groupChat: Model.Group?} & {Объект группы, информация о котором отображается в таблице} \\ \hline
+\texttt{var usersArray: [Int] } & {Список людей в этой группе} \\ \hline
+\texttt{var users: [Int: Model.Users] } & {Словарь людей в этой группе} \\ \hline
+\texttt{var myPermissions: PersonStatus } & {Статус пользователя в беседе} \\ \hline
+\end{longtable}
+
+
+
+\subsubsection*{\texttt{class PostViewCell: UITableViewCell}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var onUserDisplay: ((Int)->())?} & {Действие при нажатии на ячейку автора поста} \\ \hline
+\texttt{var onAnonymousChannelDisplay: ((String)->())?} & {Действие при нажатии на хэштег} \\ \hline
+\texttt{let nameLabel: UIButton } & {Имя автора} \\ \hline
+\texttt{let fullNameLabel: UILabel } & {Полное имя автора} \\ \hline
+\texttt{let timeLabel: UILabel } & {Время написания поста} \\ \hline
+\texttt{var post: Model.Posts?} & {Пост, отображенный в ячейке} \\ \hline
+\texttt{var hashtags } & {Хэштеги поста} \\ \hline
+\end{longtable}
+
+
+\subsubsection*{\texttt{class NewsVC: UIViewController, UITableViewDelegate, UITableViewDataSource}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var onChannelDidChange: ((([Int: Model.Users],[Model.Posts]))->())?} & {Действие, происходящее с изменением выбора канала} \\ \hline
+\texttt{var onFullPost: ((HeaderType, Model.Posts)->())?} & {Действие, происходящее с нажатием на просмотр полного содержания поста} \\ \hline
+\texttt{var dictionary: [Int: Model.Users] } & {Люди, посты которых отображены в ленте} \\ \hline
+\texttt{var currChannel : Model.Channels?} & {Отображенный канал} \\ \hline
+\texttt{var dataSourse: [Model.Posts] } & {Данные о постах} \\ \hline
+\texttt{var cellDataSourse: [PostCellData] } & {Данные о ячейках для отображения постов} \\ \hline
+\texttt{var type: HeaderType } & {Тип новостной ленты} \\ \hline
+\texttt{weak var viewController: UIViewController?} & {Класс, который делегирует отображение ленты} \\ \hline
+\end{longtable}
+
+\subsubsection*{\texttt{class FullPostController: UITableViewController}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Поле} & \textbf{Описание} \\ \hline
+\texttt{var post: Model.Posts?} & {Пост, отображенный в ячейке} \\ \hline
+\texttt{var type: HeaderType } & {Тип поста} \\ \hline
+\end{longtable}
+
+
+\subsection*{Описание методов классов и структур}
+
+\subsubsection*{\texttt{class ChannelController: UIViewController, UITableViewDelegate,\\ UITableViewDataSource, UITextFieldDelegate, UISearchBarDelegate}}
+
+\begin{longtable}{| >{\raggedright\arraybackslash}p{0.55\textwidth} | p{0.4\textwidth}|}
+\hline
+\textbf{Метод} & \textbf{Описание} \\ \hline
+\texttt{override func viewDidLoad()} & {Загрузка вьюшки} \\ \hline
+\texttt{override func viewWillAppear(\_ animated: Bool)} & {Метод, вызывающийся при появлении вьюшки} \\ \hline
+\texttt{override func viewWillDisappear(\_ animated: Bool)} & {Метод, вызывающийся при исчезновении вьюшки} \\ \hline
+\texttt{@objc func showPreview()} & {Предпросмотр превью канала} \\ \hline
+\texttt{func setUpController()} & {Настройка поисковой строки} \\ \hline
+\texttt{func numberOfSections(in tableView: UITableView) -> Int} & {Количество секций в таблице} \\ \hline
+\texttt{func tableView(\_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int} & {Количество ячеек в секции} \\ \hline
+\texttt{func tableView(\_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)} & {Действие при выборе ячейки} \\ \hline
+\texttt{func tableView(\_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell} & {Метод, возвращающий ячеейку} \\ \hline
+\texttt{func tableView(\_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat} & {Высота заголовка секции} \\ \hline
+\end{longtable}

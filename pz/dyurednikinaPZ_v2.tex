@@ -1,0 +1,323 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{../styledoc19}
+
+
+\begin{document} % конец преамбулы, начало документа
+	\year{2019}
+	\itsHSE
+	\academicTeacher{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
+	{М. К. Горденко}
+	
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	
+	\titleList{Пояснительная записка}{RU.17701729.04.03-01 81 01-1-ЛУ}
+	\par\vspace{60mm}
+	\nameOfAuthor{БПИ174}{Д. Ю. Редникина}
+	\tabForFirstPage
+	
+						\newpage
+	
+	\pagestyle{fancy}
+	\lhead{УТВЕРЖДЕН \newline
+	 	RU.17701729.04.03-01 81 01-1-ЛУ}
+	\vspace*{\fill}
+	\begingroup
+	\centering
+	\tabForFirstPage
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	\titleList{Пояснительная записка}{RU.17701729.04.03-01 81 01-1-ЛУ}
+	\listNumber{54}
+	
+	\endgroup
+	\vspace*{\fill}
+	
+	
+						\newpage
+	\lhead{ }
+	\chead{\vfill \thepage \vfill  RU.17701729.04.03-01 81 01-1-ЛУ}
+	\rhead{ }
+	\cfoot{ }
+	%delete this if you are not writing a TZ
+	\cfoot{\tabForTZ}
+	\tableofcontents
+	\newpage
+	\section{Введение}
+	\subsection{Наименование программы}
+	\input{../includes/tex/title.tex}
+	\subsection{Документы, на основании которых ведется разработка}
+	\begin{enumerate}
+		\item  Приказ декана факультета компьютерных наук Национального Исследовательского университета <<Высшая школа экономики>> № 2.3-02/1012-0 2 от 10.12.18.
+		\item Техническое задание <<iOS-приложение <<Социальная сеть для сотрудников НИУ ВШЭ>>.
+	\end{enumerate}
+	\newpage
+	\section{Назначение и область применения}
+	% \subsection{Назначение программы }
+	\subsection{Функциональное назначение}
+	\input{../includes/tex/functionalPurpose}
+	\subsection{Эксплуатационное назначение}
+	\input{../includes/tex/workingPurpose}
+	\subsection{Область применения}
+	\input{../includes/tex/areaOfUse}
+	
+					\newpage 
+	\section{Технические характеристики}
+	\subsection{Постановка задачи на разработку программы}
+	
+	
+		\input{../includes/tex/requirements}
+	
+	\subsection{Описание алгоритмов и функционирования программы}
+	\subsubsection{Описание алгоритмов программы}
+	\paragraph{Поиск предложенных хэштегов\\}
+		
+		Список всех существующих хэштегов хранится в виде дерева, полученного по запросу из JSON файла в структуре.
+		
+		\code{../includes/code/Tree.swift}{Структура объекта дерева автодополнений хэштегов} \label{code: treeStruct}
+		\textbf{Сравнение со стандатным алгоритмом:\\} \indent
+		 Стандартный поиск совпадений в массиве и отображении предложенных хэштегов выполняется  за $O(q\  \cdot\  l)$ (методы из стандартной библиотеки \verb|func filter { }|, \verb|func contains { }|  имеет временную сложность $O(q), O(l)$), где q -- количество слов в массиве для поиска, а $l$ - максимальная длина слова.
+		 
+		 \code{../includes/code/standardSearch.swift}{Стандартный поиск совпадений в массиве за $O(q*l)$}
+		 
+		 Поиск совпадений в структуре дерева (см. \ref{code: treeStruct}) выполняется за $O(n + m)$, где $n$ -- количество элементов дерева (введенных букв), $m$ -- количество найденных результатов поиска. 
+		 
+		 \textbf{Доказательство:\\}
+		 Так как дерево представлено структурой (см. \ref{code: treeStruct}), то каждое поддерево доступно за $O(1)$ (поиск по ключу в словаре \verb|subtree|). Пусть $n$ -- количество элементов дерева, тогда обход дерева $n$ (поиск поддеревьев, соответсвующих всем введенным буквам), а взятие результата сводится к $m$, где $m$ -- количество результатов поиска. Итого сложность алгоритма $O(n + m)$.
+		 
+		 \code{../includes/code/TreeFunc.swift}{Функции для обхода дерева хэштегов}
+		 
+		 Выше приведен код для обхода дерева и поиска значений \verb|value != nil| в массив предложенных хэштегов.
+	\clearpage
+	\subsubsection{Описание схемы функционирования программы}
+	
+	\paragraph{Application Flow\\}
+	Приложение разрабатывалось с использованием Coordinator pattern: взаимодействие внутри основных слоев приложения (LogIn, Channels, Messages, Profile) осуществлялось с помощью координатора (см. рис \ref{pic: Coordinator}) - класса, который управлял основной логикой переходов между ViewControllers, передачей основных данных между общими частями приложения. Этот паттерн применяется в проектировании приложений для избежания повторения кода и отделения логики переходов между экранами в отдельный класс для быстрого изменения flow приложения в будущем.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width = \linewidth]{../includes/illustrations/Flow.pdf}
+		\caption{Слои приложения в App Flow}
+		\label{pic: Coordinator}
+	\end{figure}
+
+	Список слоев управления с описанием их зоны ответственности:
+	\begin{enumerate}
+		\item AppCoordinator: управление основным Flow программы.\\ Наследуется от \verb|BaseCoordinator|, который в свою очередь правляет зависимостями между координаторами и началом и окончанием работы координаторов.\\ \verb|AppCoordinator| принимает решение, кому передавать работу: схеме авторизации/входа в аккаунт или же начинать работу с авторизованным пользователем в \verb|MainFlow|
+		\begin{enumerate}
+			\item \verb|LogInCoordinator| отвечает за переключение между авторизацией/регистрацией. В случае успешной авторизации передает работу \verb|TabBarCoordinator|
+			\item \verb|TabBarCoodinator| отвечает за \verb|MainFlow| программы. Управляет каналами, сообщениями, профилем до выхода из аккаунта (в этом случае передает работу AppCoodrinator, который в свою очередь делегирует работу \verb|LogInCoordinator|)		
+			\begin{enumerate}
+				\item \verb|ChannelsCoordinator| координирует работу каналов
+				\item \verb|MessagesCoordinator| координирует работу сообщений
+				\item \verb|ProfileCoordinator| координирует работу 
+			\end{enumerate}
+		\end{enumerate}
+	\end{enumerate}
+
+	\paragraph{Схема отправки запросов серверу и получения ответа\\}
+	Так как приложение <<Социальная сеть для сотрудников НИУ ВШЭ>> является клиент-серверным приложением, то ключевая задача приложения - взаимодействие с сервером \cite{server}: отправка и получение данных. Для корректного отправления и получения данных используется библиотека Alomofire \cite{Alomofire} и возможности стандартной библиотеки iOS SDK (Codable protocol, URLrequest) \cite{SDK}.
+	
+	Ниже описан класс стандартного запроса \verb|GeneralRequest|. Этот класс позволяет сериализовать в JSON объект типа \verb|GeneralRequest|, который используется для всех запросов постов/сообщений/постов в каналах:
+	\code{../includes/code/GeneralRequest.swift}{Структура запроса на сервер}
+	
+	В классе \verb|Model| содержатся статические методы для отправки конкретных запросов: \verb|POST /posts/forUser|, \verb|POST /posts/last|, \verb|POST /channel/get|,\\ \verb|POST /messages/get/userChat|, \verb|POST /messages/get/groupChat|. Отправка и получение запросов происходит по следующей схеме (ниже приведен пример реализации запроса и возвращения response от сервера):
+	
+	%\code{includes/code/SimpleRequestExample.swift}
+	
+	\begin{enumerate}
+		\item Создание \verb|URLRequest| с помощью url (iOS SDK)
+		\item Сериализация JSON объекта класса \verb|Channels: Codable| (iOS SDK)
+		\item Отправка request и получение respose (Alomofire) и валидация полученного \verb|statusCode| от сервера. 
+		\item В некоторых случаях происходит десериализация полученного \verb|JSONresponse| с помощью iOS SKD и через \verb|@escaping| замыкание происходит возвращение полученного объекта
+	\end{enumerate}
+	\paragraph{Схема работы с каналами\\}
+	Ниже приведена визуализация управления слоя \verb|ChannelsCoordinator|
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width = \linewidth]{../includes/illustrations/channelsFlow.pdf}
+		\caption{Диаграмма состояний}
+		\label{pic: channel}
+	\end{figure}
+
+	Процесс работы клиента с каналами выглядит следующим образом (см. рис \ref{pic: channel}):
+	\begin{itemize}
+		\item Запрос данных на сервер для отображения списка каналов
+		\begin{itemize}
+			\item При успешном запросе пользователь видет список каналов
+			\item При ошибке запроса (\verb|statusCode != 200|) - демонстрируется пустая таблица
+		\end{itemize}
+		\item При редактировании или создании канала происходит вызов методов updateChannel или createChannel
+		\begin{itemize}
+			\item При успешном запросе пользователь видет только что созданный/измененный канал в списке каналов
+			\item При ошибке запроса (\verb|statusCode != 200|) изменения к выбранному каналу не применяются
+		\end{itemize}
+		Запрос на сервер осуществляется при выходе из режима редактирования канала с последующим обновлением списка каналов
+		\item При выборе режима просмотра содержимого канала отправляется запрос на сервер
+		\begin{itemize}
+			\item При успешном запросе пользователь видет ленту, отвечающую множестам подписок на канал
+			\item При ошибке запроса (\verb|statusCode != 200|) пользователь видит пустую ленту канала
+		\end{itemize}
+	\end{itemize}
+\clearpage
+\paragraph{Схема работы с сообщениями\\}
+Ниже приведена визуализация cлоя, отвечающего за работу с сообщениями:
+\begin{figure}[h]
+	\centering
+	\includegraphics[width = 0.8\linewidth]{../includes/illustrations/Messages.pdf}
+	\caption{Диаграмма состояний}
+	\label{pic: messages}
+\end{figure}
+
+Процесс работы клиента с сообщениями (см. рис \ref{pic: messages}, \ref{pic: pmessages}) выглядит следующим образом:
+\begin{itemize}
+	\item Запрос данных на сервер для отображения списка диалогов
+	\begin{itemize}
+		\item При успешном запросе пользователь видет список чатов и бесед
+	\end{itemize}
+	\item При просмотре сообщений клиент имеет возможность пролистывать сообщения в обратном хронологическом порядке, для этого серверу отправляются запросы в формате <<с какого сообщения>>, <<сколько>>, <<какое направление>>
+	\item При выходе из режима редактирования беседы происходит update с отправлением новой информации о чате на сервер
+\end{itemize}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width = 0.7\linewidth]{../includes/illustrations/PMessages.pdf}
+	\caption{Диаграмма прецедентов}
+	\label{pic: pmessages}
+\end{figure}
+\clearpage	
+	
+	\paragraph{Схема авторизации и регистрации клиента\\}
+	При входе в аккаунт пользователю предлагается ввести свою почту (см. рис \ref{pic: auth}, \ref{pic: authP}):
+	\begin{enumerate}
+		\item Процесс входа уже зарегистрированного пользователя:
+		\begin{enumerate}
+			\item Ввод email -- происходит отправка запрос на сервер для валидации данных, получение ответа от сервера и cookies для header запросов
+			\item При успешной валидации почты на сервере, происходит получение письма на введенную почту с кодом подтверждения 
+			\item Клиент вводит полученный код в специальное поле -- при успешной валидации кода полученные cookies становятся активными и клиент успешно входит в приложение
+		\end{enumerate}
+	\item Процесс регистрации:
+		\begin{enumerate}
+			\item Ввод email -- происходит отправка запрос на сервер для валидации данных
+			\item При успешной валидации почты на сервере, происходит получение письма на введенную почту с кодом подтверждения 
+			\item Клиент вводит полученный код в специальное поле -- при успешной валидации кода клиент получает cookies для header запросов
+			\item Открывается окно с регистрацией: пользователю необходимо заполнить обязательные поля (см. раздел требований \ref{req: auth})
+			\item После заполнения пользователь подтверждает создание учетной записи, объект с заполненныи данными пользователя отправляется на сервер, cookies становятся активными и клиент успешно входит в приложение
+		\end{enumerate}
+	\end{enumerate}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width = 0.7\linewidth]{../includes/illustrations/Auth.pdf}
+		\caption{Диаграмма состояний}
+		\label{pic: auth}
+	\end{figure}
+
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width = \linewidth]{../includes/illustrations/AuthP.pdf}
+		\caption{Диаграмма прецедентов}
+		\label{pic: authP}
+	\end{figure}
+	\clearpage	
+	\subsubsection{Возможные взаимодействия программы с другими программами}
+	
+	Приложение <<Социальная сеть для сотрудников НИУ ВШЭ>> разработана с использованием сторонних библиотек: 
+	\begin{itemize}
+		\item github <<robb/Cartography>>: расстановка ограничений верстки в коде
+		\item github <<ivanbruel/MarkdownKit>>: отображение markdown текста в постах
+		\item github <<roberthein/TinyConstraints>>: расстановка ограничений верстки в коде
+		\item github <<macteo/Marklight>>: поддержка синтаксической подсветки markdown
+		\item github <<Alamofire/Alamofire>> <<5.0.0-beta.2>>: для отправки запросов и получения ответов от сервера
+		\item github <<ZaidSA/TaggerKit>> (forked from nekonora/TaggerKit): создание хэштегов, поиск и автодополнение
+		\item github <<ReactiveCocoa/ReactiveCocoa>>: валидация почты 
+	\end{itemize}
+	\subsection{Описание и обоснование выбора метода организации входных и выходных данных}
+	
+	\subsubsection{Описание метода организации входных и выходных данных}
+	
+	\input{../includes/tex/inData.tex}
+	
+	\input{../includes/tex/outData.tex}
+
+	\subsubsection{Обоснование выбора метода организации входных и выходных данных}
+	
+	Выбор входных и выходных данных обусловлен установленным функционалом программы.
+	
+	
+	\subsection{Описание и обоснование выбора состава технических и программных средств}
+	
+	
+	\subsubsection{Состав технических и программных средств}
+	При разработке программного продукта использовались следующие технические и программные средства:
+	\begin{itemize}
+		\item Язык разработки: Swift 5.0
+		\item Среда разработки: Xcode Version 10.2.1
+		\item Dependency manager: Carthage
+		\item iPhone 7 версии 12.2
+		\item Библиотеки, использованные при разрабоке: github <<robb/Cartography>>, github <<ReactiveCocoa/ReactiveCocoa>>, github <<ZaidSA/TaggerKit>> \\ (forked from nekonora/TaggerKit), github <<ivanbruel/MarkdownKit>>, \\ github <<roberthein/TinyConstraints>>, github <<macteo/Marklight>>,\\ github <<Alamofire/Alamofire>>
+	\end{itemize}
+	\subsubsection{Обоснование выбора состава технических и программных средств}
+	\paragraph{Язык программирования\\}
+	Компания Apple поддерживает два языка программирования для iOS разработки: Objective-C и Swift. 
+	
+	Для разработки был выбран язык Swift 4.2, так как он более легкий в изучении, прост и приятен в синтаксисе, level of performance выше более чем в 1.5 раза чем у других языков, на которых можно разрабатывать под iOS платформу \cite{whySwift}. В процессе работы проект мигрировал на новую версию Swift 5.0 (первая ABI стабильная версия).
+	\paragraph{Среда разработки\\}
+	Так как изначально было принято решение разрабатывать нативное приложение на языке программирования Swift, то такие среды разработки как Xamarin не рассматривались. Xcode -- бесплатная (в отличие от AppCode) и удобная среда разработки  нативных приложений на iOS, разработанная компанией Apple.
+	
+	\paragraph{Шаблон проектирования\\}
+	
+	Был выбран шаблон проектирования MVC: он используется в iOS SDK и рекомендован производитем платформы. Другие основные паттерны, использованные при разработке: delegation, Coodinator pattern.
+	\paragraph{Библиотеки}
+	
+	\begin{description}
+		\item [Alomofire] библиотека HTTP запросов для Swift. Эта библиотека используется для выполнения всех запросов на сервер \cite{server} и получения данных. Удобное API для error handling, responce handling.
+		\item [TinyConstraints/Cartography] - обе библиотеки использовались для расставлений размеров и накладываний ограничений на внешний вид элементов \verb|self.view| в коде. Xcode поддерживает \verb|autolayout| с помощью технологии выставления constraints в \verb|storyboard|, но этот способ не подходит для сложных лэйаутов/анимаций. Обе библиотеки имеют документацию, содержащую информацию о том, как реализовывать расставление, анимацию constraints непосредственно в коде приложения. Несколько viewControllers были созданы полностью с помощью кода (не использовался \verb|storyboard|), эти библиотеки помогли создать \verb|layout| без xml поддержки. iOS SDK также поддерживает возможность расставлять ограничения в коде, но стандартная библиотека предоставляет неудобный API для этого. В частности Cartography позволяет объединять constraints  в группы, эта возможность позволяет в динамике работать со взаимосвязанными объектами и их размерами. Библиотека TinyConstraints - синтаксический сахар, заменяющий длинные строчки кода из стандартной библиотеки на маленький и емкий кусок кода.
+		\item [MarkdownLight/Marklight/TaggerKit] - библиотеки использовались для парсинга маркдауна/подстветки синтаксиса и представления выбора хэштегов в приложении. Все три библиотеки не подразумевают сложного API, не требуют дополнительных знаний
+	\end{description}
+	
+						\newpage
+	\section{Технико-экономические показатели}
+	\subsection{Предполагаемая потребность}
+	Программа будет использоваться сотрудниками НИУ ВШЭ для коммуникации между научными сотрудниками, преподавателями, сотрудниками с разных факультетов.
+	
+	\input{../includes/tex/workingPurpose.tex}
+	\subsection{Экономические преимущества по сравнению с отечественными и зарубежными аналогами}
+	\input{../includes/tex/ecefficiency.tex}
+
+
+
+\newpage
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\addition{Список литературы}
+% приложения нумеруются отдельно и надо выровнять по правому краю
+%\section{Источники, использованные при разработке}
+%\renewcommand{\refname}{Список источников}
+%\addcontentsline{toc}{section}{\refname}
+\begin{thebibliography}{7}
+	\bibitem{iOS} The Swift Programming Language Documentation [Электронный ресурс] URL: \url{https://swift.org/documentation/#the-swift-programming-language} (Дата обращения: 16.05.2019, режим доступа: свободный)
+	\bibitem{documentation}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+	\bibitem{server} GitHub repository ilyakoo0/denis [Электронный ресурс] URL: \url{https://github.com/ilyakooo0/denis} (Дата обращения: 16.05.2019, режим доступа: свободный)
+	
+	\bibitem{Alomofire} GitHub repository Alomofire/Alomofire [Электронный ресурс] URL: \url{https://github.com/Alamofire/Alamofire} (Дата обращения: 16.05.2019, режим доступа: свободный)
+	\bibitem{SDK} Swift Standard Library [Электронный ресурс] URL: \url{https://developer.apple.com/documentation/swift/swift_standard_library} (Дата обращения: 16.05.2019, режим доступа: свободный)
+	
+	\bibitem{lms} 
+	LMS [Электронный ресурс] URL: 
+	\url{https://lms.hse.ru} (Дата обращения: 16.05.2019, режим доступа: свободный)
+	
+	\bibitem{whySwift} 
+	Aticle <<9 Reasons to Choose Swift for iOS App Development>> [Электронный ресурс] URL: 
+	\url{https://www.upwork.com/hiring/for-clients/9-reasons-to-choose-swift-for-ios-app-development/} (Дата обращения: 16.05.2019, режим доступа: свободный)
+\end{thebibliography}
+
+\newpage
+
+\addition{Используемые понятия и определения}
+\input{../includes/tex/terms.tex} %термины и определения
+
+\addition{Статус требований}
+\input{../includes/tex/reqTable.tex}
+
+\addition{Описание классов, структур, методов, полей}
+	\input{../includes/tex/doc.tex}
+						
+						\newpage
+	\listRegistration
+	%\addcontentsline{toc}{section}{Лист регистрации изменений}
+\end{document} % конец документа

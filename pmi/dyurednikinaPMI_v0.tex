@@ -1,0 +1,367 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{../styledoc19}
+
+
+\begin{document} % конец преамбулы, начало документа
+	
+	\itsHSE
+	\academicTeacher{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
+	{М. К. Горденко}
+	
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	
+	\titleList{Программа и методика испытаний}{RU.17701729.04.03-01 51 01-1}
+	\par\vspace{60mm}
+	\nameOfAuthor{БПИ174}{Д. Ю. Редникина}
+	\tabForFirstPage
+	
+						\newpage
+	
+	\pagestyle{fancy}
+	\lhead{УТВЕРЖДЕН \newline
+	 	RU.17701729.04.03-01 51 01-1}
+	\vspace*{\fill}
+	\begingroup
+	\centering
+	\tabForFirstPage
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	\titleList{Программа и методика испытаний}{RU.17701729.04.03-01 51 01-1}
+	\listNumber{27}
+	
+	\endgroup
+	\vspace*{\fill}
+	
+	
+						\newpage
+	\lhead{ }
+	\chead{\vfill \thepage \vfill  RU.17701729.04.03-01 51 01-1}
+	\rhead{ }
+	\cfoot{ }
+	%delete this if you are not writing a TZ
+	\cfoot{\tabForTZ}
+	\tableofcontents
+	\newpage
+	\section{Объекты испытаний}
+	\subsection{Наименование программы}
+	\input{../includes/tex/title.tex}
+	\subsection{Область применения программы}
+	\subsubsection{Функциональное назначение}
+	\input{../includes/tex/functionalPurpose}
+	\subsubsection{Эксплуатационное назначение}
+	\input{../includes/tex/workingPurpose}
+	\subsubsection{Область применения}
+	\input{../includes/tex/areaOfUse}
+	
+					\newpage
+	\section{Цель испытаний}
+	
+	Проверка на соответствие требованиям, указанным в документе <<iOS-приложение <<Социальная сеть для сотрудников НИУ ВШЭ>>. Техническое задание>>
+	
+					\newpage 
+	\section{Требования к программе}
+	\subsection{Требования к функциональным характеристикам} \label{subsec:requirements}
+	\input{../includes/tex/requirements}
+	\subsection{Требования к интерфейсу}
+	\input{../includes/tex/interfaceReq}
+	\subsection{Требования к надежности}
+	\begin{itemize}
+		\item Проверка корректности введенных текстовых данных (при составлении поста, написании сообщения) - кодировка utf8
+		\item Проверка корректного statusCode при подключенкии к серверу/отправке запросов, в случае возвращения кода 498 происходит выход пользователя из учетной записи (истек срок токена)
+		\item Проверка корректности данных, введенных пользователем при авторизации, происходит на стороне сервера и в зависимости от возвращенного success или failure статуса приложение либо авторизует, либо прекращает авторизацию пользователя
+	\end{itemize}
+	
+						\newpage
+	\section{Требования к программной документации}
+	\subsection{Состав программной документации}
+	\input{../includes/tex/documents.tex}
+	
+						\newpage
+	\section{Средства и порядок испытаний}
+	\subsection{Технические средства, используемые во время испытаний}
+	Работа приложения проверялась на iPhone 7, iPhone X и симуляторах Xcode, а именно Simulator iPhone 8 iOS 12.2.
+	
+	\subsection{Программные средства, используемые во время испытаний}
+	
+	На всех устройствах была установлена операционная система iOS 12.2.
+	\subsection{Условия проведения испытаний}
+	
+	Климатические условия, при которых производилось испытание приложения, удовлетворяли требованиям к климатическим условиям эксплуатации устройств, на которых производилось испытание.
+	\subsection{Порядок проведения испытаний}
+	
+	Испытания будут проводиться в следующем порядке:
+	\begin{enumerate}
+		\item Проверка к функциональным характеристикам;
+		\item Проверка требований к формату входных и выходных данных;
+		\item Проверка требований к надежности; 
+		\item Проверка требований к программной документации;
+	\end{enumerate}
+	
+						\newpage
+	\section{Методы испытаний}
+	Результаты всех испытаний проверяются визуально на экране используемого телефона.
+	\subsection{Проверка требований к функциональным характеристикам}
+	\subsubsection{Регистрация клиента}
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/login.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/r1.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/r3.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/r2.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/code.png}
+		\end{subfigure}
+		\caption{\label{pic: register}Регистрация клиента в социальной сети}
+	\end{figure}
+
+	Регистрация осуществляется при введении почты с \verb|@hse.ru| в поле для текста на рис. \ref{pic: register}. При успешной валидации почты на сервере \cite{server}, пользователь может ввести свои данные (ФИО, факультет) в поля (см. рис \ref{pic: register}). При успешном заполнении полей (выбран факультет и ФИО введено полностью) пользователь должен ввести код валидации, отправленный на почту, для входа в приложение. Для подтвеждения введенных данных клиент должен нажать кнопку \textit{Next} в правом нижнем углу, при неверно введенном коде пользователю будет отображено сообщение (см. рис \ref{pic: auto}).
+	\subsubsection{Авторизация клиента}
+	При авторизации пользователь также должен ввести почту \verb|@hse.ru| и код валидации (см. рис. \ref{pic: auto}).
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/login.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/code1.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/invalidcode.png}
+		\end{subfigure}
+		\caption{\label{pic: auto} Авторизация клиента в социальной сети}
+	\end{figure}
+	\clearpage
+	\subsubsection{Просмотр профиля пользователя}
+	\paragraph{Просмотр своего профиля\\}
+	
+	При выборе \textit{Profile} на \textit{tabBar}(\ref{C: tabbar}) пользователь оказывается на странице своего профиля: при выборе на \textit{segmented control} секции \textit{Posts} отображаются посты пользователя - по нажатию пост открывается целиком (см. \ref{pic: myprofile}), в секции \textit{Basic info} - информация о контактах, факультете, интересах пользователя. При выборе \textit{More} в правом верхнем углу появляется \textit{Action sheet}(\ref{C: actionSheet}) для предоставления выбора действий со своей страницы: выйти из аккаунта, выйти из аккаунта со всех устройств или редактировать информацию о себе. При редактировании информации о себе появляется окошко для редактирования (см. \ref{pic: myprofile}). Сохранение отредактированной информации происходит при нажатии на кнопку \textit{Done}.
+	
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/profile.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/basic_info.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/profile_functions.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/profile_fullpost.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/edit_profile.png}
+		\end{subfigure}
+
+		\caption{\label{pic: myprofile} Просмотр своего профиля}
+	\end{figure}
+	\clearpage
+	\paragraph{Просмотр профилей других пользователей\\}
+	При просмотре общей ленты, сообщений в диалогах, канала можно перейти на профиль автора поста/сообщения (при нажатии на имя автора). Если автором не является авторизованный пользователь, то в профиле есть возможность написать человеку сообщение (см. \ref{pic: otherprofile}) при нажатии кнопки \textit{New message}. Также доступны вышеперечисленные (см. \ref{pic: myprofile}) возможности просмотра постов, информации о человеке на его странице. Но \textit{Action sheet}(\ref{C: actionSheet}) содержит опцию добавления профиля в один из существующих каналов (см. \ref{pic: otherprofile}), которая доступна при нажатии на опцию \textit{Add to a channel}.
+	
+	\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[b]{0.3\linewidth}
+		\includegraphics[width=\linewidth]{../includes/pmi/otherprofile.png}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\linewidth}
+		\includegraphics[width=\linewidth]{../includes/pmi/otherprofile_functions.png}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\linewidth}
+		\includegraphics[width=\linewidth]{../includes/pmi/addtoachannel.png}
+	\end{subfigure}
+	\caption{\label{pic: otherprofile} Просмотр профилей других пользователей}
+	\end{figure}
+	\clearpage
+	\subsubsection{Публикация постов}
+	При нажатии в правом верхнем углу окна с лентой кнопки (cм. рис \ref{pic: hash}) открывается окно для написания поста. При нажатии кнопки \textit{Edit hashtags} в окне предоставляется окно с возможностью выбрать хэштеги из предложенных или написать свои (см. рис. \ref{pic: hash}). Публикация поста происходит при нажатии кнопки \textit{Post} в правом верхнем углу.
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/general.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/choose_hashtag.png}
+		\end{subfigure}
+		\caption{\label{pic: hash}Написание поста}
+	\end{figure}
+	\clearpage
+	\subsubsection{Просмотр ленты}
+	При просмотре ленты пользователь имеет возможность в строке поиска (см. рис. \ref{pic: newss}) выбрать хэштег для отображения ленты, состоящей из постов, содержащих этот хэштег. Также при просмотре ленты при нажатии на ячейку с постом можно перейти на отображение полного содежания поста (см. рис. \ref{pic: newss}).  При нажатии на хэштег в общей ленте происходит отображение ленты постов, содержащих этот хэштег (см. рис. \ref{pic: newss}).
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/profile_fullpost.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/search.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/ios_channel.png}
+		\end{subfigure}
+		\caption{\label{pic: newss}Просмотр ленты}
+	\end{figure}
+	\clearpage
+	\subsubsection{Каналы: создание, удаление и просмотр}
+	\paragraph{Создание канала\\}
+	При нажатии на кнопку <<+>> в правом верхнем углу открывается окно создания нового канала. В данном окне можно отредактировать название, добавить в список людей и хэштеги. 
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/channel_list.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/channel_create.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/edit_title.png}
+		\end{subfigure}
+		\caption{Создание канала}
+	\end{figure}
+	\clearpage
+
+	\paragraph{Редактирование канала\\}
+	При  нажатии кнопки \textit{Edit} происходит переход в режим редактирование содержимого канала: по нажатию на красный минус слева от каждой чейки (см. рис \ref{pic: editChannel}) происходит удаление элементов из множества хэштегов и людей. При нажатии ячеек <<Add more>> в зависимости от раздела, в котором находится ячейка, открывается окно для добавления новых людей/хэштегов.
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/edit.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/edit_button_channel.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/choose_peple.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/choose_hashtag.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/after_editing.png}
+		\end{subfigure}
+		\caption{\label{pic: editChannel}Редактирование канала}
+	\end{figure}
+	\clearpage
+	\paragraph{Предпросмотр и просмотр содержимого канала\\}
+	
+	В режиме редактирования переход в режим предпросмотра содержимого канала осуществляется по нажатию на кнопку \textit{Play} в правом верхнем углу экрана. В режиме предпросмотра не доступно нажатие на отображенный пост в ленте для его полного просмотра, а также переход на страницы авторов постов.
+	
+	Просмотр канала выполняется при нажатии на ячейку с именем канала на экране со списком постов.
+	
+	\begin{figure}[h!]
+		\centering
+	\begin{subfigure}[b]{0.3\linewidth}
+		\includegraphics[width=\linewidth]{../includes/pmi/channel_list.png}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\linewidth}
+		\includegraphics[width=\linewidth]{../includes/pmi/ios_channel_what.png}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.3\linewidth}
+		\includegraphics[width=\linewidth]{../includes/pmi/ios_channel.png}
+	\end{subfigure}
+	\caption{Педпросмотр и просмотр канала}
+	\end{figure}
+	
+	\clearpage 
+	\subsubsection{Чаты и беседы: просмотр, создание, редактирование}
+	Просмотр списка диалогов доступен при переходе на раздел \textit{Chats} на \textit{tabBar}(\ref{C: tabbar}). При нажатии на ячейку открывается соответственный диалог с сообщениями, написанными ранее. Кнопка \textit{Send} (см. рис. \ref{pic: chats}) предназначена для отправки сообщений. Окно ввода текста для сообщений также поддерживает разметку \textit{markdown}.
+		\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/chats.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/userChat.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/groupChat.png}
+		\end{subfigure}
+		\caption{\label{pic: chats}Беседы и чаты}
+	\end{figure}
+	Права администратора беседы имеет либо создатель беседы, либо любой из участников беседы, назначенный другим администратором (см. рис. \ref{pic: admin}). Также администратор может поменять название беседы и состав участников по нажатию на соответствующие ячейки в секции \textit{Title} и  \textit{Participants} (см. рис. \ref{pic: admin}). Также выйти из чата можно с помощью нажатия на кнопку \textit{Leave chat}.
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/adminName.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/adminChange.png}
+		\end{subfigure}
+		\caption{\label{pic: admin}Администрирование беседы}
+	\end{figure}
+	\subsection{Проверка требований к надежности}
+	 В процессе выполнения всех остальных испытаний программа продолжала функционировать без перебоев со стороны приложения.
+	\subsection{Проверка требований к программной документации}
+	Вся документация, представленная в требованиях, готова.
+	
+						\newpage
+	\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+	\addition{Список источников}
+	\begin{thebibliography}{6}
+		\bibitem{interface} Human Interdace Guidelines [Электронный ресурс] URL: \url{https://developer.apple.com/design/human-interface-guidelines/ios/overview/themes} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{UIKit} UIKit [Электронный ресурс] URL: \url{https://developer.apple.com/documentation/uikit} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{terms} Terms of use for Apple products [Электронный ресурс] URL: \url{https://www.apple.com/legal} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{lms} 
+		LMS [Электронный ресурс] URL: 
+		\url{https://lms.hse.ru} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{server} GitHub repository ilyakoo0/denis [Электронный ресурс] URL: \url{https://github.com/ilyakooo0/denis} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{threads} 
+		How to design social media interactions 
+		[Электронный ресурс] URL:
+		\url{https://medium.com/@michaelchaika/ho-to-design-social-media-interactions-386bdb5bee6d} (Дата обращения: 16.05.2019, режим доступа: свободный)
+	\end{thebibliography}
+
+	\addition{Иллюстрации интерфейса} \label{interface}
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/1.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/2.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/6.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/4.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/5.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/8.pdf}
+		\end{subfigure}
+		\caption{Прототип интерфейса}
+	\end{figure}
+
+
+	\addition{Используемые понятия и определения} 
+	\begin{description}
+		\item[Социальная сеть] -- это интернет-площадка, сайт, который позволяет зарегистрированным на нем пользователям размещать информацию о себе и коммуницировать между собой, устанавливая социальные связи
+		\item[Хэштег] -- ключевое слово или несколько слов сообщения, тег (пометка), используемый в микроблогах и социальных сетях, облегчающий поиск сообщений по теме или содержанию и начинающийся со знака решётки \label{term: hash}
+		\item[Пост] -- информационный блок, размещённый пользователем в социальной сети на своей странице и содержащий набор хэштегов, по которым его можно найти \label{term: post}
+		\item[Канал] -- сохраненные ранее созданные фильтры новостей (набор хэштегов) по всем публичным постам \label{term: channel}
+		\item [Беседа] -- чат для пользователей, в котором одновременно могут присутствовать от 3 до 50 участников \label{term: chat}
+		\item [Проект]  -- раздел, в котором сотрудники с любых факультетов по приглашению смогут вместе работать над каким-либо научным исследованием. Проект состоит из timeline (лента с новостями для всех участников проекта) и набором чатов и бесед (с разным количеством участников в каждой) \label{term: project}
+		\item [Preview канала]  -- предпросмотр ленты канала с ограничениями на просмотр полной версии поста в ленте, переходом на страницы авторов, нажатия на хэштеги \label{term: preview}
+		\item [Preview поста]  -- ограниченный контент (содержание) поста в ленте \label{term: previewPost}
+		\item [Action sheet] это особый стиль оповещения, который появляется в ответ на элемент управления или действие и представляет собой набор из двух или более вариантов выбора, связанных с текущим контекстом. \label{C: actionSheet}
+		\item [TabBar] в дизайне - интерфейс документа с вкладками или вкладка, представляющая  собой графический элемент управления, который позволяет нескольким документам или панелям содержаться в одном окне, используя вкладки в качестве навигационные виджеты для переключения. \label{C: tabbar}
+	\end{description}
+	
+	\addition{Статус требований}
+	\input{../includes/tex/reqTable.tex}
+	
+	\listRegistration
+	%\addcontentsline{toc}{section}{Лист регистрации изменений}
+\end{document} % конец документа

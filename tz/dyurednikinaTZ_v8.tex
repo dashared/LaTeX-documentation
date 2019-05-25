@@ -1,0 +1,227 @@
+\documentclass[a4paper,12pt,reqno]{article}
+
+\usepackage{../styledoc19}
+
+\begin{document} % конец преамбулы, начало документа
+	
+	\itsHSE
+	\academicTeacher{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
+	{М. К. Горденко}
+	
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	
+	\titleList{Техническое задание}{RU.17701729.04.03-01 ТЗ 01-1-ЛУ}
+	\par\vspace{60mm}
+	\nameOfAuthor{БПИ174}{Д. Ю. Редникина}
+	\tabForFirstPage
+	
+						\newpage
+	
+	\pagestyle{fancy}
+	\lhead{УТВЕРЖДЕН \newline
+	 	RU.17701729.04.03-01 ТЗ 01-1-ЛУ}
+	\vspace*{9cm}
+	\begingroup
+	\centering
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	\titleListTwo{Техническое задание}{RU.17701729.04.03-01 ТЗ 01-1}
+	\listNumber{26}
+	
+	\endgroup
+	\vspace{8cm}
+	\tabForFirstPage
+	\vspace*{\fill}
+	
+	
+						\newpage
+	\lhead{ }
+	\chead{\vfill \thepage \vfill  RU.17701729.04.03-01 ТЗ 01-1 }
+	\rhead{ }
+	\cfoot{ }
+	%delete this if you are not writing a TZ
+	\cfoot{\tabForTZ}
+	\tableofcontents
+	\newpage
+	\section{Введение}
+	\subsection{Наименование программы}
+	\input{../includes/tex/title.tex}
+	\subsection{Краткая характеристика области применения}
+	\input{../includes/tex/areaOfUse}
+	\newpage
+	\section{Основания для разработки}
+	\subsection{Документы, на основании которых ведется разработка}
+	
+	
+	Приказ декана факультета компьютерных наук Национального Исследовательского университета <<Высшая школа экономики>> № 2.3-02/1012-0 2 от 10.12.18.
+	
+	\subsection{Наименование темы разработки}
+	
+	Наименование темы разработки – iOS-приложение <<Социальная сеть для сотрудников НИУ ВШЭ>>  (iOS application <<Social network for HSE staff>>).
+
+
+ Программа выполняется в рамках темы курсовой работы в соответствии с учебным планом подготовки бакалавров по направлению 09.03.04 «Программная инженерия» Национального исследовательского университета «Высшая школа экономики», факультет компьютерных наук.
+	
+	\newpage 
+	\section{Назначение разработки}
+	 
+	\subsection{Функциональное назначение}
+	\input{../includes/tex/functionalPurpose}
+	\subsection{Эксплуатационное назначение}
+	\input{../includes/tex/workingPurpose}
+	
+						\newpage
+	\section{Требования к программе}
+	\subsection{Требования к функциональным характеристикам}
+	\subsubsection{Требования к составу выполняемых функций}\label{subsec:requirements}
+	
+	\input{../includes/tex/requirementstz.tex}
+	\subsubsection{Требования к организации входных данных}
+	\input{../includes/tex/inData}
+	\subsubsection{Требования к организации выходных данных}
+	\input{../includes/tex/outData}
+	%\subsection{Требования к надежности}
+	%Для корректной работы программы необходимо иметь 
+	\clearpage
+	\subsection{Требования к интерфейсу}
+	\input{../includes/tex/interfaceReq.tex}
+	\subsection{Условия эксплуатации}
+	\subsubsection{Климатические условия}
+	Климатические условия сопадают с климатическими условиями эксплуатации\\ устройства \cite{terms}.
+	\subsubsection{Требования к пользователю}
+	Пользователь должен иметь базовое представление об основных принципах работы социальных сетей и операционной системы iOS. 
+	\subsection{Требования к составу и параметру технических средств}
+	Для корректной работы приложения необходимо устройство на платформе iOS с доступом в интернет.
+	\subsection{Требования к информационной и программной совместимости}
+	На устройстве должна быть установлена операционная система iOS 12.2 или новее.
+	\subsection{Требования к маркировке и упаковке}
+	Приложение должно быть доступно для скачивания в приложении <<TestFlight>> в магазине <<App Store>>.
+	
+						\newpage
+	\section{Требования к программной документации}
+	\input{../includes/tex/documents.tex}
+	
+						\newpage
+	\section{Технико-экономические показатели}
+	\subsection{Предполагаемая потребность}
+	Программа будет использоваться сотрудниками НИУ ВШЭ для коммуникации между научными сотрудниками, преподавателями, сотрудниками с разных факультетов. 
+	
+	\input{../includes/tex/workingPurpose.tex}
+	\subsection{Ориентировочная экономическая эффективность} \label{competitors}
+	\input{../includes/tex/ecefficiency}
+	
+						\newpage
+	\section{Стадии и этапы разработки}
+	
+	\subsection{Необходимые стадии разработки, этапы и содержание работ}
+	\begin{enumerate}
+		\item Техническое задание: \textit{(ноябрь-декабрь, 2018)}
+		\begin{enumerate}
+			\item Этапы разработки: \textit{(ноябрь, 2018)}
+			\begin{enumerate}
+				\item Обоснование необходимости разработки программы; 
+				\item Постановка задачи; 
+				\item Сбор исходных материалов; 
+				\item Выбор и обоснование критериев эффективности и качества разрабатываемой программы; 
+				\item Обоснование необходимости проведения научно-исследовательских работ; 
+			\end{enumerate}
+			\item Разработка и утверждение технического задания: \textit{(ноябрь-декабрь, 2018)}
+			\begin{enumerate}
+				\item Определение требований к программе; \textit{(декабрь, 2018)}
+				\item Определение стадий, этапов и сроков разработки программы и документации на неё; \textit{(декабрь, 2018)}
+				\item Согласование и утверждение технического задания; \textit{(декабрь, 2018)}
+			\end{enumerate}
+		\end{enumerate}
+		\item Проект \textit{(ноябрь -- май, 2018/19)}
+		\begin{enumerate}
+			\item \input{../includes/tex/plan.tex}
+		\end{enumerate}
+	\end{enumerate}
+\newpage
+	\subsection{Сроки и исполнители}
+	Программа и документация к ней разрабатываются к утвержденным срокам защиты курсовой работы (20 – 30 мая 2019 года).
+	Исполнителем является студент НИУ ВШЭ группы БПИ174 Редникина Дарья Юрьевна.
+	
+						\newpage
+	\section{Порядок контроля и приемки}
+	\subsection{Виды испытаний}
+	Виды испытаний описаны в документе «Программа и методика испытаний» (ГОСТ 19.301-78).
+	
+	
+	\indent
+	Испытания будут проводиться в следующем порядке: 
+	\begin{enumerate}
+		\item Проверка требований к функциональным характеристикам
+		\item Проверка требований к интерфейсу
+		\item Проверка требований к алгоритму и к формату входных и выходных данных
+		\item Проверка требований к надежности
+		\item Проверка требований к программной документации
+	\end{enumerate}
+	\subsection{Общие требования к приемке работы}
+	Общие требования к приемке работы описаны в документе «Программа и методика испытаний»(ГОСТ19.301-78).
+	
+	\indent
+	Для успешной сдачи должны быть пройдены все испытания.
+	
+	
+	% приложения нумеруются отдельно и надо выровнять по правому краю
+
+	
+	\addition{Используемые понятия и определения}
+	\input{../includes/tex/terms.tex} %термины и определения
+						\newpage
+	
+	\addition{Иллюстрации интерфейса} \label{interface}
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/1.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/2.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/6.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/4.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/5.pdf}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/prototype/8.pdf}
+		\end{subfigure}
+		\caption{Прототип интерфейса}
+	\end{figure}
+
+	\newpage
+	\addition{Статус требований}
+	\input{../includes/tex/reqTable}
+						\newpage
+						
+	\addition{SWOT-анализ} \label{addition: D}
+	\input{../includes/tex/swot}
+	\newpage
+	%\section{Источники, использованные при разработке}
+	%\renewcommand{\refname}{Список источников}
+	% \addcontentsline{toc}{subsection}{\refname}
+	\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+	\addition{Список источников}
+	\begin{thebibliography}{6}
+		\bibitem{interface} Human Interdace Guidelines [Электронный ресурс] URL: \url{https://developer.apple.com/design/human-interface-guidelines/ios/overview/themes} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{UIKit} UIKit [Электронный ресурс] URL: \url{https://developer.apple.com/documentation/uikit} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{terms} Terms of use for Apple products [Электронный ресурс] URL: \url{https://www.apple.com/legal} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{lms} 
+		LMS [Электронный ресурс] URL: 
+		\url{https://lms.hse.ru} (Дата обращения: 16.05.2019, режим доступа: свободный)
+		\bibitem{threads} 
+		How to design social media interactions 
+		[Электронный ресурс] URL:
+		\url{https://medium.com/@michaelchaika/ho-to-design-social-media-interactions-386bdb5bee6d} (Дата обращения: 16.05.2019, режим доступа: свободный)
+	\end{thebibliography}
+
+						\newpage
+	\listRegistration
+
+\end{document} % конец документа

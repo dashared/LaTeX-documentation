@@ -1,0 +1,310 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{../styledoc19}
+
+
+\begin{document} % конец преамбулы, начало документа
+	
+	\itsHSE
+	\academicTeacher{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
+	{М. К. Горденко}
+	
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	
+	\titleList{Руководство оператора}{RU.17701729.04.03-01 34 01-1}
+	\par\vspace{60mm}
+	\nameOfAuthor{БПИ174}{Д. Ю. Редникина}
+	\tabForFirstPage
+	
+						\newpage
+	
+	\pagestyle{fancy}
+	\lhead{УТВЕРЖДЕН \newline
+	 	RU.17701729.04.03-01 34 01-1}
+	\vspace*{\fill}
+	\begingroup
+	\centering
+	\tabForFirstPage
+	\projectName{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
+	\titleList{Руководство оператора}{RU.17701729.04.03-01 34 01-1}
+	\listNumber{22}
+	
+	\endgroup
+	\vspace*{\fill}
+	
+	
+						\newpage
+	\lhead{ }
+	\chead{\vfill \thepage \vfill  RU.17701729.04.03-01 34 01-1}
+	\rhead{ }
+	\cfoot{ }
+	%delete this if you are not writing a TZ
+	\cfoot{\tabForTZ}
+	\tableofcontents
+	\newpage
+	\section{Назначение программы}
+	\subsection{Функциональное назначение }
+	\input{../includes/tex/functionalPurpose}
+	\subsection{Эксплуатационное назначение}
+	\input{../includes/tex/workingPurpose}
+	\subsection{Состав выполняемых функций}
+	\input{../includes/tex/requirements}
+	
+	\newpage
+	\section{Условия выполнения программы}
+	\subsection{Минимальный состав аппаратурных средств}
+	Для надежной и бесперебойной работы программы требуется следующий состав аппаратурных средств:
+	
+	\begin{enumerate}
+		\item Персональный компьютер фирмы \textit{Apple} ;
+		\item Мобильное устройство iPhone;
+		\item 150 МБ оперативной памяти или больше;
+		\item Не менее 1ГБ свободного места на жестком диске;
+		\item Трекпад или мышь;
+	\end{enumerate}
+
+	\subsection{Минимальный состав программных средств}
+	Для надежной и бесперебойной работы программы требуется следующий состав программных средств:
+	\begin{enumerate}
+		\item Должна быть установлена операционная система iOS 12.2 или новее. \item На компьютере пользователя должен быть установлен \textit{Xcode} 10.2.
+	\end{enumerate}
+	\subsection{Требования к персоналу}
+	Для работы с данным приложением пользователь должен обладать базовыми знаниями работы социальных сетей и работы операционной системы iOS.
+	
+	\newpage 
+	\section{Выполнение программы}
+	\subsection{Загрузка и запуск программы}
+	После распаковки архива \textit{dyurednikina.zip} содержимое папки \textit{GDproject} будет выглядеть следущим образом (см. рис \ref{pic: Folder}):
+		\begin{figure}[h]
+		\centering
+		\includegraphics[width = \linewidth]{../includes/ro/folder.png}
+		\caption{Папка, содержащая проект}
+		\label{pic: Folder}
+	\end{figure}
+
+
+	Для запуска программы через симулятор или мобильный телефон требуется открыть файл \textit{GDproject.xcodeproj}, заранее установив программу \textit{Xcode} через магазин \textit{App store}. 
+	
+	Для запуска проекта требуется выбрать модель симулятора или подключенное к ноутбуку устройство и нажать \textit{Play} (см. рис \ref{pic: Play}).
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width = 0.6\linewidth]{../includes/ro/play.png}
+		\caption{Запуск проекта}
+		\label{pic: Play}
+	\end{figure}
+	
+	\subsection{Выполнение программы}
+	\subsubsection{Регистрация}
+	При входе в аккаунт пользователю предлагается ввести свою почту (см. рис \ref{pic: register}):
+	Процесс регистрации:
+		\begin{enumerate}
+			\item Ввод email -- происходит отправка запрос на сервер для валидации данных
+			\item При успешной валидации почты на сервере, происходит получение письма на введенную почту с кодом подтверждения 
+			\item Клиент вводит полученный код в специальное поле 
+			\item Открывается окно с регистрацией: пользователю необходимо заполнить обязательные поля (см. раздел требований \ref{req: auth})
+			\item После заполнения пользователь подтверждает создание учетной записи и клиент успешно входит в приложение
+		\end{enumerate}
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/login.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/r1.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/r3.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/r2.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/code.png}
+		\end{subfigure}
+		\caption{\label{pic: register}Регистрация клиента в социальной сети}
+	\end{figure}
+	\subsubsection{Вход в учетную запись}
+	Процесс входа уже зарегистрированного пользователя в собственную учетную запись:
+	\begin{enumerate}
+		\item Ввод email -- происходит отправка запрос на сервер для валидации данных
+		\item При успешной валидации почты на сервере, происходит получение письма на введенную почту с кодом подтверждения 
+		\item Клиент вводит полученный код в специальное поле -- при успешной валидации кода клиент входит в приложение
+	\end{enumerate}
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/login.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/code1.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/invalidcode.png}
+		\end{subfigure}
+		\caption{\label{pic: auto} Авторизация клиента в социальной сети}
+	\end{figure}
+	\clearpage
+	\subsubsection{Просмотр ленты новостей}
+	При входе в приложение пользователь видит общую ленту всех новостей \textit{General}. Клиент может с помощью строки поиска найти посты по интересущей его тематике (см. рис \ref{sub: search}, \ref{sub: ios}), а также просто просматривать ленту новостей, открывать полное содержание поста в ленте (см. рис \ref{sub: fullpost}) при нажатии на текст поста, а также переходить на профили пользователей -- авторов постов, при нажатии на их имя.
+	
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/profile_fullpost.png}
+			\caption{\label{sub: fullpost}Просмотр поста}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/search.png}
+			\caption{\label{sub: search}Поиск}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/ios_channel.png}
+			\caption{\label{sub: ios}Интересующая тематика}
+		\end{subfigure}
+		\caption{\label{pic: n}Просмотр ленты}
+	\end{figure}
+	\clearpage
+	\subsubsection{Написание и публикация поста}
+	Находясь в канале/в общей ленте, клиент имеет возможность написать пост, нажав кнопку в правом верхнем углу. При открытии окна для написания поста пользователь может написать текст а также добавить хэштеги к посту (см. рис \ref{pic: write}). Публикация поста происходит при нажатии кнопки \textit{Publish}, кнопка \textit{Cancel} предлагает удалить написанный текст или сохранить как черновик для следующего открытия окна для написания поста (cм. рис \ref{pic: draft}).
+	
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/ro/newpost.png}
+			\caption{\label{pic: write}Написание поста}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/ro/draft.png}
+			\caption{\label{pic: draft}Черновик}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/ro/display.png}
+			\caption{\label{pic: display}Пост в ленте}
+		\end{subfigure}
+		\caption{\label{pic: writenewpost}Написание и публикация поста}
+	\end{figure}
+ 	\clearpage
+	\subsubsection{Просмотр каналов}
+	Находясь в канале/в общей ленте, клиент имеет возможность по свайпу вправо (или при нажатии кнопки в левом верхнем углу \textit{Channels}) перейти в полный список каналов (см. рис ). Для просмотра содержимого канала клиенту надо нажать на интересущую его ячейку в списке.
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/channel_list.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/ios_channel_what.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/ios_channel.png}
+		\end{subfigure}
+		\caption{Педпросмотр и просмотр канала}
+	\end{figure}
+	\clearpage
+	\subsubsection{Создание и редактирование каналов}
+	Находясь в полном списке каналов, клиент имеет возможность создать канал по нажатию на кнопку <<+>> в правом верхнем углу (см. рис ). При нажатии открывается окно для редактирование содержимого пока что пустого канала (см. рис ): можно отредактировать название нажав на ячейку в первой секции, можно отредактировать множество хэштегов и людей, входящих в канал, нажав на ячейку \textit{Add more} в каждой секции (<<People>>, <<Hashtags>>) соответственно (см. рис ). Также можно удалить элементы из списков при нажатии кнопки \textit{Edit} в правом верхнем углу и выборе соответствующих элементов для удаления (см. рис). 
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/edit.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/edit_button_channel.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/choose_peple.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/choose_hashtag.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/after_editing.png}
+		\end{subfigure}
+		\caption{\label{pic: editChannl}Редактирование канала}
+	\end{figure}
+	\clearpage
+	\subsubsection{Просмотр сообщений}
+	Для просмотра сообщений клиент должен выбрать \textit{Messages} секцию на таббаре (см. рис ). 
+		\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/chats.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/userChat.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/groupChat.png}
+		\end{subfigure}
+		\caption{\label{pic: chats}Беседы и чаты}
+	\end{figure}
+\clearpage
+	\subsubsection{Создание беседы и администрирование}
+	Для создания чата или беседы пользователь должен нажать кнопку \textit{Write} в правом верхнем углу списка диалогов и выбрать людей (2 или больше для создания беседы, 1 -- для чата) (см. рис ). Для просмотра информации (и редактирования при правах администратора) в беседе клиенту надо нажать кнопку \textit{Info} (см. рис). Пользователь, находящийся в беседе, может быть администратором или не иметь прав администратора (см. рис). Пользователь, являющийся администратором, может назначить участников беседы администраторами или отобрать у них это право. Также администратор может менять название чата и добавлять людей при нажатии ячейки \textit{Add people} (см. рис).
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/adminName.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/adminChange.png}
+		\end{subfigure}
+		\caption{\label{pic: admin}Администрирование беседы}
+	\end{figure}
+\clearpage
+	\subsubsection{Просмотр профиля пользователя}
+	Для просмотра собственного профиля пользователь должен выбрать \textit{Profile} секцию на таббаре (см. рис \ref{pic: mypr}). На странице пользователя есть возможность просматривать посты, опубликованные пользователем, их полные версии. Также клиент может просмотреть базовую информацию о пользователе выбрав \textit{Basic info} в сегментном контроле (см. рис \ref{pic: bi}). Есть возможность при нажатии справа сверху кнопки \textit{Info} добавить профиль пользователя в один из существующих каналов (подписаться на пользователя), выбрав <<Add person to the channel>> (см. рис \ref{pic: otherpr}).
+		\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/profile.png}
+			\caption{\label{pic: mypr} Просмотр профиля}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/basic_info.png}
+			\caption{\label{pic: bi} Базовая информация}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/otherprofile_functions.png}
+			\caption{\label{pic: otherpr} Опции профиля}
+		\end{subfigure}
+		
+		\caption{\label{pic: myprofile} Просмотр профиля}
+	\end{figure}
+\clearpage
+	\subsubsection{Выход из социальной сети}
+	Находясь в секции таббара \textit{Profile}, есть возможность при нажатии справа сверху кнопки \textit{Info} выйти из аккаунта, выбрав <<Log out>> (см. рис \ref{pic: logout}).
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/pmi/profile_functions.png}
+			\caption{\label{pic: logout}Выход из аккаунта}
+		\end{subfigure}
+	\caption{\label{pic: userOp}Выход}
+	\end{figure}
+	\newpage
+	\section{Сообщения оператору}
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/ro/invalid.png}
+			\caption{\label{pic: invalid} Неверная почта}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/ro/invaliddata.png}
+			\caption{\label{pic: invaliddata} Неверные данные}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{../includes/ro/wrongcode2.png}
+			\caption{\label{pic: wrong_code} Пустые поля}
+		\end{subfigure}
+		
+		\caption{\label{pic: wr} Сообщения оператору}
+	\end{figure}
+	
+	\addition{Используемые понятия и определения}
+	\input{../includes/tex/terms.tex} %термины и определения
+	
+	\newpage
+	\listRegistration
+	%\addcontentsline{toc}{section}{Лист регистрации изменений}
+\end{document} % конец документа
