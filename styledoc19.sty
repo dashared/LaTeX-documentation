@@ -36,6 +36,7 @@
 \usepackage{titlesec}
 \usepackage{hyperref}
 \usepackage{etoolbox}
+\usepackage{lastpage}
 
 
 
@@ -132,9 +133,35 @@
 }
 
 % define doc number
+\newcommand{\@supervPos}{{\color{red}{TODO}}}
+\newcommand{\@supervName}{{\color{red}{TODO}}}
+\newcommand{\supervisor}[2]{
+	\renewcommand{\@supervPos}{#1}
+	\renewcommand{\@supervName}{#2}
+}
+
+
+% define student name and group
+\newcommand{\@student}{{\color{red}{TODO}}}
+\newcommand{\@groupName}{{\color{red}{TODO}}}
+\newcommand{\student}[2]{
+	\renewcommand{\@student}{#2}
+	\renewcommand{\@groupName}{#1}
+}
+
+
+
+
+% define doc project name
 \newcommand{\@project}{{\color{red}{TODO}}}
 \newcommand{\project}[1]{
 	\renewcommand{\@project}{#1}
+}
+
+% define doc format
+\newcommand{\@docFormat}{{\color{red}{FORMAT TODO}}}
+\newcommand{\docFormat}[1]{
+	\renewcommand{\@docFormat}{#1}
 }
 
 %%% for code and listings
@@ -205,6 +232,7 @@
 		Факультет компьютерных наук\\
 		Департамент программной инженерии
 	\end{center}}
+
 \newcommand{\academicTeacher}[2]{
 	\begin{table}[h]
 		\begin{center}
@@ -220,14 +248,45 @@
 		\end{center}
 	\end{table}
 }
-\newcommand{\projectName}[1]{\begin{center}
+
+\newcommand{\secondPage}{
+	\pagestyle{fancy}
+	\lhead{УТВЕРЖДЕН \newline
+		\@docNumber{}}
+	\vspace*{9cm}
+	\begingroup
+	\centering
+	\projectName{\@project{}}
+	\titleListTwo{\@docFormat{}}
+	\listNumber{Листов \pageref{LastPage}}
+	
+	\endgroup
+	\vspace{8cm}
+	\tabForFirstPage
+	\vspace*{\fill}
+}
+
+\newcommand{\thirdPage}{
+	\lhead{ }
+	\chead{\vfill \thepage \vfill  \@docNumber{}}
+	\rhead{ }
+	\cfoot{ }
+	\cfoot{\tabForTZ}
+	\tableofcontents
+}
+
+\newcommand{\projectName}[1]{
+	\begin{center}
 		\large{\textsc{\textbf{#1}}}
-	\end{center}}
+	\end{center}
+}
+
 %\renewcommand{\familydefault}{\sfdefault} % Начертание шрифта
-\newcommand{\titleList}[1]{
+
+\newcommand{\titleList}{
 	\begin{center}
 \par\vspace{4mm}
-\textbf{#1}
+\textbf{\@docFormat{}}
 \par\vspace{6mm}
 \textbf{
 	ЛИСТ УТВЕРЖДЕНИЯ}
@@ -244,12 +303,21 @@
 		\textbf{\@docNumber{}}
 \end{center}}
 
-\newcommand{\nameOfAuthor}[2]{
+\newcommand{\firstPage}{
+	\itsHSE
+	\academicTeacher{\@supervPos{}}{\@supervName{}}
+	\projectName{\@project{}}
+	\titleList
+	\nameOfAuthor
+	\tabForFirstPage
+}
+
+\newcommand{\nameOfAuthor}{
 	\hfill\begin{tabular}{c}
 		\\ 
-		Исполнитель: студент группы #1
+		Исполнитель: студент группы \@groupName{} 
 		\\ 
-		\underline{\hspace{4cm}} #2
+		\underline{\hspace{4cm}} \@student{}
 		\\ 
 		<<\underline{\hspace{1cm}}>> \underline{\hspace{4cm}} \@year{} г.  
 	\end{tabular} 
