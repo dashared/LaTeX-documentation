@@ -4,11 +4,13 @@
 
 \begin{document} % конец преамбулы, начало документа
 	
-	\docNumber{RU.17701729.04.03-01 81 01-1-ЛУ}
+	\year{2020}
+	\docNumber{RU.17701729.04.13-01 ТЗ 01-1-ЛУ}
 	\docFormat{Пояснительная записка}
 	\student{БПИ 174}{Д. Ю. Редникина}
-	\supervisor{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
-	{М. К. Горденко}
+	\supervisor{Профессор департамента \vfill программной инженерии  факультета компьютерных наук, к.т.н}
+	{Е. М. Гринкруг}
+	\project{СИСТЕМА УПРАВЛЕНИЯ ЗАДАНИЯМИ ПО АВТОМАТИЧЕСКОМУ СБОРУ ДАННЫХ ИЗ СЕТИ ИНТЕРНЕТ}
 	
 	\firstPage
 						\newpage
@@ -18,46 +20,627 @@
 						\newpage
 	\section{Введение}
 	\subsection{Наименование программы}
+	<<\input{tex/rusTitle}>> (<<\input{tex/engTitle}>>)
+	
 	\subsection{Документы, на основании которых ведется разработка}
+	\input{tex/docsForDevelopment}
 	\newpage
 	\section{Назначение и область применения}
 	\subsection{Назначение программы }
-	\subsubsection{Функциональное назначение }
+	\subsubsection{Функциональное назначение}
+	\input{tex/functionalPurpose}
 	\subsubsection{Эксплуатационное назначение}
+	\input{tex/operationalPurpose} 
 	\subsubsection{Область применения}
-	
+	\input{tex/projectScope}
 					\newpage 
 	\section{Технические характеристики}
 	\subsection{Постановка задачи на разработку программы}
+	Программа должна соответствовать требованиям, представленным в техническом задании:
+
+    \input{tex/req}
+	\input{tex/formOfProblem}
 	\subsection{Описание алгоритмов и функционирования программы}
 	\subsubsection{Описание алгоритмов программы}
+	\paragraph{Алгоритм проверки наличия доступа\\ \\}
+	В разрабатываемой системе практически каждый запрос имеет ограничение по доступу: изменение в проект могут вносить только участники с \texttt{ReadAndWrite} или \texttt{Owner} доступом, \texttt{ProjectId} и \texttt{CrawlerId} для запуска должны совпадать, удалять проект может человек с \texttt{Owner} правами и т.д.
+	
+	Для обработки таких ситуаций было принято решение создать \texttt{SecurityService}, который реализовывает алгоритм работы с несколькими проверками сразу и обработкой ошибок доступа.
+	
+	Была реализована функция выполнения \textit{nextAction} - следующего действия в базе данных по результату предыдущей \ref{lst:func}. С помощью функции \textt{flatMap} можно делать композицию функции и таким образом соединять несколько проверок в единое целое. \cite{flatmap} 
+	
+	Целью данного механизма было желание добиться легкого в изменении способа проверки нескольких условий одновременно с выводом читабельной ошибки, если где-то в середине что-то пойдет не так.
+	
+	\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:func}, caption={Нестинг функций},captionpos=b]
+        accessRight(ReadAndWrite) >> jobToProject >> jobToStatus(Running) 
+	\end{lstlisting}
+	
+	На примере \textt{JobsController} можно увидеть, как легко использовать такой механизм для проверки нескольких условий.
+	
+	\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:func}, caption={Функция для проверки доступа пользователя и запуска},captionpos=b]
+def checkUserProjectAndJob(userId: UUID,
+                             projectId: Long,
+                             jobId: Long,
+                             userAccess: MembershipAccessRight = Readonly):
+                             Future[Option[JobExecution]] = {
+
+    val jobExecutionAction =
+      hasPermissionToAccessProject(projectId, userId, userAccess)
+      .flatMap(checkResultAndPerformNextAction(
+            SecurityService.UserAccessMessage, 
+            jobExecCorrespondsToProject(projectId, jobId)))
+      .flatMap(res => checkResultAndPerformNextAction(
+            SecurityService.JobExecutionToProjectMessage, 
+            DBIO.successful(res))(res))
+
+    db.run(jobExecutionAction)
+  }
+	\end{lstlisting}
+	
 	\subsubsection{Описание схемы функционирования программы}
+	
+	Диаграмма вариантов использования (\ref{pic: usecase}) отображает ключевые преценденты и главных акторов системы. Первостепенный актор - обычный пользователь, описание и профиль которого представлены в разделах \ref{subsub: userprofile} и \ref{subsub: userlist}. Второстепенные акторы системы - база данных postgres \cite{postgresql}, а также scrapyd \cite{scrapyd}. Вот основные преценденты, которые инициирует обычный пользователь в рамках системы :
+	\begin{enumerate}
+	    \item Авторизация;
+	    \item \textbf{CRUD работ по запуску};
+	    \label{g:CRUDjobs}
+	    \item CRUD периодических задач;
+	    \item Просмотр и редактирование пауков;
+	    \item \textbf{CRUD проектов};
+	    \label{g:CRUDprojects}
+	\end{enumerate}
+	
+Преценденты \ref{g:CRUDprojects} и \ref{g:CRUDjobs} будут расмотрены детально в этом разделе на странице \pageref{s: spec}.  Область применения разрабатываемой системы продемонстрирована на рисунке \ref{pic: classdiagram}. 
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.8\linewidth]{img/uml/UseCase.png}
+		\caption{Use-case диаграмма}
+		\label{pic: usecase}
+	\end{figure}
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width = 0.8\linewidth]{img/ClassDiagram.png}
+		\caption{Диаграмма области применения}
+		\label{pic: classdiagram}
+	\end{figure}
+	
+	приетв
+	
+	
+	\section*{Спецификации прецендентов} \label{s: spec}
+	
+	\subsection*{Спецификация прецендента <<CRUD запусков>>}
+	
+	\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+    \caption{Краткая информация о преценденте}
+    \hline
+    Название             & <<CRUD запусков>>   \\ \hline
+    Аннотация            & Любой пользователь, имеющий доступ к проекту \texttt{Owner} или \texttt{ReadAndWrite}, может создать запуск из имеющихся в проекте краулеров. Запуск может иметь приоритет, а также настройки и аргументы для скрейпинга. В результате запуска пользователю будут доступны логи и результаты сбора. \\ \hline
+    Автор документа      & Редникина Д.Ю.     \\ \hline
+    Рамки применения     & Вся система     \\ \hline
+    Уровень              & Ключевая задача                     \\ \hline
+    Основной исполнитель & Обычный пользователь     \\ \hline
+\end{longtable}
+
+\subsection*{Основной поток}
+
+\begin{enumerate}
+    \item Пользователь начинает прецендент: отправляет запрос на просмотр данных о задачах в статусе \texttt{finished}.
+    \item Система формирует JSON со списком задач в статусе \texttt{finished}, к которым у пользователя есть доступ.
+    \item Пользователь отправляет запрос на создание нового запуска, при этом указав id паука для запуска, приоритетность запуска, фргументы и настройки для запуска. Данные должны быть в формате JSON \ref{lst:POSTjob}. \label{g:createjob}
+    \item Система валидирует полученные данные.
+    \item Система отправляет запрос на scrapyd для создания запуска.
+    \item Система создает новый запуск в статусе \texttt{pending} в базе данных.
+    \item Система формирует JSON с созданным запуском и информацией о нем.
+\end{enumerate}
+
+\subsection*{Альтернативные потоки}
+
+\subsection*{Альтернативный поток 1}
+
+\paragraph*{Условие начала} В шаге \ref{g:createjob} основного потока пользователь отправил JSON в неверном формате. 
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Система валидирует данные.
+    \item Система возвращает статус-код \texttt{BAD\_REQUEST} с сообщением об неверном формате введенных данных. 
+\end{enumerate}
+
+\subsection*{Альтернативный поток 2}
+
+\paragraph*{Условие начала} В шаге \ref{g:createjob} основного потока пользователь отправил запрос на создание запуска с краулером, находящимся в проекте id, к которому пользователь имеет доступ \texttt{ReadOnly}.
+
+\begin{enumerate}
+    \item Cистема валидирует права доступа пользователя к проекту id.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<You don't have permission to run a job>>.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 3}
+
+\paragraph*{Условие начала} В шаге \ref{g:createjob} пользователь отправляет \texttt{CrawlerId} паука, для которого хочет совершить запуск и \texttt{ProjectId} проекта, к которому имеет \texttt{Owner} или \texttt{ReadAndWrite} доступ. Паука с \texttt{CrawlerId} нет в проекте \texttt{ProjectId}.
+
+\begin{enumerate}
+    \item Система валидирует права доступа к проекту и наличие паука в проекте с данным \texttt{projectId}.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<Project and crawler doesn't match>>.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 4} 
+\paragraph*{Условие начала} На шаге \ref{g:createjob} пользователь отправляет запрос на отмену запуска \texttt{id}, который находится в статусе \texttt{Pending} или \texttt{Running}.
+
+\begin{enumerate}
+    \item Система валидирует данные: доступ пользователя к отмене задачи, а также статус задачи.
+    \item Система отправляет запрос на \texttt{scrapyd} для отмены запущенной задачи.
+    \item Система валидирует полученный результат.
+    \item Система изменяет статус задачи на \texttt{Finished}.
+    \item Система отправляет статус-код \texttt{OK} и \texttt{id} отмененной задачи.
+\end{enumerate}
+
+
+\subsection*{Альтернативный поток 5} 
+\paragraph*{Условие начала} На шаге \ref{g:createjob} пользователь отправляет запрос на отмену запуска \texttt{id}, который находится в статусе \texttt{Finished}.
+
+\begin{enumerate}
+    \item Система валидирует данные: доступ пользователя к отмене задачи, а также статус задачи.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<Job has already finished>>.
+\end{enumerate}
+
+
+\subsection*{Альтернативный поток 6} 
+\paragraph*{Условие начала} На шаге \ref{g:createjob} пользователь отправляет запрос на удаление запуска \texttt{id}, который находится в статусе \texttt{Finished}.
+
+\begin{enumerate}
+    \item Система валидирует данные: доступ пользователя к отмене задачи, а также статус задачи.
+    \item Cистема удаляет данные о задаче в базе данных.
+    \item Система возвращает статус-код \texttt{OK}.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 7} 
+\paragraph*{Условие начала} На шаге \ref{g:createjob} пользователь отправляет запрос на удаление запуска \texttt{id}, который находится в статусе \texttt{Pending} или \texttt{Running}.
+
+\begin{enumerate}
+    \item Система валидирует данные: доступ пользователя к отмене задачи, а также статус задачи.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<Job is not in finished state>>.
+\end{enumerate}
+
+
+\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+\caption{Пред- и постусловия для прецендента}
+\hline
+    Предусловия            &  Пользователь авторизован в системе. \\ \hline
+    Постусловия            & В системе зафиксированы совершенные запуски.              \\ \hline
+    Специальные требования & Пользователь должен быть знаком с технологией web-scraping. \\ \hline
+    Список технологий      & База данных Postgresql. Scrapyd. \\ \hline
+    Приоритет              & Высокий \\ \hline
+    Открытые проблемы      &            \\ \hline
+\end{longtable}
+
+\clearpage
+	
+	\subsection*{Спецификация прецендента <<CRUD проектов>>}
+	
+	\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+    \caption{Краткая информация о преценденте}
+    \hline
+    Название             & <<CRUD проектов>>   \\ \hline
+    Аннотация            & Любой пользователь системы имеет возможность создать проект. Проект - это сущность для организации краулеров, а также их запусков и периодических задач в одно целое. Над проектом может работать как один человек, так и несколько. \\ \hline
+    Автор документа      & Редникина Д.Ю.     \\ \hline
+    Рамки применения     & Вся система     \\ \hline
+    Уровень              & Ключевая задача                     \\ \hline
+    Основной исполнитель & Обычный пользователь     \\ \hline
+\end{longtable}
+
+\subsection*{Основной поток}
+
+Диаграмма базового потока представлена на рисунке \ref{pic:baseflow-projects}.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь начинает прецендент.
+    \item Система формирует JSON со списком проектов, к которым у пользователя есть доступ. \label{g:start}
+    \item Пользователь отправляет запрос на создание нового проекта, при этом указав название и опциональное описание проекта. Данные должны быть в формате JSON \ref{lst:POST}. \label{g:create}
+    \item Система валидирует полученные данные (название и описание проекта).
+    \item Система создает новый проект с указанными данными и присваивает пользователю \texttt{Owner} права на доступ к проекту.
+    \item Система формирует JSON с созданным проектом и информацией о нем.
+    \label{g:end}
+\end{enumerate}
+
+
+
+
+
+
+\subsection*{Альтернативные потоки}
+
+\subsection*{Альтернативный поток 1}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправил JSON в неверном формате.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Система валидирует данные.
+    \item Система возвращает статус-код \texttt{BAD\_REQUEST} с сообщением об неверном формате введенных данных. 
+\end{enumerate}
+
+\subsection*{Альтернативный поток 2}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об изменении одного из вернувшихся на предыдущем шаге \ref{g:start} проекта. Пользователь имеет \texttt{ReadAndWrite} права на редактирование этого проекта.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет JSON с данными, которые должны быть изменены о проекте, в формате \ref{lst:PUT} или \ref{lst:DEPLOY}. 
+    \item Система валидирует доступ пользователя к изменяемому проекту и данные.
+    \item Система фиксирует внесенные пользователем изменения.
+    \item Система отображает статус-код операции \texttt{OK}.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 3}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об изменении одного из вернувшихся на предыдущем шаге \ref{g:start} проекта. Пользователь имеет \texttt{ReadOnly} права на редактирование этого проекта.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет JSON с данными, которые должны быть изменены о проекте, в формате. 
+    \item Система валидирует доступ пользователя к изменяемому проекту и данные.
+    \item Система возвращает статус-код операции \texttt{FORBIDDEN} с сообщением <<You don't have permission to change project>>.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 4}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об удалении проекта. У пользователя \texttt{Owner} доступ к проекту.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет запрос с \texttt{id} проекта, который хочет удалить.
+    \item Система валидирует права доступа к проекту и наличие проекта с данным \texttt{id}.
+    \item Система удаляет проект из БД.
+    \item Система возвращает статус-код \texttt{OK}.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 5}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об удалении проекта. У пользователя \texttt{ReadOnly} или \texttt{ReadAndWrite} доступ к проекту.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет запрос с \texttt{id} проекта, который хочет удалить.
+    \item Система валидирует права доступа к проекту и наличие проекта с данным \texttt{id}.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<You don't have permission to delete project>>.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 6}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об удалении проекта. У пользователя могут быть любые права доступа.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет запрос с \texttt{id} проекта, который хочет удалить.
+    \item Система валидирует права доступа к проекту и наличие проекта с данным \texttt{id}.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<Project doesn't exist>>.
+\end{enumerate}
+
+
+\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+\caption{Пред- и постусловия для прецендента}
+\hline
+    Предусловия            &  Пользователь авторизован в системе. \\ \hline
+    Постусловия            & В системе зафиксированы произведенные изменения проектов.                                                                          \\ \hline
+    Специальные требования & Пользователь должен быть знаком с технологией web-scraping. \\ \hline
+    Список технологий      & База данных Postgresql.   \\ \hline
+    Приоритет              & Высокий \\ \hline
+    Открытые проблемы      &                                                                                                                                    \\ \hline
+\end{longtable}
+
+
+\begin{figure}[H]
+		\centering
+		\includegraphics[width = \linewidth]{img/BaseFlow-Projects.png}
+		\caption{Базовый поток прецендента <<CRUD проектов>>}
+		\label{pic:baseflow-projects}
+	\end{figure}
+
+
+
+
+	
+	
+	
+	
+\clearpage
 	\subsubsection{Возможные взаимодействия программы с другими программами}
+	
+	Разрабатываемая программа взаимодействует с scrapyd \cite{scrapyd}. Базовый функционал этого сервера используется для непосредственного запуска пауков.
 	\subsection{Описание и обоснование выбора метода организации входных и выходных данных}
-	\subsubsection{Описание метода организации входных и выходных данных}
-	\subsubsection{Обоснование выбора метода организации входных и выходных данных}
+
+	
+	Так как разрабатываемая программа является серверным приложением, то для формата входных данных был выбран JSON формат. Такая организация ввода позволяет быстро производить ввод данных, и препятствует ошибочному и некорректному заполнению данными полей базы данных.
+	
+	Для организации выходных данных также был выбран JSON формат. Это позволяет клиентам легко интерпретировать и отображать данные, так как JSON - самый популярный формат для сериализации передаваемых данных в клиент-серверных приложениях \cite{json}.
 	\subsection{Описание и обоснование выбора состава технических и программных средств}
 	\subsubsection{Состав технических и программных средств}
-	\subsubsection{Обоснование выбора состава технических средств}
+	При разработке программного продукта использовались следующие технические и программные средства:
+	\begin{itemize}
+		\item Язык разработки: Scala 2.13.1
+		\item Фреймворк: Play-framework 2.6.13 \cite{play}
+		\item Среда разработки: IntelliJ IDEA 2019.2 (Ultimate Edition)
+		\item Dependency manager: sbt
+		\item MacBook (Retina, 12-inch, Early 2016)
+		\item Операционная система: macOS Catalina Version 10.15.2
+		\item Библиотеки, использованные при разрабоке: 
+		\begin{itemize}
+			\item play-silhouette 5.0.3
+			\item postgresql 42.2.8
+			\item play-slick 3.0.1
+			\item slick-pg 0.18.0
+			\item slick-pg\_play-json 0.18.0
+			\item scala-guice 4.2.6
+			\item swagger-play2 1.6.1
+			\item scalacheck 1.13.5
+			\item scalatestplus-play 3.1.2
+			\item akka-quartz-scheduler 1.8.2-akka-2.6.x
+		\end{itemize}
+	\end{itemize}
+
+	\subsubsection{Обоснование выбора библиотек}
 	
+	\paragraph{slick / play-slick / slick-pg\\ \\}
+	
+	Slick - это современная библиотека для совершения запросов к базе данных и доступа к ней, реализованная на языке Scala. Она позволяет работать с данными из БД почти так же, как если использовать коллекции из стандартной библиотеки Scala, и в то же время дает полный контроль над тем, когда происходит доступ к базе данных и какие данные передаются. Преимущество библиотеки заключается в том, что можно писать запросы к базе данных на type-safe Scala вместо SQL, получая таким образом статическую проверку совместимости типов, безопасность во время компиляции и композиционность в Scala. Также в Slick есть расширяемый компилятор запросов, который может генерировать код для разных бэкэндов. 
+	
+	Play-slick - это библиотека, которая позволяет интегрировать Slick \cite{slick} в жизеннный цикл приложения в Play-framework \cite{play}, а также поддерживает play-эволюции \footnote{Эволюции не использовались при разработки системы}.
+	
+	Slick-pg - надстройка над Slick \cite{slick}, которая позволяет работать с Jsonb типом и enum в Postgresql \cite{postgresql}.
+	
+	\paragraph{play-silhouette \% tests\\ \\}
+	Библиотека \textt{Silhouette} - это библиотека аутентификации для приложений Play Framework \cite{play}, которая поддерживает несколько методов аутентификации, включая OAuth1, OAuth2, OpenID, CAS, Credentials, Basic Authentication или пользовательские схемы аутентификации \cite{silhouette}. При проектировании приложения было принято решение использовать механизм аутентификации через Cookie - библиотека прекрасно подошла. Более того, существует удобный механизм для тестирования api-запросов, написанный с помощью \texttt{SecuredActions} библиотеки Silhouette - Silhouette-Testing. Также библиотека поддерживает механизм авторизациии через социальные сети - таким образом в будущем при расширении функционала приложения можно будет легко встроить механизм такой авторизации. \cite{silhouette-testing}. 
+	
+	\paragraph{akka-quartz-scheduler\\ \\}
+	
+	Для запуска периодических задач были рассмотрены следующие библиотеки, подходящие для использования в Play-framework \cite{play}. Основное требование к библиотеке - запуски по cron-expression на долговременный период.
+	
+	\begin{longtable}[]{|>{\bfseries}l| p{5cm}|p{5cm}|} 
+\caption{Рассмотренные библиотеки для периодического запуска}
+\hline
+\textbf{Библиотека} & \textbf{Плюсы} & \textbf{Минусы} \\ \hline
+    Scala's tasks            & Поддерживается & The Akka Scheduler не предназначен для использования на длительные периоды запусков, также не гарантирована точность запусков. \\ \hline
+    Monix + cron4s           & Хорошая и популярная библиотека. & Очень много зависимостей. Пришлось бы писать много кода для соединения с cron4s. \\ \hline
+    akka-quartz-scheduler    &  Иделаьно подходит под задачи проекта. Есть работа с cron-expression. & Не работает на более новых версиях Play-framework \cite{play} (> 2.6.13)\\ \hline
+    fs2      & Библиотека для асинхронных запусков в функциональном стиле. & Не предназначена для данного вида задач, придется писать обертку. Нет работы с cron-expression.  \\ \hline
+    play-akkjobs       &  На официальном сайте Play-framework ссылка на эту библиотеку как на хороший scheduler & Не поддерживается \\ \hline
+\end{longtable}
+	
+	По итогам сравнения была выбрана библиотека \textt{akka-quartz-scheduler}.
+	\subsubsection{Обоснование выбора языка программирования}
+	\paragraph{Scala\\ \\}
+	
+	Scala объединяет объектно-ориентированное и функциональное программирование в одном емком языке высокого уровня. Статические типы Scala помогают избежать ошибок в сложных приложениях, а среда выполнения JVM  позволяет создавать высокопроизводительные системы с легким доступом к огромным экосистемам библиотек.
+	
+	\subsubsection{Обоснование выбора шаблона проектирования}
+	\paragraph{MVC\\ \\}
+	Так как разработка велась в фреймворке Play \cite{play}, то был использован подход с паттерном MVC \cite{play-mvc} для работы с HTTP-запросами. MVC представляет Controllers, Views\footnote{Так как разрабатывалось серверное приложение, то views не использовались}, Actions - для работы с api-запросами.
+	\paragraph{Слоистая архитектура проектирования\\ \\}
+	
+	При разработке использовался архитектурный подход - layers. Все приложение поделено на несколько слоев (см. рисунок \ref{pic:layers})
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.9\linewidth]{img/uml/ComponentDiagram.png}
+		\caption{Пример слоистости в приложении}
+		\label{pic:layers}
+	\end{figure}
+	
+	\subsubsection{Обоснование выбора базы данных}
+	\paragraph{PostgreSQL\\ \\}
+	
+	PostgreSQL\cite{postgresql} -- свободная объектно-реляционная система управления базами данных с открытым исходным кодом. 
+    
+    База данных позволяет хранить большое количество связанной и структурированной информации и эффективно производить манипуляции с ней. 
+    
+    Postgres также отличается хорошей поддержкой сериализации и индексации произвольных JSON~\cite{json} объектов, что сильно повышает гибкость в ее применении.
+
+    Взаимодействие с базой данных производится на диалекте языка SQL. В рамках разработки большинство взаимодействия производилось посредством библиотеки play-slick (\cite{slick}) для строгой типизации и уменьшения ошибок со стороны программиста.
+    
 						\newpage
 	\section{Технико-экономические показатели}
 	\subsection{Предполагаемая потребность}
+	\subsubsection{Устройство рынка}
+	
+	Рынок веб-скрейпинга составляют как коммерческие продукты, а также их open source аналоги. Web-scraping - это технология и методы, используемые стартапами, небольшими и крупными компаниями, которые делают возможным быстрое извлечение данных и информации из сети интернет и их обработку. Также технологии извлечения данных широко применяются в науке, образовании учебными, студентами и программистами.
+	
+	Таким образом, заинтересованных лиц на рынке выделить сложно - слишком большому кругу компаний сейчас требуется воспользоваться извлечением информации из интернета. Разрабатываемый продукт планируется сделать бесплатной площадкой для использования технологий web-scraping и доступной любому пользователю.
+	
+	\subsubsection{Пользовательская среда}
+	
+	Продукт будет применяться пользователями в рабочих, научных и исследовательских целях. Продуктом пользоваться можно будет как водиночку: запуск краулеров и сбор данных не требует дополнительных человеческих ресурсов, но также можно будет предоставлять доступ для наблюдения и редактирования запусков другим людям.
+	
+	Задачи, которые решают пользователи данной системой давольно обширные. Это может быть мелкая проблема, например как <<сбор данных о книгах с сайта>>, а вот примеры наиболее популярных крупных проблем:
+	\begin{itemize}
+		\item Сбор данных о продуктах и ценах для сравнения
+		\item Сбор списков недвижимости
+		\item Сбор данных для исследований
+	\end{itemize}
+	
+	Перечисленный список задач компаниям и ученым приходится делать вручную или с использованием уже существующих аналогов - с этим они сталкиваются на регулярной основе. На данный момент существует много платных веб-сервисов, а также open source расширение для браузера.
+	
+	
+	\subsubsection{Список пользователей} \label{subsub: userlist}
+	\begin{table}[ht]
+		\centering
+		\begin{tabular}{|p{0.15\linewidth}|p{0.25\linewidth}|p{0.25\linewidth}|p{0.25\linewidth}|} 
+			\hline
+			\textbf{Роль пользователя продукта} & \textbf{Описание} & \textbf{Способ работы с продуктом} & \textbf{Представители
+				интересов в процессе
+				разработки}\\ \hline
+			Обычный пользователь & Компания, заинтересованная в сборе данных; программист; студент; & Применение для сбора данных в учебных целях/ рабочих целях (мониторинг сайтов)/исследованиях & Представитель заказчика \\ \hline
+		\end{tabular}
+	\caption{Список пользователей}
+	\end{table}
+
+\newpage
+	\subsubsection{Профили пользователей} \label{subsub: userprofile}
+	
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}{|p{0.3\linewidth}|p{0.6\linewidth}|} 
+			\hline
+			\textbf{Категория пользователя} & \textit{Обычный пользователь} \\ \hline
+			\textbf{Описание} & Пользователь, заинтересованный в сборе данных с помощью технологии web-scraping \\ \hline
+			\textbf{Представители} & Компания, заинтересованная в сборе данных; стартап; программист; студент; научный сотрудник; аналитик \\ \hline
+			\textbf{Уровень компетентности} & Определенный уровень знаний в области сбора данных и написании пауков для сбора данных, пользователь ПК \\ \hline
+			\textbf{Обязанности} & 
+			\begin{itemize}
+				\item Использование продукта в целях сбора данных
+				\item Мониторинг логов, ошибок
+				\item Запуск периодических работ и мониторинг результатов
+			\end{itemize}  \\ \hline
+			\textbf{Критерий удовлетворенности продуктом} & Продукт удовлетворяет потребности в мониторинге и сборе данных \\ \hline
+			\textbf{Степень вовлеченности} & Полная вовлеченность \\ \hline
+			\textbf{Ожидаемые артифакты} & Логи, собранные данные \\ \hline
+		\end{tabular}
+		\caption{Профили пользователей}
+	\end{table}
+	\clearpage
+	
+	
 	\subsubsection{Экономические преимущества по сравнению с отечественными и зарубежными аналогами}
+	\input{tex/functionalPurpose} Разрабатываемая платформа предоставит бесплатный доступ к слудующему функционалу:
+\begin{itemize}
+    \item Совместное управление запусками клаулеров
+    \item Периодический запуск задач
+    \item Сбор логов, ошибок
+    \item Группировка краулеров,а также их запусков в проект 
+    \item Бесплатная функциональность
+\end{itemize}
+	
+На рынке представлены следующие аналоги разрабатываемому планировщику заданий по запуску краулеров:
+\subsection*{Системы с открытым исходным кодом}
+\subsubsection*{scrapymon}
+
+Простенький интерфейс для обзора задач и пауков над scrapyd. Нет поддержки планировщика. Нет дополнительного функционала, кроме базового запуска задач. Работает поверх scrapyd.
+
+\subsubsection*{gerapy}
+
+Работает поверх scrapyd. Api для запуска задач предоставляет cron-формат для периодического запуска. 
+
+\subsubsection*{scrapydweb}
+
+У продукта есть lgpl-лицензия, есть парсинг логов, удобный UI-интерфейс. Api для запуска задач предоставляет cron-формат для периодического запуска. Работает поверх scrapyd. 
+
+\subsubsection*{ScrapyKeeper}
+
+У продукта есть парсинг логов, удобный UI-интерфейс. Есть архивация версий и доступ к проектам. Api для запуска задач предоставляет cron-формат для периодического запуска. Работает поверх scrapyd. 
+
+\subsection*{Проприетарные системы}
+
+\subsubsection*{Scrapinghub.com}
+
+Платная платформа, которая предоставляет возможность запускать периодические задачи, разрешает совместный доступ к проектам.
+
 
 	\addition{Используемые понятия и определения}
+	\input{tex/terms}
 	
-	\addition{Статус требований}
+	\addition{Листинги}
+	
+	\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:POST}, caption={JSON for POST /projects},captionpos=b]
+{
+    "name": "some name",
+    "description": "optional description"
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:PUT}, caption={JSON for PUT /project},captionpos=b]
+{
+    "name": "some name",
+    "description": "optional description",
+    "spiderSettings": "{}",
+    "spiderArgs": "{}"
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:DEPLOY}, caption={JSON for PUT /deploy},captionpos=b]
+{
+    "eggFile": <egg file>
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:POSTjob}, caption={JSON for POST /jobs},captionpos=b]
+{
+    "crawlerId": "CrawlerName",
+    "priority": "Normal",
+    "args": "{}",
+    "settings": "{}"
+}
+\end{lstlisting}
 	
 	\addition{Описание классов, структур, методов, полей}
 	
+	\section*{Контроллеры}
+	
+	\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+	\hline
+	ApplicationController.scala & API методы для доступа к авторизации \\ \hline
+CrawlersController.scala & API методы для доступа к паукам \\ \hline
+JobsController.scala & API методы для доступа к запускам \\ \hline
+MembershipController.scala & API методы для доступа к участникам проекта \\ \hline
+PeriodicJobsController.scala & API методы для доступа к периодическим запускам \\ \hline
+ProjectsController.scala & API методы для доступа к проектам \\ \hline
+SignInController.scala & API методы для доступа к авторизации \\ \hline
+SignUpController.scala & API методы для доступа к регистрации \\ \hline
+	
+	\end{longtable}
+	
+	\section*{Сервисы}
+	
+	\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+	\hline
+	JobService.scala & Сервис для управления запусками\\ \hline
+MembershipService.scala & Сервис для управления\\ \hline
+ProjectService.scala & Сервис для управления проектами\\ \hline
+ScrapydService.scala & Сервис для отправки запросов в scrapyd \cite{scrapyd}\\ \hline
+SecurityService.scala & Сервис для управления безопасностью доступа\\ \hline
+UpdaterService.scala & Сервис для управления обновлениями и синхронизацией со scrapyd \cite{scrapyd}\\ \hline
+UserService.scala & Сервис для управления пользователями\\ \hline
+
+	\end{longtable}
+	\section*{DAO}
+	
+	\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+	\hline
+	CrawlersDAO.scala & Класс паук-объект базы данных\\ \hline
+JobDAO.scala & Класс запуск-объект базы данных\\ \hline
+MembershipDAO.scala & Класс участник-объект базы данных\\ \hline
+PasswordDAO.scala & Класс пароль-объект базы данных\\ \hline
+ProjectDAO.scala & Класс проект-объект базы данных\\ \hline
+	\end{longtable}
 						\newpage
 	%\section{Источники, использованные при разработке}
 	\renewcommand{\refname}{Список источников}
 	\addcontentsline{toc}{section}{\refname}
 	\begin{thebibliography}{7}
-		\bibitem{iOS} The Swift Programming Language Documentation [Электронный ресурс] URL: \url{https://swift.org/documentation/#the-swift-programming-language} (Дата обращения: 16.05.2019, режим доступа: свободный)
-		\bibitem{documentation}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{scrapyd} Github scrapyd/scrapyd [Электронный ресурс] URL: \url{https://github.com/scrapy/scrapyd} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{scalatestplus} ScalaTest+Play [Электронный ресурс] URL:\url{http://www.scalatest.org/plus}(Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{playsilhouettetestkit} Testing - silhouette [Электронный ресурс] URL:\url{https://www.silhouette.rocks/docs/testing} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{postgresql} Postgresql [Электронный ресурс] URL:\url{https://www.postgresql.org} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{flatmap} FlatMap [Электронный ресурс] URL:\url{https://www.scala-lang.org/api/current/scala/collection/View/FlatMap.html} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{json} JSON - Использование [Электронный ресурс]
+		URL:\url{https://ru.wikipedia.org/wiki/JSON} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{silhouette} Silhouette - документация [Электронный ресурс] URL: \url{https://www.silhouette.rocks/docs} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{silhouette-testing} Silhouette-testing - документация [Электронный ресурс] URL: \url{https://www.silhouette.rocks/docs/testing} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{slick} Slick [Электронный ресурс] URL: \url{https://scala-slick.org}(Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{play} Play-framework [Электронный ресурс] URL:\url{https://www.playframework.com} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{play-mvc} Package play.mvc [Электронный ресурс] URL: \url{https://www.playframework.com/documentation/2.6.0/api/java/play/mvc/package-summary.html} (Дата обращения: 16.04.2020, режим доступа: свободный)
 	\end{thebibliography}
 	
 						\newpage

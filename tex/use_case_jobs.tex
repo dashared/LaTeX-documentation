@@ -1,0 +1,155 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{../styledoc19}
+
+
+\begin{document}
+
+\clearPage
+\section{Спецификация прецендентов}
+\subsection{Спецификация прецендента <<CRUD проектов>>}
+
+\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+\caption{Краткая информация о преценденте}
+\hline
+    Название             & <<CRUD проектов>>   \\ \hline
+    Аннотация            & Любой пользователь системы имеет возможность создать проект. Проект - это сущность для организации краулеров, а также их запусков и периодических задач в одно целое. Над проектом может работать как один человек, так и несколько. \\ \hline
+    Автор документа      & Редникина Д.Ю.     \\ \hline
+    Рамки применения     & Вся система     \\ \hline
+    Уровень              & Ключевая задача                     \\ \hline
+    Основной исполнитель & Обычный пользователь     \\ \hline
+\end{longtable}
+
+\subsection*{Основной поток}
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь начинает прецендент.
+    \item Система формирует JSON со списком проектов, к которым у пользователя есть доступ. \label{g:start}
+    \item Пользователь отправляет запрос на создание нового проекта, при этом указав название и опциональное описание проекта. Данные должны быть в формате JSON \ref{lst:POST}. \label{g:create}
+    \item Система валидирует полученные данные (название и описание проекта).
+    \item Система создает новый проект с указанными данными и присваивает пользователю \texttt{Owner} права на доступ к проекту.
+    \item Система формирует JSON с созданным проектом и информацией о нем.
+    \label{g:end}
+\end{enumerate}
+
+
+
+
+
+
+\subsection*{Альтернативные потоки}
+
+\subsection*{Альтернативный поток 1}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправил JSON в неверном формате.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Система валидирует данные.
+    \item Система возвращает статус-код \texttt{BAD\_REQUEST} с сообщением об неверном формате введенных данных. 
+\end{enumerate}
+
+\subsection*{Альтернативный поток 2}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об изменении одного из вернувшихся на предыдущем шаге \ref{g:start} проекта. Пользователь имеет \texttt{ReadAndWrite} права на редактирование этого проекта.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет JSON с данными, которые должны быть изменены о проекте, в формате \ref{lst:PUT} или \ref{lst:DEPLOY}. 
+    \item Система валидирует доступ пользователя к изменяемому проекту и данные.
+    \item Система фиксирует внесенные пользователем изменения.
+    \item Система отображает статус-код операции \texttt{OK}.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 3}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об изменении одного из вернувшихся на предыдущем шаге \ref{g:start} проекта. Пользователь имеет \texttt{ReadOnly} права на редактирование этого проекта.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет JSON с данными, которые должны быть изменены о проекте, в формате. 
+    \item Система валидирует доступ пользователя к изменяемому проекту и данные.
+    \item Система возвращает статус-код операции \texttt{FORBIDDEN} с сообщением <<You don't have permission to change project>>.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 4}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об удалении проекта. У пользователя \texttt{Owner} доступ к проекту.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет запрос с \texttt{id} проекта, который хочет удалить.
+    \item Система валидирует права доступа к проекту и наличие проекта с данным \texttt{id}.
+    \item Система удаляет проект из БД.
+    \item Система возвращает статус-код \texttt{OK}.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 5}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об удалении проекта. У пользователя \texttt{ReadOnly} или \texttt{ReadAndWrite} доступ к проекту.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет запрос с \texttt{id} проекта, который хочет удалить.
+    \item Система валидирует права доступа к проекту и наличие проекта с данным \texttt{id}.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<You don't have permission to delete project>>.
+\end{enumerate}
+
+\subsection*{Альтернативный поток 6}
+
+\paragraph*{Условие начала} В шаге \ref{g:create} основного потока пользователь отправляет запрос об удалении проекта. У пользователя могут быть любые права доступа.
+
+\begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \item Пользователь отправляет запрос с \texttt{id} проекта, который хочет удалить.
+    \item Система валидирует права доступа к проекту и наличие проекта с данным \texttt{id}.
+    \item Система возвращает статус-код \texttt{FORBIDDEN} с сообщением <<Project doesn't exist>>.
+\end{enumerate}
+
+
+\begin{longtable}[]{|@{\textbf}r|p{7cm}|} 
+\caption{Пред- и постусловия для прецендента}
+\hline
+    Предусловия            &  Пользователь авторизован в системе. \\ \hline
+    Постусловия            & В системе зафиксированы произведенные изменения проектов.                                                                          \\ \hline
+    Специальные требования & Пользователь должен быть знаком с технологией web-scraping. \\ \hline
+    Список технологий      & База данных Postgresql.   \\ \hline
+    Приоритет              & Высокий \\ \hline
+    Открытые проблемы      &                                                                                                                                    \\ \hline
+\end{longtable}
+
+\addition{Форматы данных}
+
+
+\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:POST}, caption={JSON for POST /projects},captionpos=b]
+{
+    "name": "some name",
+    "description": "optional description"
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:PUT}, caption={JSON for PUT /project},captionpos=b]
+{
+    "name": "some name",
+    "description": "optional description",
+    "spiderSettings": "{}",
+    "spiderArgs": "{}"
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:DEPLOY}, caption={JSON for PUT /deploy},captionpos=b]
+{
+    "eggFile": <egg file>
+}
+\end{lstlisting}
+\clearpage
+\section{Лист регистрации изменений}
+
+\begin{longtable}[]{|l|l|l|l|} \hline
+    Версия документа & Дата & Описание изменения & Автор \\ \hline
+                     &      &                    &       \\ \hline
+\end{longtable}
+
+\end{document}

@@ -1,0 +1,105 @@
+{
+\setcounter{secnumdepth}{3}
+
+\hypertarget{crawlers}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{Crawlers}{Crawlers}}{Crawlers}}\label{crawlers}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{listSpiders}{\texttt{get\ /api/projects/\{projectId\}/crawlers}}
+\item
+  \protect\hyperlink{updateSpider}{\texttt{put\ /api/projects/\{projectId\}/crawlers/\{crawlerId\}}}
+\end{itemize}
+
+\hypertarget{login}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{Login}{Login}}{Login}}\label{login}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{signIn}{\texttt{post\ /api/auth/signin}}
+\end{itemize}
+
+\hypertarget{logout}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{Logout}{Logout}}{Logout}}\label{logout}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{logout}{\texttt{get\ /api/auth/logout}}
+\end{itemize}
+
+\hypertarget{membership}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{Membership}{Membership}}{Membership}}\label{membership}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{addParticipants}{\texttt{put\ /api/projects/\{projectId\}/memberships/\{guestId\}/\{guestAccess\}}}
+\item
+  \protect\hyperlink{deleteParticipant}{\texttt{delete\ /api/projects/\{projectId\}/memberships/\{guestId\}}}
+\item
+  \protect\hyperlink{getParticipants}{\texttt{get\ /api/projects/\{projectId\}/memberships}}
+\end{itemize}
+
+\hypertarget{onetimejobs}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{OnetimeJobs}{OnetimeJobs}}{OnetimeJobs}}\label{onetimejobs}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{cancel}{\texttt{put\ /api/projects/\{projectId\}/jobs/\{jobScrapydId\}/\{jobId\}}}
+\item
+  \protect\hyperlink{deleteJob}{\texttt{delete\ /api/projects/\{projectId\}/jobs/\{jobScrapydId\}/\{jobId\}}}
+\item
+  \protect\hyperlink{getJobsExecutions}{\texttt{get\ /api/projects/jobs/\{limit\}/\{status\}}}
+\item
+  \protect\hyperlink{schedule}{\texttt{post\ /api/projects/\{projectId\}/jobs}}
+\end{itemize}
+
+\hypertarget{periodicjobs}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{PeriodicJobs}{PeriodicJobs}}{PeriodicJobs}}\label{periodicjobs}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{addPeriodicJob}{\texttt{post\ /api/projects/\{projectId\}/periodicJobs}}
+\item
+  \protect\hyperlink{changePeriodicJob}{\texttt{put\ /api/projects/\{projectId\}/periodicJobs/\{periodicJobId\}}}
+\item
+  \protect\hyperlink{deletePeriodicJob}{\texttt{delete\ /api/projects/\{projectId\}/periodicJobs/\{periodicJobId\}}}
+\item
+  \protect\hyperlink{disable}{\texttt{put\ /api/projects/\{projectId\}/periodicJobs/\{periodicJobId\}/disable}}
+\item
+  \protect\hyperlink{enable}{\texttt{put\ /api/projects/\{projectId\}/periodicJobs/\{periodicJobId\}/enable}}
+\item
+  \protect\hyperlink{getPeriodicJobs}{\texttt{get\ /api/projects/\{projectId\}/periodicJobs/\{limit\}}}
+\end{itemize}
+
+\hypertarget{projects}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{Projects}{Projects}}{Projects}}\label{projects}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{createProject}{\texttt{post\ /api/projects}}
+\item
+  \protect\hyperlink{deleteProject}{\texttt{delete\ /api/projects/\{projectId\}}}
+\item
+  \protect\hyperlink{deployProject}{\texttt{put\ /api/projects/\{projectId\}/deploy}}
+\item
+  \protect\hyperlink{getProjects}{\texttt{get\ /api/projects/\{limit\}}}
+\item
+  \protect\hyperlink{updateProjectMetadata}{\texttt{put\ /api/projects/\{projectId\}}}
+\end{itemize}
+
+\hypertarget{registration}{%
+\paragraph{\texorpdfstring{\protect\hyperlink{Registration}{Registration}}{Registration}}\label{registration}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{signUp}{\texttt{post\ /api/auth/signup}}
+\end{itemize}
+}

@@ -1,0 +1,328 @@
+
+
+\protect\hypertarget{createProject}{}{}
+
+
+
+\begin{verbatim}
+post /api/projects
+\end{verbatim}
+
+Create project ({createProject})
+
+\hypertarget{request-body-5}{%
+\subsubsection*{Request body}\label{request-body-5}}
+
+body \protect\hyperlink{ProjectForm}{ProjectForm} (required)
+
+{Body Parameter} --- Form with initial project data
+
+\hypertarget{return-type-17}{%
+\subsubsection*{Return type}\label{return-type-17}}
+
+UUID
+
+\hypertarget{example-data-17}{%
+\subsubsection*{Example data}\label{example-data-17}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+"046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+\end{verbatim}
+
+\hypertarget{responses-17}{%
+\subsubsection*{Responses}\label{responses-17}}
+
+\hypertarget{section-59}{%
+\paragraph{200}\label{section-59}}
+
+successful operation \protect\hyperlink{UUID}{UUID}
+
+\hypertarget{section-60}{%
+\paragraph{400}\label{section-60}}
+
+ProjectFormBadRequest \protect\hyperlink{}{}
+
+\hypertarget{section-61}{%
+\paragraph{401}\label{section-61}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-62}{%
+\paragraph{500}\label{section-62}}
+
+Couldn't create projects \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{deleteProject}{}{}
+
+
+
+\begin{verbatim}
+delete /api/projects/{projectId}
+\end{verbatim}
+
+Delete project ({deleteProject})
+
+We can't delete project from our DB in case we encounter error deleting
+it from scrapyd
+
+\hypertarget{path-parameters-15}{%
+\subsubsection*{Path parameters}\label{path-parameters-15}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{return-type-18}{%
+\subsubsection*{Return type}\label{return-type-18}}
+
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{example-data-18}{%
+\subsubsection*{Example data}\label{example-data-18}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-18}{%
+\subsubsection*{Responses}\label{responses-18}}
+
+\hypertarget{section-63}{%
+\paragraph{200}\label{section-63}}
+
+successful operation
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{section-64}{%
+\paragraph{401}\label{section-64}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-65}{%
+\paragraph{403}\label{section-65}}
+
+Do not have permission to delete project \protect\hyperlink{}{}
+
+\hypertarget{section-66}{%
+\paragraph{422}\label{section-66}}
+
+Error deleting project from scrapyd \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{deployProject}{}{}
+
+
+
+\begin{verbatim}
+put /api/projects/{projectId}/deploy
+\end{verbatim}
+
+Deploy project's eggfile to scrapyd ({deployProject})
+
+\hypertarget{path-parameters-16}{%
+\subsubsection*{Path parameters}\label{path-parameters-16}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{form-parameters}{%
+\subsubsection*{Form parameters}\label{form-parameters}}
+
+eggFile (required)
+
+{Form Parameter} ---
+
+\hypertarget{return-type-19}{%
+\subsubsection*{Return type}\label{return-type-19}}
+
+array{[}\protect\hyperlink{Crawler}{Crawler}{]}
+
+\hypertarget{example-data-19}{%
+\subsubsection*{Example data}\label{example-data-19}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+[ {
+  "settings" : { },
+  "name" : "name",
+  "id" : 0,
+  "projectId" : 6
+}, {
+  "settings" : { },
+  "name" : "name",
+  "id" : 0,
+  "projectId" : 6
+} ]
+\end{verbatim}
+
+\hypertarget{responses-19}{%
+\subsubsection*{Responses}\label{responses-19}}
+
+\hypertarget{section-67}{%
+\paragraph{200}\label{section-67}}
+
+successful operation
+
+\hypertarget{section-68}{%
+\paragraph{401}\label{section-68}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-69}{%
+\paragraph{403}\label{section-69}}
+
+Do not have permission to deploy project \protect\hyperlink{}{}
+
+\hypertarget{section-70}{%
+\paragraph{422}\label{section-70}}
+
+Error getting eggfile from multipart form/data or error deploy to
+scrapyd \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{getProjects}{}{}
+
+
+
+\begin{verbatim}
+get /api/projects/{limit}
+\end{verbatim}
+
+Get projects ({getProjects})
+
+\hypertarget{path-parameters-17}{%
+\subsubsection*{Path parameters}\label{path-parameters-17}}
+
+limit (required)
+
+{Path Parameter} --- Limit for request format: int32
+
+\hypertarget{query-parameters-3}{%
+\subsubsection*{Query parameters}\label{query-parameters-3}}
+
+id (optional)
+
+{Query Parameter} --- ID excludeFrom format: int64
+
+\hypertarget{return-type-20}{%
+\subsubsection*{Return type}\label{return-type-20}}
+
+array{[}\protect\hyperlink{Project}{Project}{]}
+
+\hypertarget{example-data-20}{%
+\subsubsection*{Example data}\label{example-data-20}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+[ {
+  "createdAt" : 6,
+  "eggfile" : [ "eggfile", "eggfile" ],
+  "spidersSettings" : { },
+  "changedBy" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "name" : "name",
+  "description" : "description",
+  "changedAt" : 1,
+  "id" : 0,
+  "ownerId" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+}, {
+  "createdAt" : 6,
+  "eggfile" : [ "eggfile", "eggfile" ],
+  "spidersSettings" : { },
+  "changedBy" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "name" : "name",
+  "description" : "description",
+  "changedAt" : 1,
+  "id" : 0,
+  "ownerId" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+} ]
+\end{verbatim}
+
+\hypertarget{responses-20}{%
+\subsubsection*{Responses}\label{responses-20}}
+
+\hypertarget{section-71}{%
+\paragraph{200}\label{section-71}}
+
+successful operation
+
+\hypertarget{section-72}{%
+\paragraph{401}\label{section-72}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-73}{%
+\paragraph{500}\label{section-73}}
+
+Couldn't get projects \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{updateProjectMetadata}{}{}
+
+
+
+\begin{verbatim}
+put /api/projects/{projectId}
+\end{verbatim}
+
+Change project metadata ({updateProjectMetadata})
+
+\hypertarget{path-parameters-18}{%
+\subsubsection*{Path parameters}\label{path-parameters-18}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{request-body-6}{%
+\subsubsection*{Request body}\label{request-body-6}}
+
+body \protect\hyperlink{ProjectChangeForm}{ProjectChangeForm} (required)
+
+{Body Parameter} --- Form with metadata to be changed
+
+\hypertarget{return-type-21}{%
+\subsubsection*{Return type}\label{return-type-21}}
+
+\protect\hyperlink{ActionProjectChangeForm}{ActionProjectChangeForm}
+
+\hypertarget{example-data-21}{%
+\subsubsection*{Example data}\label{example-data-21}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-21}{%
+\subsubsection*{Responses}\label{responses-21}}
+
+\hypertarget{section-74}{%
+\paragraph{200}\label{section-74}}
+
+successful operation
+\protect\hyperlink{ActionProjectChangeForm}{ActionProjectChangeForm}
+
+\hypertarget{section-75}{%
+\paragraph{401}\label{section-75}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-76}{%
+\paragraph{403}\label{section-76}}
+
+Do not have permission to change project \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}

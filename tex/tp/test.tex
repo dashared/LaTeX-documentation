@@ -1,0 +1,1591 @@
+\subsection{controllers/ApplicationSpec.scala}
+\begin{lstlisting}
+package controllers
+
+
+import utils.{AuthSpecification,DatabaseCleaner}
+import play.api.test._
+import com.mohiva.play.silhouette.test._
+import play.api.test.Helpers._
+
+
+
+class ApplicationSpec extends AuthSpecification
+                      with DatabaseCleaner {
+
+
+  import utils.data.UserData._
+
+  private val controller = app.injector.instanceOf[ApplicationController]
+
+  "ApplicationController Logout GET" should {
+
+    "should be unauthorized error" in {
+      val result = controller.logout.apply(FakeRequest(method = "GET", "/"))
+      status(result) mustBe UNAUTHORIZED
+    }
+
+    "redicrect if user was found" in {
+      val request = FakeRequest().withAuthenticator(loginInfo)
+      val result = controller.logout(request)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some("/api/helloworld")
+    }
+  }
+}
+\end{lstlisting}
+\subsection{controllers/AuthorizationSpec.scala}
+\begin{lstlisting}
+package controllers
+
+import akka.stream.Materializer
+import com.mohiva.play.silhouette.api.LoginInfo
+import forms.SignIn
+import play.api.libs.json.{JsString, Json}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import utils.{AuthSpecification, DatabaseCleaner}
+
+class AuthorizationSpec extends AuthSpecification
+                        with DatabaseCleaner {
+
+  import utils.data.UserData._
+
+  private val controllerSignUp = app.injector.instanceOf[SignUpController]
+  private val controllerSignIn = app.injector.instanceOf[SignInController]
+  implicit lazy val materializer: Materializer = app.materializer
+
+  "Authorize person" should {
+
+    "signUp: OK" in {
+
+      val result = controllerSignUp.signUp()(FakeRequest().withBody(signUpForm))
+
+      status(result) mustBe OK
+      contentAsJson(result) mustEqual Json.toJson(Map("user" -> LoginInfo("credentials", authorizationEmail)))
+
+      val resultSignIn = controllerSignIn.signIn()(FakeRequest().withBody(credentials))
+      status(resultSignIn) mustBe OK
+    }
+
+    "signUp: userAlreadyExists" in {
+
+      val result = controllerSignUp.signUp()(FakeRequest().withBody(signUpForm.copy(email = email)))
+
+      status(result) mustBe CONFLICT
+      contentAsJson(result) mustBe JsString(controllerSignUp.UserAlreadyExistsMessage)
+    }
+
+    "signUp: invalid email format" in {
+      val invalidCredentials = signUpForm.copy(email = "wrongformat@ j j j")
+      val result = call(controllerSignUp.signUp(), FakeRequest(POST, "/api/auth/signup").withJsonBody(Json.toJson(invalidCredentials)))
+      status(result) mustBe FORBIDDEN
+    }
+
+    "signIn: wrong credentials" in {
+
+      val wrongCredentials = Json.toJson(SignIn("ddd@kkk.d", "fff"))
+      val result = call(controllerSignIn.signIn(), FakeRequest(POST, "/api/auth/signin").withJsonBody(wrongCredentials))
+
+      status(result) mustBe FORBIDDEN
+    }
+  }
+}
+\end{lstlisting}
+\subsection{controllers/CrawlerSpec.scala}
+\begin{lstlisting}
+package controllers
+
+import models.tables.Crawler
+import play.api.libs.json.{Json, OFormat}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsJson, status}
+import utils.{AuthSpecification, DatabaseCleaner, TestHelper}
+import play.api.test.Helpers._
+import utils.data.UserData._
+import com.mohiva.play.silhouette.test._
+import forms.SpiderChangeForm
+import models.services.SecurityService
+import utils.data.ProjectTestData
+
+class CrawlerSpec extends AuthSpecification
+                  with DatabaseCleaner {
+
+  implicit val crawlerFormat: OFormat[Crawler] = Json.format[Crawler]
+
+  private val projectsController = app.injector.instanceOf[ProjectsController]
+  private val crawlersController = app.injector.instanceOf[CrawlersController]
+
+  private val readonlyProject = ProjectTestData.Access.readOnly
+  private val readAndWriteProject = ProjectTestData.Access.readAndWrite
+  private val noAccessProject = ProjectTestData.Access.noAccess
+
+  private def getPutRequest: FakeRequest[SpiderChangeForm] = {
+
+    val changeBody = SpiderChangeForm(settings = Map("DOWNLOAD_DELAY" -> "300"))
+    FakeRequest().withAuthenticator(loginInfo).withBody(changeBody)
+  }
+
+  "GET crawlers: OK" in {
+
+    val projectId = 15
+    val deployResult = projectsController.deployProject(projectId)(TestHelper.requestWithMetadata("egg1.egg"))
+
+    status(deployResult) mustBe OK
+    contentAsJson(deployResult) mustBe Json.toJson(TestHelper.crawlers)
+
+    val getResult = crawlersController.listSpiders(projectId)(FakeRequest().withAuthenticator(loginInfo))
+
+    status(getResult) mustBe OK
+    contentAsJson(deployResult) mustBe Json.toJson(TestHelper.crawlers)
+  }
+
+  "GET crawlers: no access" in {
+
+    val getResult = crawlersController.listSpiders(noAccessProject)(FakeRequest().withAuthenticator(loginInfo))
+
+    status(getResult) mustBe FORBIDDEN
+  }
+
+  "PUT crawlers" in {
+
+    val putResult = crawlersController.updateSpider(readAndWriteProject, 2)(getPutRequest)
+
+    status(putResult) mustBe OK
+  }
+
+  "PUT crawlers: ReadOnly access" in {
+
+    val putResult = crawlersController.updateSpider(readonlyProject, 1)(getPutRequest)
+
+    status(putResult) mustBe FORBIDDEN
+    contentAsString(putResult) mustBe SecurityService.UserAccessMessage
+  }
+
+  "PUT crawlers: spider not found" in {
+
+    val putResult = crawlersController.updateSpider(readAndWriteProject, 40)(getPutRequest)
+
+    status(putResult) mustBe FORBIDDEN
+    contentAsString(putResult) mustBe SecurityService.CrawlerMessage
+  }
+}
+\end{lstlisting}
+\subsection{controllers/jobs/JobTestCase.scala}
+\begin{lstlisting}
+package controllers.jobs
+
+import controllers.{JobsController, PeriodicJobsController, ProjectsController}
+import models.tables.Crawler
+import play.api.libs.json.{Json, OFormat}
+import play.api.test.Helpers.{status, _}
+import utils.{AuthSpecification, DatabaseCleaner, TestHelper}
+
+class JobTestCase extends AuthSpecification
+                  with DatabaseCleaner {
+
+  // MARK: - Controllers
+
+  val periodicJobsController: PeriodicJobsController = app.injector.instanceOf[PeriodicJobsController]
+  val projectController: ProjectsController = app.injector.instanceOf[ProjectsController]
+  val jobsController: JobsController = app.injector.instanceOf[JobsController]
+
+  implicit val crawlerFormat: OFormat[Crawler] = Json.format[Crawler]
+
+  def postEggFile(projectId: Long): Unit = {
+    val deployResult = projectController.deployProject(projectId)(TestHelper.requestWithMetadata("egg1.egg"))
+
+    status(deployResult) mustBe OK
+  }
+
+}
+\end{lstlisting}
+\subsection{controllers/jobs/specs/JobExecutionSpec.scala}
+\begin{lstlisting}
+package controllers.jobs.specs
+
+import java.util.UUID
+
+import com.mohiva.play.silhouette.test._
+import controllers.jobs.JobTestCase
+import models.common.enums.JobExecutionStatus
+import models.responses.SimpleJob
+import models.services.SecurityService
+import play.api.libs.json._
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import utils.data.UserData._
+import utils.TestHelper
+import utils.data.{JobTestData, ProjectTestData}
+
+class JobExecutionSpec extends JobTestCase {
+
+  private val projectId: Long = JobTestData.OnetimeJob.Owner.projectId
+  private val jobId: Long = JobTestData.OnetimeJob.ids.length
+  private val scheduledJobId: Long = JobTestData.OnetimeJob.ids.length + 1
+
+  private val request = FakeRequest().withAuthenticator(loginInfo)
+
+  private val readAndWriteProject = ProjectTestData.Access.readAndWrite
+  private val readonlyProject = ProjectTestData.Access.readOnly
+
+  private def scheduleJob(projectId: Long, scheduledJobId: Long): UUID = {
+    /** Post egg file with crawlers for project */
+    postEggFile(projectId)
+
+    /** Schedule job */
+    val request = FakeRequest().withAuthenticator(loginInfo).withBody(TestHelper.onetimeJobForm)
+    val result = jobsController.schedule(projectId)(request)
+
+    val responseObject = contentAsJson(result).as[SimpleJob]
+
+    responseObject.id mustBe scheduledJobId
+    status(result) mustBe OK
+
+    responseObject.scrapydId
+  }
+
+  "JobsController" should {
+
+    "GET jobs" in {
+
+      val limit = 10
+      val result = jobsController.getJobsExecutions(limit, JobExecutionStatus.Finished)(request)
+
+      status(result) mustBe OK
+      contentAsJson(result) match {
+        case JsArray(value) =>
+          value must have length limit
+          (value(0) \ "id").get must equal(JsNumber(20))
+        case _ => assertTypeError("Error type")
+      }
+
+      val resultRunning = jobsController.getJobsExecutions(limit, JobExecutionStatus.Running)(request)
+
+      status(resultRunning) mustBe OK
+      contentAsJson(resultRunning) match {
+        case JsArray(value) => value must have length 0
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "GET jobs: pagination" in {
+
+      val limit = 10
+      val result = jobsController.getJobsExecutions(limit, JobExecutionStatus.Finished, Some(3))(request)
+
+      status(result) mustBe OK
+      status(result) mustBe OK
+      contentAsJson(result) match {
+        case JsArray(value) =>
+          value must have length 2
+          (value(0) \ "id").get must equal(JsNumber(2))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "POST schedule: ordinary" in {
+
+      scheduleJob(projectId, scheduledJobId)
+
+      /** Get 1 running/pending job execution */
+      val getResult = jobsController.getJobsExecutions(10, JobExecutionStatus.Pending)(request)
+
+      status(getResult) mustBe OK
+      contentAsJson(getResult) match {
+        case JsArray(value) =>
+          value must have length 1
+          (value(0) \ "id").get must equal(JsNumber(scheduledJobId))
+          (value(0) \ "status").get must equal(JsString("Pending"))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+
+    "POST schedule: ReadOnly access" in {
+
+      /** Schedule job with ReadOnly access */
+      val request = FakeRequest().withAuthenticator(loginInfo).withBody(TestHelper.onetimeJobForm)
+      val result = jobsController.schedule(readonlyProject)(request)
+
+      status(result) mustBe FORBIDDEN
+      contentAsString(result) mustBe SecurityService.UserAccessMessage
+    }
+
+    "POST schedule: ProjectId doesn't match CrawlerId" in {
+
+      val request = FakeRequest().withAuthenticator(loginInfo).withBody(TestHelper.onetimeJobForm)
+      val result = jobsController.schedule(readAndWriteProject)(request)
+
+      status(result) mustBe FORBIDDEN
+      contentAsString(result) mustBe SecurityService.CrawlerMessage
+    }
+
+    "PUT cancel" in {
+
+      val jobScrapydId = scheduleJob(projectId, scheduledJobId)
+
+      // for job to start running/or be still pending
+      Thread.sleep(5000)
+
+      val cancelJobResponse = jobsController.cancel(projectId, jobScrapydId, scheduledJobId)(request)
+
+      status(cancelJobResponse) mustBe OK
+
+      // for scrapyd to finish task
+      Thread.sleep(1000)
+
+      val getJobResponse = jobsController.getJobsExecutions(1, JobExecutionStatus.Finished)(request)
+
+      status(getJobResponse) mustBe OK
+      contentAsJson(getJobResponse) match {
+        case JsArray(value) =>
+          value must have length 1
+          (value(0) \ "id").get must equal(JsNumber(scheduledJobId))
+          (value(0) \ "status").get must equal(JsString("Finished"))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "PUT cancel: jobId doesn't match to projectId" in {
+
+      val jobScrapydId = UUID.randomUUID()
+
+      val cancelJobResponse = jobsController.cancel(projectId, jobScrapydId, jobId)(request)
+
+      status(cancelJobResponse) mustBe FORBIDDEN
+      contentAsString(cancelJobResponse) mustBe SecurityService.JobExecutionToProjectMessage
+    }
+
+    "PUT cancel: ReadOnly access" in {
+
+      val jobScrapydId = UUID.randomUUID()
+
+      val cancelJobResponse = jobsController.cancel(readonlyProject, jobScrapydId, jobId)(request)
+
+      status(cancelJobResponse) mustBe FORBIDDEN
+      contentAsString(cancelJobResponse) mustBe SecurityService.UserAccessMessage
+    }
+
+    "DELETE job" in {
+
+      val (projectId, lastJobId, jobScrapydId) = TestHelper.insertedJobExecutions.last
+
+      lastJobId mustBe jobId
+
+      // delete job
+      val deleteJobResponse = jobsController.deleteJob(projectId, jobScrapydId, lastJobId)(request)
+
+      status(deleteJobResponse) mustBe OK
+
+      // check if job was completely deleted
+      val getJobResponse = jobsController.getJobsExecutions(1, JobExecutionStatus.Finished)(request)
+
+      status(getJobResponse) mustBe OK
+      contentAsJson(getJobResponse) match {
+        case JsArray(value) =>
+          value must have length 1
+          (value(0) \ "id").get must equal(JsNumber(lastJobId - 1))
+          (value(0) \ "status").get must equal(JsString("Finished"))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "DELETE job: still running" in {
+
+      val jobScrapydId = scheduleJob(projectId, scheduledJobId)
+
+      val deleteJobResponse = jobsController.deleteJob(projectId, jobScrapydId, scheduledJobId)(request)
+
+      status(deleteJobResponse) mustBe UNPROCESSABLE_ENTITY
+      contentAsString(deleteJobResponse) mustBe "There was no finished job with given id"
+    }
+
+    "DELETE job: ReadOnly access" in {
+
+      val (_, jobId, jobScrapydId) = TestHelper.insertedJobExecutions.last
+      val cancelJobResponse = jobsController.cancel(readonlyProject, jobScrapydId, jobId)(request)
+
+      status(cancelJobResponse) mustBe FORBIDDEN
+      contentAsString(cancelJobResponse) mustBe SecurityService.UserAccessMessage
+    }
+
+    "DELETE job: jobId doesn't match projectId" in {
+
+      val (projectId, jobId, _) = TestHelper.insertedJobExecutions.last
+      val cancelJobResponse = jobsController.cancel(projectId, UUID.randomUUID(), jobId)(request)
+
+      status(cancelJobResponse) mustBe FORBIDDEN
+      contentAsString(cancelJobResponse) mustBe SecurityService.JobExecutionToProjectMessage
+    }
+  }
+
+}
+\end{lstlisting}
+\subsection{controllers/jobs/specs/PeriodicJobSpec.scala}
+\begin{lstlisting}
+package controllers.jobs.specs
+
+
+import com.mohiva.play.silhouette.test._
+import controllers.jobs.JobTestCase
+import models.common.enums.{JobExecutionStatus, RunningStatus}
+import models.responses.ProjectData
+import models.services.SecurityService
+import models.tables.JobInstance
+import play.api.libs.json.JsArray
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{status, _}
+import utils.data.UserData._
+import utils.TestHelper
+import utils.data.{JobTestData, ProjectTestData}
+
+class PeriodicJobSpec extends JobTestCase {
+
+  private val projectId: Long = JobTestData.PeriodicJob.Owner.projectId
+  private val crawlerId: Long = JobTestData.PeriodicJob.Owner.crawlerId
+  private val periodicJobId: Long = JobTestData.PeriodicJob.Status.disabledId
+  private val scheduledJobId: Long = JobTestData.PeriodicJob.idsDisabled.max + 1
+
+  private val readonlyProject: Long = ProjectTestData.Access.readOnly
+  private val request = FakeRequest().withAuthenticator(loginInfo)
+
+  private def addActivePeriodicJob(projectId: Long, periodicJobId: Long): Unit  = {
+
+    postEggFile(projectId)
+
+    /** Schedule job */
+    val request = FakeRequest().withAuthenticator(loginInfo).withBody(TestHelper.periodicJobForm)
+    val result = periodicJobsController.addPeriodicJob(projectId)(request)
+
+    val responseObject = contentAsJson(result).as[Long]
+
+    responseObject mustBe periodicJobId
+    status(result) mustBe OK
+  }
+
+  private def cancel(projectId: Long, jobId: Long) = {
+
+    val cancelJobResponse = periodicJobsController.disable(projectId, jobId)(request)
+    status(cancelJobResponse) mustBe OK
+  }
+
+  "PeriodicJobController" should {
+
+    "GET periodic jobs: basic" in {
+
+      val getResult = periodicJobsController.getPeriodicJobs(projectId, 1)(request)
+
+      status(getResult) mustBe OK
+      contentAsJson(getResult).as[Seq[JobInstance]] must equal (Seq(TestHelper.insertedPeriodicJobs(periodicJobId)))
+    }
+
+    "GET periodic jobs: pagination" in {
+
+      val getResult = periodicJobsController.getPeriodicJobs(projectId, 5, exclusiveFrom = Some(23))(request)
+
+      status(getResult) mustBe OK
+      contentAsJson(getResult).as[Seq[JobInstance]] must equal (Seq(TestHelper.insertedPeriodicJobs(22), TestHelper.insertedPeriodicJobs(21)))
+    }
+
+    "GET periodic jobs: no access to project" in {
+
+      val noAccessId = ProjectTestData.Access.noAccess
+
+      val getResult = periodicJobsController.getPeriodicJobs(noAccessId, 5)(request)
+
+      status(getResult) mustBe FORBIDDEN
+      contentAsString(getResult) mustBe SecurityService.UserAccessMessage
+    }
+
+    "POST periodic job: basic" in {
+
+      val projectId = 12
+
+      addActivePeriodicJob(projectId, scheduledJobId)
+
+      Thread.sleep(5000)
+
+      val getResponse = jobsController.getJobsExecutions(1, JobExecutionStatus.Pending)(request)
+
+      contentAsJson(getResponse) match {
+        case JsArray(value) =>
+          (value(0) \ "jobInstanceId").as[Long] mustBe scheduledJobId
+          (value(0) \ "project").as[ProjectData] mustBe ProjectData(projectId, s"${projectId} project")
+        case _ => assertTypeError("Error type")
+      }
+
+      val cancelResponse = periodicJobsController.disable(projectId, scheduledJobId)(request)
+
+      status(cancelResponse) mustBe OK
+    }
+
+    "POST periodic job: invalid cron-expression" in {
+
+      val invalidCronBody = TestHelper.periodicJobForm.copy(cronExpression = "test", crawlerId = crawlerId)
+      val createResponse = periodicJobsController.addPeriodicJob(projectId)(request.withBody(invalidCronBody))
+
+      status(createResponse) mustBe UNPROCESSABLE_ENTITY
+      contentAsString(createResponse) mustBe "invalid cron expression"
+    }
+
+    "POST periodic job: crawler doesn't correspond to project" in {
+
+      val createResponse = periodicJobsController.addPeriodicJob(projectId)(request.withBody(TestHelper.periodicJobForm))
+
+      status(createResponse) mustBe FORBIDDEN
+      contentAsString(createResponse) mustBe SecurityService.CrawlerMessage
+    }
+
+    "POST periodic job: ReadOnly access" in {
+
+      val createResponse = periodicJobsController.addPeriodicJob(readonlyProject)(request.withBody(TestHelper.periodicJobForm))
+
+      status(createResponse) mustBe FORBIDDEN
+      contentAsString(createResponse) mustBe SecurityService.UserAccessMessage
+    }
+
+    "PUT periodic job: basic" in {
+
+      val jobInstance = TestHelper.insertedPeriodicJobs(periodicJobId)
+      val projectId = jobInstance.projectId
+      val changePeriodicJob = TestHelper.changePeriodicJobForm.copy(crawlerId = jobInstance.spider)
+
+      val putResponse = periodicJobsController.changePeriodicJob(projectId, periodicJobId)(request.withBody(changePeriodicJob))
+
+      status(putResponse) mustBe OK
+    }
+
+    "PUT periodic job: crawler does not correspond to project" in {
+
+      val changePeriodicJob = TestHelper.changePeriodicJobForm
+
+      val putResponse = periodicJobsController.changePeriodicJob(projectId, periodicJobId)(request.withBody(changePeriodicJob))
+
+      status(putResponse) mustBe FORBIDDEN
+      contentAsString(putResponse) mustBe SecurityService.CrawlerMessage
+    }
+
+    "PUT periodic job: wrong cron-expression" in {
+
+      val changePeriodicJob = TestHelper.changePeriodicJobForm.copy(cronExpression = "test", crawlerId = crawlerId)
+
+      val putResponse = periodicJobsController.changePeriodicJob(projectId, periodicJobId)(request.withBody(changePeriodicJob))
+
+      status(putResponse) mustBe UNPROCESSABLE_ENTITY
+      contentAsString(putResponse) mustBe "invalid cron expression"
+    }
+
+    "DELETE periodic job: enabled status" in {
+
+      addActivePeriodicJob(projectId, scheduledJobId)
+
+      // check GET after creating periodic job and before deleting it
+      val getBeforeResponse = periodicJobsController.getPeriodicJobs(projectId, 1)(request)
+      val lastPeriodicScheduled = contentAsJson(getBeforeResponse).as[Seq[JobInstance]].head
+
+      status(getBeforeResponse) mustBe OK
+      lastPeriodicScheduled.id mustBe scheduledJobId
+
+      // delete created periodic job
+      val deleteResponse = periodicJobsController.deletePeriodicJob(projectId, scheduledJobId)(request)
+
+      status(deleteResponse) mustBe OK
+
+      // check GET after deletion
+      val getAfterResponse = periodicJobsController.getPeriodicJobs(projectId, 1)(request)
+      val lastScheduled = contentAsJson(getAfterResponse).as[Seq[JobInstance]].head
+
+      status(getAfterResponse) mustBe OK
+      lastScheduled.id mustBe (scheduledJobId - 1)
+    }
+
+    "DELETE periodic job: disabled status" in {
+
+      val deleteResponse = periodicJobsController.deletePeriodicJob(projectId, periodicJobId)(request)
+
+      status(deleteResponse) mustBe OK
+    }
+
+    "DELETE periodic job: readonly access" in {
+
+      val readonly = ProjectTestData.Access.readOnly
+      val deleteResponse = periodicJobsController.deletePeriodicJob(readonly, periodicJobId)(request)
+
+      status(deleteResponse) mustBe FORBIDDEN
+      contentAsString(deleteResponse) mustBe SecurityService.UserAccessMessage
+    }
+
+    "DELETE periodic job: no existing job with id" in {
+      val deleteResponse = periodicJobsController.deletePeriodicJob(projectId, scheduledJobId)(request)
+
+      status(deleteResponse) mustBe FORBIDDEN
+      contentAsString(deleteResponse) mustBe SecurityService.JobInstanceToProjectMessage
+    }
+
+    "PUT cancel periodic job: basic" in {
+
+      addActivePeriodicJob(projectId, scheduledJobId)
+
+      // check GET after creating periodic job and before deleting it
+      val getBeforeResponse = periodicJobsController.getPeriodicJobs(projectId, 1)(request)
+      val lastPeriodicScheduled = contentAsJson(getBeforeResponse).as[Seq[JobInstance]].head
+
+      status(getBeforeResponse) mustBe OK
+      lastPeriodicScheduled.id mustBe scheduledJobId
+      lastPeriodicScheduled.status mustBe RunningStatus.Enabled
+
+      // cancel periodic job
+      cancel(projectId, scheduledJobId)
+
+      // check GET after cancelling
+      val getAfterResponse = periodicJobsController.getPeriodicJobs(projectId, 1)(request)
+      val lastScheduled = contentAsJson(getAfterResponse).as[Seq[JobInstance]].head
+
+      status(getAfterResponse) mustBe OK
+      lastScheduled.status mustBe RunningStatus.Disabled
+    }
+
+    "PUT cancel periodic job: already disabled" in {
+
+      val cancelJobResponse = periodicJobsController.disable(projectId, periodicJobId)(request)
+
+      status(cancelJobResponse) mustBe UNPROCESSABLE_ENTITY
+    }
+
+    "PUT cancel periodic job: readonly access" in {
+
+      val cancelJobResponse = periodicJobsController.disable(readonlyProject, periodicJobId)(request)
+
+      status(cancelJobResponse) mustBe FORBIDDEN
+      contentAsString(cancelJobResponse) mustBe SecurityService.UserAccessMessage
+
+    }
+
+    "PUT cancel periodic job: no existing job with id" in {
+
+      val cancelJobResponse = periodicJobsController.disable(projectId, 4920)(request)
+
+      status(cancelJobResponse) mustBe FORBIDDEN
+      contentAsString(cancelJobResponse) mustBe SecurityService.JobInstanceToProjectMessage
+    }
+
+
+    "PUT enable periodic job: basic" in {
+
+      addActivePeriodicJob(projectId, scheduledJobId)
+
+      // cancel periodic job
+      cancel(projectId, scheduledJobId)
+
+      val enableJobResponse = periodicJobsController.enable(projectId, scheduledJobId)(request)
+      status(enableJobResponse) mustBe OK
+
+      val getResponse = periodicJobsController.getPeriodicJobs(projectId, 1)(request)
+      val periodicJob = contentAsJson(getResponse).as[Seq[JobInstance]].head
+
+      status(getResponse) mustBe OK
+      periodicJob.id mustBe scheduledJobId
+      periodicJob.status mustBe RunningStatus.Enabled
+
+      // cancel periodic job
+      cancel(projectId, scheduledJobId)
+    }
+
+    "PUT enable periodic job: already enabled" in {
+
+      val enabledJobId = JobTestData.PeriodicJob.Status.enabledId
+
+      val cancelEnabledResponse = periodicJobsController.enable(projectId, enabledJobId)(request)
+
+      status(cancelEnabledResponse) mustBe UNPROCESSABLE_ENTITY
+    }
+
+    "PUT enable periodic job: readonly access" in {
+
+      val enableResponse = periodicJobsController.enable(readonlyProject, periodicJobId)(request)
+
+      status(enableResponse) mustBe FORBIDDEN
+      contentAsString(enableResponse) mustBe SecurityService.UserAccessMessage
+    }
+
+    "PUT enable periodic job: no existing job found with id" in {
+
+      val enableResponse = periodicJobsController.enable(projectId, scheduledJobId)(request)
+
+      status(enableResponse) mustBe FORBIDDEN
+      contentAsString(enableResponse) mustBe SecurityService.JobInstanceToProjectMessage
+    }
+  }
+}
+\end{lstlisting}
+\subsection{controllers/MembershipSpec.scala}
+\begin{lstlisting}
+package controllers
+
+import play.api.test.FakeRequest
+import utils.{AuthSpecification, DatabaseCleaner, TestHelper}
+import play.api.test.Helpers._
+import utils.data.UserData._
+import com.mohiva.play.silhouette.test._
+import models.common.enums.MembershipAccessRight
+import models.responses.Member
+import models.services.SecurityService
+import utils.data.ProjectTestData
+
+
+class MembershipSpec extends AuthSpecification
+                     with DatabaseCleaner {
+
+  val controller: MembershipController = app.injector.instanceOf[MembershipController]
+
+  private val readAndWriteProject = ProjectTestData.Access.readAndWrite
+  private val noAccessProject = ProjectTestData.Access.noAccess
+  private val ownerProject = ProjectTestData.Access.owner
+
+  def checkGETLength(projectId: Long, expectedLength: Int): Unit = {
+
+    val getResponse = controller.getParticipants(projectId)(FakeRequest().withAuthenticator(loginInfo))
+
+    status(getResponse) mustBe OK
+    val members = contentAsJson(getResponse).as[Seq[Member]]
+
+    members.length mustBe expectedLength
+  }
+
+  "MembershipController" should {
+
+    "GET members: ReadAndWrite access" in {
+
+      checkGETLength(readAndWriteProject, 2)
+    }
+
+    "GET members: no access to project" in {
+
+      val getResponse = controller.getParticipants(noAccessProject)(FakeRequest().withAuthenticator(loginInfo))
+
+      status(getResponse) mustBe FORBIDDEN
+      contentAsString(getResponse) mustBe SecurityService.UserAccessMessage
+    }
+
+    "DELETE member: Owner access" in {
+
+      val requestWithAuthenticator = FakeRequest().withAuthenticator(loginInfo)
+      val deleteResponse = controller.deleteParticipant(ownerProject, sampleUser.id)(requestWithAuthenticator)
+
+      status(deleteResponse) mustBe OK
+
+      checkGETLength(ownerProject, 1)
+    }
+
+    "DELETE member: ReadAndWrite access" in {
+
+      val requestWithAuthenticator = FakeRequest().withAuthenticator(loginInfo)
+      val deleteResponse = controller.deleteParticipant(readAndWriteProject, sampleUser.id)(requestWithAuthenticator)
+
+      status(deleteResponse) mustBe FORBIDDEN
+      contentAsString(deleteResponse) mustBe SecurityService.UserAccessMessage
+
+      checkGETLength(readAndWriteProject, 2)
+    }
+
+    "PUT member: Owner access" in {
+
+      checkGETLength(ownerProject, 1)
+
+      val requestWithAuthenticator = FakeRequest().withAuthenticator(loginInfo)
+      val putResponse = controller.addParticipants(ownerProject, sampleUser.id, MembershipAccessRight.Readonly)(requestWithAuthenticator)
+
+      status(putResponse) mustBe OK
+
+      // after adding new participant
+      checkGETLength(ownerProject, 2)
+    }
+
+    "PUT member: ReadAndWrite access" in {
+
+      val requestWithAuthenticator = FakeRequest().withAuthenticator(loginInfo)
+      val putResponse = controller.addParticipants(readAndWriteProject, sampleUser.id, MembershipAccessRight.Readonly)(requestWithAuthenticator)
+
+      status(putResponse) mustBe FORBIDDEN
+      contentAsString(putResponse) mustBe SecurityService.UserAccessMessage
+    }
+  }
+
+}
+\end{lstlisting}
+\subsection{controllers/ProjectSpec.scala}
+\begin{lstlisting}
+package controllers
+
+
+import akka.stream.Materializer
+import utils.{AuthSpecification, DatabaseCleaner, TestHelper}
+import play.api.test._
+import com.mohiva.play.silhouette.test._
+import forms.project.{ProjectChangeForm, ProjectForm}
+import models.tables.Crawler
+import play.api.test.Helpers._
+import play.api.libs.json.{JsArray, JsNumber, JsString, Json, OFormat}
+import utils.data.ProjectTestData
+import utils.data.UserData._
+
+
+class ProjectSpec extends AuthSpecification
+                  with DatabaseCleaner  {
+
+  implicit val crawlerFormat: OFormat[Crawler] = Json.format[Crawler]
+
+  private val controller = app.injector.instanceOf[ProjectsController]
+  implicit lazy val materializer: Materializer = app.materializer
+  
+  private val readAndWriteProject = ProjectTestData.Access.readAndWrite
+  private val readonlyProject = ProjectTestData.Access.readOnly
+
+  object Data {
+    val projectForm: ProjectForm = ProjectForm(
+      name = "New project",
+      description = Some("Hello world description")
+    )
+    val changeProjectForm: ProjectChangeForm = ProjectChangeForm(
+      name = "New name",
+      description = Some("New description"),
+      spiderSettings = Map("XYZ" -> "Z"),
+      spiderArgs = Map("args" -> "something")
+    )
+  }
+
+  "ProjectsController" should {
+
+    "GET list of projects for user" in {
+
+      val result = controller.getProjects(10, None)(FakeRequest().withAuthenticator(loginInfo))
+
+      status(result) mustBe OK
+
+      contentAsJson(result) match {
+        case JsArray(value) =>
+          value must have length 10
+          (value(0) \ "id").get must equal(JsNumber(16))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "GET list of projects: with pagination" in {
+
+      val result = controller.getProjects(10, Some(13))(FakeRequest().withAuthenticator(loginInfo))
+
+      status(result) mustBe OK
+
+      contentAsJson(result) match {
+        case JsArray(value) =>
+          value must have length 10
+          (value(0) \ "id").get must equal(JsNumber(12))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "CREATE project" in {
+
+      val request = FakeRequest()
+        .withAuthenticator(loginInfo)
+        .withBody(Data.projectForm)
+      val createResult = controller.createProject(request)
+
+      status(createResult) mustBe OK
+      contentAsString(createResult) mustBe "17"
+
+      val getResult = controller.getProjects(1, None)(FakeRequest().withAuthenticator(loginInfo))
+
+      status(getResult) mustBe OK
+      contentAsJson(getResult) match {
+        case JsArray(value) =>
+          value must have length 1
+          (value(0) \ "id").get must equal(JsNumber(17))
+          (value(0) \ "name").get must equal(JsString(Data.projectForm.name))
+          (value(0) \ "description").get must equal(JsString(Data.projectForm.description.getOrElse("")))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+
+    "PUT project's metadata" in {
+
+      val request = FakeRequest()
+        .withAuthenticator(loginInfo)
+        .withBody(Data.changeProjectForm)
+
+      val putResult = controller.updateProjectMetadata(16)(request)
+
+      status(putResult) mustBe OK
+
+      val getResult = controller.getProjects(1)(FakeRequest().withAuthenticator(loginInfo))
+
+      status(getResult) mustBe OK
+      contentAsJson(getResult) match {
+        case JsArray(value) =>
+          value must have length(1)
+          (value(0) \ "id").get must equal(JsNumber(16))
+          (value(0) \ "name").get must equal(JsString(Data.changeProjectForm.name))
+          (value(0) \ "description").get must equal(JsString(Data.changeProjectForm.description.getOrElse("")))
+          (value(0) \ "spidersSettings").as[Map[String, String]] must equal(Data.changeProjectForm.spiderSettings)
+          (value(0) \ "args").as[Map[String, String]] must equal(Data.changeProjectForm.spiderArgs)
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "PUT project's metadata: Readonly access - no permission" in {
+
+      val request = FakeRequest()
+        .withAuthenticator(loginInfo)
+        .withBody(Data.changeProjectForm)
+
+      val putResult = controller.updateProjectMetadata(readonlyProject)(request)
+
+      status(putResult) mustBe FORBIDDEN
+    }
+
+    "PUT project's metadata: ReadAndWrite access" in {
+
+      val request = FakeRequest()
+        .withAuthenticator(loginInfo)
+        .withBody(Data.changeProjectForm)
+
+      val putResult = controller.updateProjectMetadata(readAndWriteProject)(request)
+
+      status(putResult) mustBe OK
+    }
+
+    "DELETE project: Owner access" in {
+
+      val request = FakeRequest().withAuthenticator(loginInfo)
+      val deleteRequest = controller.deleteProject(16)(request)
+
+      status(deleteRequest) mustBe OK
+
+      val getRequest = controller.getProjects(20)(request)
+
+      status(getRequest) mustBe OK
+      contentAsJson(getRequest) match {
+        case JsArray(value) =>
+          value must have length(14)
+          (value(0) \ "id").get must equal(JsNumber(15))
+        case _ => assertTypeError("Error type")
+      }
+    }
+
+    "DELETE project: NOT Owner access" in {
+
+      val request = FakeRequest().withAuthenticator(loginInfo)
+      val deleteRequest = controller.deleteProject(readAndWriteProject)(request)
+
+      status(deleteRequest) mustBe FORBIDDEN
+    }
+
+    "DELETE project: doesn't exist" in {
+
+      val request = FakeRequest().withAuthenticator(loginInfo)
+      val deleteRequest = controller.deleteProject(122)(request)
+
+      status(deleteRequest) mustBe FORBIDDEN
+    }
+
+    "PUT deploy" in {
+
+      val deployResult = controller.deployProject(15)(TestHelper.requestWithMetadata("egg1.egg"))
+
+      status(deployResult) mustBe OK
+      contentAsJson(deployResult) mustBe(Json.toJson(TestHelper.crawlers))
+    }
+
+    "PUT deploy: wrong format file" in {
+
+      val deployResult = controller.deployProject(15)(TestHelper.requestWithMetadata("invalid.egg"))
+
+      status(deployResult) mustBe UNPROCESSABLE_ENTITY
+    }
+
+    "PUT deploy: no access" in {
+
+      val deployResult = controller.deployProject(readonlyProject)(TestHelper.requestWithMetadata("egg1.egg"))
+
+      status(deployResult) mustBe FORBIDDEN
+    }
+  }
+}
+\end{lstlisting}
+\subsection{unit/EmailValidatorTest.scala}
+\begin{lstlisting}
+package unit
+
+import org.scalatest.FunSuite
+import models.common.extensions.ValidateString
+
+class EmailValidatorTest extends FunSuite {
+
+  test("EmailString.wrongEmail") {
+    assert(!"helpmail.ru".isEmail)
+    assert(!"helpп@mail.ru".isEmail)
+    assert(!"help123@.ru".isEmail)
+    assert(!"help@mail.".isEmail)
+    assert(!"help@ma il.go".isEmail)
+  }
+
+  test("EmailString.validEmail") {
+    assert("help@mail.ru".isEmail)
+    assert("help123@mail.ru".isEmail)
+  }
+}
+\end{lstlisting}
+\subsection{unit/SettingsMergerTest.scala}
+\begin{lstlisting}
+package unit
+
+
+import models.common.extensions._
+import org.scalatest.FunSuite
+import play.api.libs.json._
+import models.common.settings.{ScrapydSettings, SettingsFromDB, SettingsMerger}
+
+class SettingsMergerTest extends FunSuite {
+
+  object Data {
+    val settings: JsValue = Json.parse("""{"DOWNLOAD_DELAY":"2", "XYZ":"S"}""")
+    val settings2: JsValue = Json.parse("""{"DOWNLOAD_DELAY":"200", "ABD":"S"}""")
+    val settings3: JsValue = Json.parse("""{"DOWNLOAD_DELAY":"3030", "X":"XJS"}""")
+  }
+
+
+  test("SettingsMerger.basic") {
+
+    val jsonToSettings = Data.settings
+
+    assert(Some(jsonToSettings).toMap === Map("DOWNLOAD_DELAY" -> "2", "XYZ" -> "S"))
+  }
+
+  test("SettingsMerger.wrongInput") {
+    val jsonToArgs = Json.parse("""["hello", "hehehe"]""")
+
+    assert(Some(jsonToArgs).toMap === Map.empty)
+  }
+
+  test("SettingsMerger.testPriority") {
+
+    val projectData = SettingsFromDB(settings = Some(Data.settings), args = Some(Data.settings))
+    val spiderData = SettingsFromDB(settings = Some(Data.settings2), args = Some(Data.settings2))
+    val jobData = SettingsFromDB(settings = Some(Data.settings3), args = Some(Data.settings3))
+
+    val resultSettingsMap = Map(
+      "DOWNLOAD_DELAY" -> "3030",
+      "XYZ" -> "S",
+      "ABD" -> "S",
+      "X" -> "XJS"
+    )
+    val resultSettingsSeq = resultSettingsMap.map { case (str, str1) => s"$str=$str1" }.toSeq
+
+    val result = SettingsMerger.mergeSettings(projectData, spiderData, jobData)
+    assert(result === ScrapydSettings(setting = resultSettingsSeq, args = resultSettingsMap))
+  }
+
+}
+\end{lstlisting}
+\subsection{utils/AuthSpecification.scala}
+\begin{lstlisting}
+package utils
+
+import java.util.UUID
+
+import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredErrorHandlerModule, UnsecuredErrorHandler, UnsecuredErrorHandlerModule}
+import com.mohiva.play.silhouette.api.{Environment, LoginInfo, Silhouette, SilhouetteProvider}
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import com.mohiva.play.silhouette.test.FakeEnvironment
+import forms.{SignIn, SignUp}
+import models.tables.User
+import net.codingwell.scalaguice.ScalaModule
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import utils.data.UserData
+
+import scala.concurrent.ExecutionContext.Implicits.global
+
+/**
+ * A specification which contains some auth specific configuration.
+ */
+abstract class AuthSpecification extends BaseSpecification {
+
+  import UserData._
+
+  /**
+   * The fake environment.
+   */
+  implicit val fakeEnv: FakeEnvironment[DefaultEnv] = FakeEnvironment[DefaultEnv](Seq(loginInfo -> userExample))
+
+  /**
+   * The silhouette module used to instantiate the application.
+   */
+  def silhouetteModule: ScalaModule = new ScalaModule {
+    def configure(): Unit = {
+      bind[Environment[DefaultEnv]].toInstance(fakeEnv)
+      bind[Silhouette[DefaultEnv]].to[SilhouetteProvider[DefaultEnv]]
+    }
+  }
+
+  /**
+   * The application builder.
+   */
+  override def fakeApplication(): Application = {
+    val builder = overrideDependencies(
+      new GuiceApplicationBuilder()
+        .overrides(silhouetteModule)
+    )
+    builder.build()
+  }
+
+  def overrideDependencies(application: GuiceApplicationBuilder): GuiceApplicationBuilder = {
+    application
+  }
+}
+\end{lstlisting}
+\subsection{utils/BaseSpecification.scala}
+\begin{lstlisting}
+package utils
+
+import java.time.{Clock, Instant, ZoneId}
+
+import net.codingwell.scalaguice.ScalaModule
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.specs2.specification.Scope
+import play.api.Application
+import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.PlaySpecification
+
+/**
+ * A specification which contains some helpers.
+ */
+abstract class BaseSpecification extends PlaySpec with GuiceOneAppPerSuite {
+
+  /**
+   * The fake module used to instantiate the application.
+   */
+  def fakeModule: ScalaModule = new ScalaModule {
+    def configure(): Unit = {}
+  }
+
+  /**
+   * The application builder.
+   */
+  def applicationBuilder: GuiceApplicationBuilder = new GuiceApplicationBuilder()
+    .overrides(fakeModule)
+
+  /**
+   * The application.
+   */
+  def application: Application = applicationBuilder.build()
+
+  /**
+   * The Guice injector.
+   */
+  def injector: Injector = application.injector
+
+  /**
+   * The Play lang.
+   */
+  def lang: Lang = Lang("en-US")
+
+
+  /**
+   * The current clock.
+   */
+  lazy val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+}
+\end{lstlisting}
+\subsection{utils/data/CrawlerData.scala}
+\begin{lstlisting}
+package utils.data
+
+import models.tables.Crawler
+
+object CrawlerData {
+
+  def getCrawlers: Seq[Crawler] = {
+
+    val pIds = Seq(1,2, JobTestData.OnetimeJob.Owner.projectId, JobTestData.PeriodicJob.Owner.projectId)
+    pIds.map(id => getCrawlerForProjectId(id))
+  }
+
+  private def getCrawlerForProjectId(projectId: Long): Crawler = {
+    Crawler(projectId = projectId, name = s"crawler in project ${projectId}")
+  }
+
+}
+\end{lstlisting}
+\subsection{utils/data/JobTestData.scala}
+\begin{lstlisting}
+package utils.data
+
+import models.common.enums.RunningStatus.RunningStatus
+import models.common.enums.RunningType
+import models.tables.JobInstance
+
+object JobTestData {
+
+  object OnetimeJob {
+
+    val ids: Array[Int] = 1 to 20 toArray
+
+    object Owner {
+      val projectId: Long = 13
+      val crawlerId: Long = 3
+    }
+
+    def getJobInstance: JobInstance = {
+      JobInstance(projectId = Owner.projectId, spider = Owner.crawlerId, runType = RunningType.Onetime)
+    }
+  }
+
+
+  object PeriodicJob {
+
+    val idsEnabled: Array[Int] = 21 to Status.enabledId toArray
+    val idsDisabled: Array[Int] = 31 to Status.disabledId toArray
+
+    def getJobInstance(id: Long, status: RunningStatus): JobInstance = {
+      JobInstance(
+        id = id,
+        projectId = Owner.projectId,
+        spider = Owner.crawlerId,
+        runType = RunningType.Periodic,
+        status = status)
+    }
+
+    val validCronExpression = "* * * * * ? *"
+
+    object Status {
+      val enabledId = 30
+      val disabledId = 40
+    }
+
+    object Owner {
+      val projectId: Long = 13
+      val crawlerId: Long = 4
+    }
+
+  }
+}
+\end{lstlisting}
+\subsection{utils/data/ProjectTestData.scala}
+\begin{lstlisting}
+package utils.data
+
+import java.time.Instant
+
+import models.tables.Project
+
+object ProjectTestData {
+
+  object Access {
+    val readOnly = 1
+    val readAndWrite = 2
+    val noAccess = 3
+    val owner = 4
+  }
+
+  def getProject(withId: Long = 0): Project = {
+    Project(
+      name = s"${withId} project",
+      description = Some("projectForm.description"),
+      ownerId = UserData.userExample.id,
+      createdAt = Instant.now(),
+      changedBy = UserData.userExample.id,
+      changedAt = Instant.now()
+    )
+  }
+
+}
+\end{lstlisting}
+\subsection{utils/data/UserData.scala}
+\begin{lstlisting}
+package utils.data
+
+import java.util.UUID
+
+import com.mohiva.play.silhouette.api.LoginInfo
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import forms.{SignIn, SignUp}
+import models.tables.User
+
+object UserData {
+
+  val email = "zdaria99@mail.ru"
+  val authorizationEmail = "exampleEmail@mail.ru"
+  val sampleUserEmail = "hello@mail.ru"
+  val loginInfo = LoginInfo(CredentialsProvider.ID, email)
+
+  val credentials = SignIn(authorizationEmail, "password")
+
+  /**
+   * Form to create new user in DB.
+   * */
+  val signUpForm = SignUp(
+    name = "Dasha",
+    login = "unique_name",
+    email = credentials.email,
+    password = credentials.password
+  )
+
+  val userExample = User(
+    id = UUID.fromString("0375dc2c-6d44-4096-a35b-152b8c2568dc"),
+    name = "Dasha",
+    login = "dashatest",
+    email = email,
+    providerID = "credentials",
+    providerKey = email)
+
+  val sampleUser = User(
+    id = UUID.randomUUID(),
+    name = "User",
+    login = "some_user",
+    email = sampleUserEmail,
+    providerID = "credentials",
+    providerKey = sampleUserEmail
+  )
+
+}
+\end{lstlisting}
+\subsection{utils/DatabaseCleaner.scala}
+\begin{lstlisting}
+package utils
+
+import models.common.{DBCreator, PGProfile}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
+
+trait DatabaseCleaner extends HasDatabaseConfigProvider[PGProfile]
+                                with BeforeAndAfterEach
+                                with BeforeAndAfterAll {
+  this: Suite with BaseSpecification =>
+
+
+  override lazy val dbConfigProvider: DatabaseConfigProvider =
+    app.injector.instanceOf[DatabaseConfigProvider]
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    createDB()
+  }
+
+  override protected def afterEach(): Unit = {
+    dropDB()
+    super.afterEach()
+  }
+
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    Try(DBCreator.downTypes(db))
+    DBCreator.upTypes(db)
+  }
+
+  def createDB(): Unit = {
+    Try(dropDB())
+    DBCreator.up(db)
+    DBTestFiller.fillData(db)
+  }
+
+  def dropDB(): Unit = {
+    DBCreator.down(db)
+  }
+}
+\end{lstlisting}
+\subsection{utils/DBTestFiller.scala}
+\begin{lstlisting}
+package utils
+
+
+import java.time.Instant
+
+import models.common.PGProfile.api._
+import models.tables._
+import models.common.extensions._
+import models.common.enums.{JobExecutionStatus, MembershipAccessRight, RunningStatus}
+import utils.data.{CrawlerData, JobTestData, ProjectTestData}
+
+import scala.concurrent.ExecutionContext
+
+object DBTestFiller {
+
+  import utils.data.UserData._
+  import slickProfile.api._
+  import utils.data.JobTestData._
+
+  val user = User.dbUsers
+  val password = Password.dbPasswords
+  val project = Project.dbProjects
+  val crawler = Crawler.dbCrawlers
+  val jInstance = JobInstance.dbJobInstances
+  val jExecution = JobExecution.dbJobExecutions
+  val membership = Membership.dbMembership
+
+  def fillData(db: Database)(implicit ec: ExecutionContext): Unit = {
+    db.run(generateUserData andThen generateProjectData andThen generateCrawlerData
+      andThen generateJobExecutionData).awaitForResult
+  }
+
+  private def generateUserData() = {
+    user ++= Seq(userExample, sampleUser)
+  }
+
+  /**
+   * Generate 15 projects which user owns
+   */
+  private def generateProjectData()(implicit ec: ExecutionContext): DBIO[Unit] = {
+
+    val insertProject = project returning project.map(_.id)
+    val userId = userExample.id
+
+    val projectForTestReadonly = ProjectTestData.getProject(1)
+    val projectForTestReadAndWrite = ProjectTestData.getProject(2)
+    val projectNoAccess = ProjectTestData.getProject(3)
+
+    val projectsForTest = (4 to 16 toArray).map { pId => ProjectTestData.getProject(pId) }
+
+    (for {
+      pIdReadonly <- insertProject += projectForTestReadonly // 1
+      pIdReadAndWrite <- insertProject += projectForTestReadAndWrite // 2
+      pIdNoAccess <- insertProject += projectNoAccess // 3
+      projectIds <- insertProject ++= projectsForTest
+
+      memberships = projectIds.map { id =>  Membership(userId, id, MembershipAccessRight.Owner) }
+
+      _ <- membership ++= memberships
+
+      _ <- membership += Membership(sampleUser.id, pIdReadonly, MembershipAccessRight.Owner)
+      _ <- membership += Membership(sampleUser.id, pIdReadAndWrite, MembershipAccessRight.Owner)
+      _ <- membership += Membership(sampleUser.id, pIdNoAccess, MembershipAccessRight.Owner)
+
+      _ <- membership += Membership(userId, pIdReadonly, MembershipAccessRight.Readonly)
+      _ <- membership += Membership(userId, pIdReadAndWrite, MembershipAccessRight.ReadAndWrite)
+
+    } yield ()).transactionally
+
+  }
+
+  /**
+   * Data for testing CrawlerController
+   */
+  private def generateCrawlerData()(implicit ec: ExecutionContext): DBIO[Unit] = {
+    (for {
+      _ <- crawler ++= CrawlerData.getCrawlers
+    } yield ()).transactionally
+  }
+
+  /**
+   * Data for testing job executions
+   */
+  private def generateJobExecutionData()(implicit ec: ExecutionContext): DBIO[Unit] = {
+
+    val jInstanceInsert = jInstance returning jInstance.map(_.id)
+    val jExecutionInsert = jExecution returning jExecution.map(job => (job.id, job.scrapydId))
+
+    val onetimeJobs = OnetimeJob.ids.map(_ => JobTestData.OnetimeJob.getJobInstance)
+    val periodicJobsEnabled = PeriodicJob.idsEnabled.map(id => PeriodicJob.getJobInstance(id, RunningStatus.Enabled))
+    val periodicJobsDisabled = PeriodicJob.idsDisabled.map(id => PeriodicJob.getJobInstance(id, RunningStatus.Disabled))
+
+    val periodicJobs = (periodicJobsEnabled ++ periodicJobsDisabled)
+
+    for {
+      ids1 <- jInstanceInsert ++= onetimeJobs
+      ids2 <- jInstanceInsert ++= periodicJobs
+
+      jobExecutions = ids1.map { id =>
+        JobExecution(jobInstanceId = id, createTime = Instant.now(), status = JobExecutionStatus.Finished)
+      }
+      insertedJobExecutions <- jExecutionInsert ++= jobExecutions
+    } yield {
+      TestHelper.insertedJobExecutions = insertedJobExecutions.map { case (l, uuid) => (JobTestData.OnetimeJob.Owner.projectId, l, uuid) }
+      TestHelper.insertedPeriodicJobs = ids2.zip(periodicJobs).toMap
+    }
+  }
+
+}
+\end{lstlisting}
+\subsection{utils/TestHelper.scala}
+\begin{lstlisting}
+package utils
+
+import java.nio.file.Paths
+import java.util.UUID
+
+import com.mohiva.play.silhouette.api.Environment
+import models.tables.{Crawler, JobInstance}
+import play.api.libs.Files
+import play.api.libs.Files.SingletonTemporaryFileCreator
+import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.MultipartFormData
+import play.api.mvc.MultipartFormData.FilePart
+import play.api.test._
+import utils.data.UserData._
+import com.mohiva.play.silhouette.test._
+import forms.OnetimeJobForm
+import forms.periodic.{PeriodicJobChangeForm, PeriodicJobCreateForm}
+import models.common.enums.JobPriority
+import utils.data.JobTestData
+
+
+object TestHelper {
+
+  private val baseDir = "test/data/egg/"
+
+  val projectWithCrawlers = 15
+
+  var insertedJobExecutions: Seq[(Long, Long, UUID)] = Seq.empty
+  var insertedPeriodicJobs: Map[Long, JobInstance] = Map.empty
+
+  implicit val crawlerFormat: OFormat[Crawler] = Json.format[Crawler]
+
+  val crawlers: Seq[Crawler] = Seq(
+    Crawler(5, projectWithCrawlers, "toscrape-css"),
+    Crawler(6, projectWithCrawlers, "toscrape-xpath")
+  )
+
+  val onetimeJobForm = OnetimeJobForm(
+    crawlerId = crawlers.head.id,
+    priority = JobPriority.Normal,
+    settings = Map("DOWNLOAD_DELAY" -> "100")
+  )
+
+  val periodicJobForm = PeriodicJobCreateForm(
+    title = "Periodic Job",
+    crawlerId = crawlers.head.id,
+    cronExpression = JobTestData.PeriodicJob.validCronExpression
+  )
+
+  val changePeriodicJobForm = PeriodicJobChangeForm(
+    title = "Periodic Job",
+    crawlerId = crawlers.head.id,
+    cronExpression = JobTestData.PeriodicJob.validCronExpression
+  )
+
+  def requestWithMetadata(fileName: String)(implicit env: Environment[DefaultEnv]): FakeRequest[MultipartFormData[Files.TemporaryFile]] = {
+    val filePart = FilePart(
+      "eggFile",
+      baseDir + fileName,
+      Some("text/plain;charset=UTF-8"),
+      SingletonTemporaryFileCreator.create(Paths.get(baseDir + fileName))
+    )
+
+    FakeRequest()
+      .withAuthenticator(loginInfo)
+      .withBody(MultipartFormData(
+        dataParts = Map.empty,
+        files = Seq(filePart),
+        badParts = Nil))
+  }
+}
+\end{lstlisting}

@@ -17,6 +17,9 @@
  
 % for tables added 12.11.18
 %\usepackage[format=simple,labelsep=space,tableposition=below]{caption} 
+
+\usepackage{float} % for H and HT options
+\usepackage[section]{placeins}
 \usepackage{caption} 
 \DeclareCaptionLabelSeparator{emdash}{ --- }
 \captionsetup{
@@ -52,6 +55,10 @@
 \setlength\fboxrule{1pt} % Толщина линий рамки \fbox{}
 \usepackage{wrapfig} % Обтекание рисунков текстом
 
+%%% BF for row
+\newcommand{\rowstyle}[1]{\gdef\currentrowstyle{#1}%
+#1\ignorespaces
+}
 %%% Работа с таблицами
 \usepackage{array,tabularx,tabulary,booktabs} % Дополнительная работа с таблицами
 \usepackage{longtable}  % Длинные таблицы
@@ -275,6 +282,14 @@
 	\tableofcontents
 }
 
+\newcommand{\clearPage}{
+	\lhead{ }
+	\chead{ }
+	\rhead{ }
+	\cfoot{ }
+	\cfoot{ }
+}
+
 \newcommand{\projectName}[1]{
 	\begin{center}
 		\large{\textsc{\textbf{#1}}}
@@ -332,58 +347,6 @@
 	\hline
 	\multirow{2}{*}{Изм.} & \multicolumn{4}{c|}{Номера листов} & Всего листов в документе& $\text{№}$ документа& Входящий $\text{№}$ сопроводит. докум. и дата& Под-пись& Дата\\[5ex] \cline{2-5}
 	&из-ме-нен-ных&заме-нен-ных&но-вых&аннул-лиро-ван-ных&  &  &  &  & \\[10ex]  
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
 	\hline
 	& & & & & & & & & \\[5ex]
 	\hline

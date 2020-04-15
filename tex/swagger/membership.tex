@@ -1,0 +1,192 @@
+
+\protect\hypertarget{addParticipants}{}{}
+
+\begin{verbatim}
+put /api/projects/{projectId}/memberships/{guestId}/{guestAccess}
+\end{verbatim}
+
+Add or change participant of project ({addParticipants})
+
+Insert or update
+
+\hypertarget{path-parameters-2}{%
+\subsubsection*{Path parameters}\label{path-parameters-2}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+guestId (required)
+
+{Path Parameter} --- format: uuid
+
+guestAccess (required)
+
+{Path Parameter} ---
+
+\hypertarget{return-type-4}{%
+\subsubsection*{Return type}\label{return-type-4}}
+
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{example-data-4}{%
+\subsubsection*{Example data}\label{example-data-4}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-4}{%
+\subsubsection*{Responses}\label{responses-4}}
+
+\hypertarget{section-14}{%
+\paragraph{200}\label{section-14}}
+
+successful operation
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{section-15}{%
+\paragraph{401}\label{section-15}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-16}{%
+\paragraph{403}\label{section-16}}
+
+Dont have permission to specified project \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{deleteParticipant}{}{}
+
+
+
+\begin{verbatim}
+delete /api/projects/{projectId}/memberships/{guestId}
+\end{verbatim}
+
+Delete user from membership list ({deleteParticipant})
+
+Only owner can delete from membership list
+
+\hypertarget{path-parameters-3}{%
+\subsubsection*{Path parameters}\label{path-parameters-3}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+guestId (required)
+
+{Path Parameter} --- format: uuid
+
+\hypertarget{return-type-5}{%
+\subsubsection*{Return type}\label{return-type-5}}
+
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{example-data-5}{%
+\subsubsection*{Example data}\label{example-data-5}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-5}{%
+\subsubsection*{Responses}\label{responses-5}}
+
+\hypertarget{section-17}{%
+\paragraph{200}\label{section-17}}
+
+successful operation
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{section-18}{%
+\paragraph{401}\label{section-18}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-19}{%
+\paragraph{403}\label{section-19}}
+
+Do not have permission to delete member \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{getParticipants}{}{}
+
+
+
+\begin{verbatim}
+get /api/projects/{projectId}/memberships
+\end{verbatim}
+
+Get list of members for project ({getParticipants})
+
+Not paginated
+
+\hypertarget{path-parameters-4}{%
+\subsubsection*{Path parameters}\label{path-parameters-4}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{return-type-6}{%
+\subsubsection*{Return type}\label{return-type-6}}
+
+array{[}\protect\hyperlink{Member}{Member}{]}
+
+\hypertarget{example-data-6}{%
+\subsubsection*{Example data}\label{example-data-6}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+[ {
+  "accessRight" : { },
+  "user" : {
+    "name" : "name",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "login" : "login",
+    "email" : "email"
+  }
+}, {
+  "accessRight" : { },
+  "user" : {
+    "name" : "name",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "login" : "login",
+    "email" : "email"
+  }
+} ]
+\end{verbatim}
+
+\hypertarget{responses-6}{%
+\subsubsection*{Responses}\label{responses-6}}
+
+\hypertarget{section-20}{%
+\paragraph{200}\label{section-20}}
+
+successful operation
+
+\hypertarget{section-21}{%
+\paragraph{401}\label{section-21}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-22}{%
+\paragraph{403}\label{section-22}}
+
+Dont have permission to specified project \protect\hyperlink{}{}
+
+\hypertarget{section-23}{%
+\paragraph{500}\label{section-23}}
+
+Couldn't get list of members \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}

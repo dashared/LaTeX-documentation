@@ -1,0 +1,97 @@
+	\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily, label={lst:tests}, caption={Результаты тестирования в консоли},captionpos=b]
+
+[info] EmailValidatorTest:
+[info] - EmailString.wrongEmail
+[info] - EmailString.validEmail
+[info] AuthorizationSpec:
+[info] Authorize person
+[info] - should signUp: OK
+[info] - should signUp: userAlreadyExists
+[info] - should signUp: invalid email format
+[info] - should signIn: wrong credentials
+[info] JobTestCase:
+[info] CrawlerSpec:
+[info] - GET crawlers: OK
+[info] - GET crawlers: no access
+[info] - PUT crawlers
+[info] - PUT crawlers: ReadOnly access
+[info] - PUT crawlers: spider not found
+[info] ProjectSpec:
+[info] ProjectsController
+[info] - should GET list of projects for user
+[info] - should GET list of projects: with pagination
+[info] - should CREATE project
+[info] - should PUT project's metadata
+[info] - should PUT project's metadata: Readonly access - no permission
+[info] - should PUT project's metadata: ReadAndWrite access
+[info] - should DELETE project: Owner access
+[info] - should DELETE project: NOT Owner access
+[info] - should DELETE project: doesn't exist
+[info] - should PUT deploy
+[info] - should PUT deploy: wrong format file
+[info] - should PUT deploy: no access
+[info] MembershipSpec:
+[info] MembershipController
+[info] - should GET members: ReadAndWrite access
+[info] - should GET members: no access to project
+[info] - should DELETE member: Owner access
+[info] - should DELETE member: ReadAndWrite access
+[info] - should PUT member: Owner access
+[info] - should PUT member: ReadAndWrite access
+[info] ApplicationSpec:
+[info] ApplicationController Logout GET
+[info] - should should be unauthorized error
+[info] - should redicrect if user was found
+[info] PeriodicJobSpec:
+[info] PeriodicJobController
+[info] - should GET periodic jobs: basic
+[info] - should GET periodic jobs: pagination
+[info] - should GET periodic jobs: no access to project
+[info] - should POST periodic job: basic
+[info] - should POST periodic job: invalid cron-expression
+[info] - should POST periodic job: crawler doesn't correspond to project
+[info] - should POST periodic job: ReadOnly access
+[info] - should PUT periodic job: basic
+[info] - should PUT periodic job: crawler does not correspond to project
+[info] - should PUT periodic job: wrong cron-expression
+[info] - should DELETE periodic job: enabled status
+[info] - should DELETE periodic job: disabled status
+[info] - should DELETE periodic job: readonly access
+[info] - should DELETE periodic job: no existing job with id
+[info] - should PUT cancel periodic job: basic
+[info] - should PUT cancel periodic job: already disabled
+[info] - should PUT cancel periodic job: readonly access
+[info] - should PUT cancel periodic job: no existing job with id
+[info] - should PUT enable periodic job: basic
+[info] - should PUT enable periodic job: already enabled
+[info] - should PUT enable periodic job: readonly access
+[info] - should PUT enable periodic job: no existing job found with id
+[info] SettingsMergerTest:
+[info] - SettingsMerger.basic
+[info] - SettingsMerger.wrongInput
+[info] - SettingsMerger.testPriority
+[info] JobExecutionSpec:
+[info] JobsController
+[info] - should GET jobs
+[info] - should GET jobs: pagination
+[info] - should POST schedule: ordinary
+[info] - should POST schedule: ReadOnly access
+[info] - should POST schedule: ProjectId doesn't match CrawlerId
+[info] - should PUT cancel
+[info] - should PUT cancel: jobId doesn't match to projectId
+[info] - should PUT cancel: ReadOnly access
+[info] - should DELETE job
+[info] - should DELETE job: still running
+[info] - should DELETE job: ReadOnly access
+[info] - should DELETE job: jobId doesn't match projectId
+[info] ScalaTest
+[info] Run completed in 1 minute, 33 seconds.
+[info] Total number of tests run: 68
+[info] Suites: completed 10, aborted 0
+[info] Tests: succeeded 68, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] Passed: Total 68, Failed 0, Errors 0, Passed 68
+[success] Total time: 107 s, completed 11-Apr-2020 16:44:40
+
+
+	\end{lstlisting}

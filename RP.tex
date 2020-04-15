@@ -1,0 +1,83 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{styledoc19}
+
+
+\begin{document} % конец преамбулы, начало документа
+    \year{2020}
+    \docNumber{RU.17701729.04.13-01 34 01-1}
+	\docFormat{Руководство программиста}
+	\student{БПИ 174}{Д. Ю. Редникина}
+	\supervisor{Профессор департамента \vfill программной инженерии  факультета компьютерных наук, к.т.н}
+	{Е. М. Гринкруг}
+	\project{СИСТЕМА УПРАВЛЕНИЯ ЗАДАНИЯМИ ПО АВТОМАТИЧЕСКОМУ СБОРУ ДАННЫХ ИЗ СЕТИ ИНТЕРНЕТ}
+	
+	\firstPage
+						\newpage
+	\secondPage
+						\newpage
+	\thirdPage
+						\newpage
+	\section{Назначение программы}
+	\subsection{Функциональное назначение}
+	\input{tex/functionalPurpose}
+	\subsection{Эксплуатационное назначение}
+	\input{tex/operationalPurpose}
+	\subsection{Состав выполняемых функций}
+	Следующие требования зафиксированы в документе <<Cистема управления заданиями по автоматическому сбору данных из сети Интернет. Техническое задание>> к составу выполняемых функций:
+	\input{tex/req}
+	\newpage
+	
+	\section{Обращение к сервису}
+    
+    К данному сервису обращение осуществляется посредством REST запросов \cite{rest}. Далее в этом разделе приведены все возможные запросы к сервису с примерами аргументов к нему.
+    
+	\subsection{API - список}
+	\input{tex/swagger/api}
+	
+	\subsubsection{Authorization}
+	\input{tex/swagger/login}
+	
+	\subsubsection{Registration}
+	\input{tex/swagger/registration}
+	
+	\subsubsection{Project}
+	\input{tex/swagger/project}
+	
+	\subsubsection{Membership}
+	\input{tex/swagger/membership}
+	
+	\subsubsection{Crawlers}
+	\input{tex/swagger/crawler}
+	
+	\subsubsection{Onetime jobs}
+	\input{tex/swagger/onetimejobs}
+	
+	\subsubsection{Periodic Jobs}
+	\input{tex/swagger/periodicjobs}
+	
+	
+	
+	\newpage
+	
+	\addition{Используемые понятия и определения}
+	\input{tex/terms}
+	
+	\newpage
+	\newpage
+	%\section{Источники, использованные при разработке}
+	\renewcommand{\refname}{Список источников}
+	\addcontentsline{toc}{section}{\refname}
+	\begin{thebibliography}{7}
+		\bibitem{scrapyd} Github scrapyd/scrapyd [Электронный ресурс] URL: \url{https://github.com/scrapy/scrapyd} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{postgresql} Postgresql [Электронный ресурс] URL:\url{https://www.postgresql.org} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{play} Play-framework [Электронный ресурс] URL:\url{https://www.playframework.com} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+		\bibitem{slick} Slick [Электронный ресурс] URL: \url{https://scala-slick.org}(Дата обращения: 16.04.2020, режим доступа: свободный)
+		
+	\end{thebibliography}
+						\newpage
+	\listRegistration
+	\addcontentsline{toc}{section}{Лист регистрации изменений}
+\end{document}

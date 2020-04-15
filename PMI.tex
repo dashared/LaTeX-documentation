@@ -4,11 +4,13 @@
 
 \begin{document} % конец преамбулы, начало документа
 	
-	\docNumber{RU.17701729.04.03-01 51 01-1}
+	\year{2020}
+	\docNumber{RU.17701729.04.13-01 51 01-1}
 	\docFormat{Программа и методика испытаний}
 	\student{БПИ 174}{Д. Ю. Редникина}
-	\supervisor{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
-	{М. К. Горденко}
+	\supervisor{Профессор департамента \vfill программной инженерии  факультета компьютерных наук, к.т.н}
+	{Е. М. Гринкруг}
+	\project{СИСТЕМА УПРАВЛЕНИЯ ЗАДАНИЯМИ ПО АВТОМАТИЧЕСКОМУ СБОРУ ДАННЫХ ИЗ СЕТИ ИНТЕРНЕТ}
 	
 	\firstPage
 	\newpage
@@ -19,33 +21,361 @@
 	
 	\section{Объекты испытаний}
 	\subsection{Наименование программы}
+	\input{tex/rusTitle} (\input{tex/engTitle})
 	\subsection{Область применения программы}
-	
+	\subsubsection{Функциональное назначение}
+	\input{tex/functionalPurpose}
+	\subsubsection{Эксплуатационное назначение}
+	\input{tex/operationalPurpose}
+	\subsubsection{Область применения}
+	\input{tex/projectScope}
 					\newpage
 	\section{Цель испытаний}
-	
+	Проверка на соответсвие требованиям, указанным в документе <<Cистема управления заданиями по автоматическому сбору данных из сети Интернет. Техническое задание>>.
 					\newpage 
 	\section{Требования к программе}
 	\subsection{Требования к функциональным характеристикам}
-	\subsection{Требования к интерфейсу}
-	\subsection{Требования к надежности}
+	Программа выполняется в рамках темы курсовой работы в соответствии с учебным планом подготовки бакалавров по направлению 09.03.04 «Программная инженерия» Национального исследовательского университета «Высшая школа экономики», факультет компьютерных наук.
 	
+	Программа должна удовлетворять следующим требованиям:
+	
+	\input{tex/req}
+	
+	\subsection{Требования к интерфейсу}
+	Доступ к программе должен быть предоставлен посредством интерфейса консольной программы.
+	\subsection{Требования к надежности}
+	\begin{itemize}
+	    \item Программа должна осуществлять проверку корректности посылаемого текста в кодировке utf-8 и возвращать ошибку в случае наличия невалидных символов.
+        \item Программа должна работать непрерывно (не должно быть ситуации, в которой сервер возвращает status code 500).
+        \item В базу данных не должны заноситься некорректные данные.
+	\end{itemize}
 						\newpage
 	\section{Требования к программной документации}
 	\subsection{Состав программной документации}
-	
+	\input{tex/documents}
 						\newpage
 	\section{Средства и порядок испытаний}
 	\subsection{Технические средства, используемые во время испытаний}
+	\input{tex/tech}
 	\subsection{Программные средства, используемые во время испытаний}
+	\input{tex/prog}
 	\subsection{Порядок проведения испытаний}
+	В процессе разработки программы были написаны unit-тесты, а также автотесты, тестирующие API сервера.
 	
+	Автотесты исполняются на отдельной тестовой базе данных, которая перед началом каждого теста заполняется тестовыми данными. 
+	
+	Для запуска автотестов пользователю надо ввести команду \texttt{sbt test} в директории проекта \texttt{cw\_backend\_scala}, перед этим в отдельной директории запустить сервер scrapyd~\cite{scrapyd} командой \texttt{scapyd}.
 						\newpage
 	\section{Методы испытаний}
 	\subsection{Проверка требований к функциональным характеристикам}
-	\subsection{Проверка требований к надежности}
-	\subsection{Проверка требований к программной документации}
+	Для тестирования API запросов были написаны автотесты с помощью библиотеки scralatestplus~\cite{scalatestplus}. Данная библиотека позволяет подменять зависимости основной программы и использовать \texttt{FakeRequest} как упрощенный способ выполнять запросы к контроллерам приложения. 
 	
+	Также для тестирования приложения используется библиотека play-silhouette-testkit~\cite{playsilhouettetestkit}. Эта библиотека позволяет авторизовываться в приложении без использования cookies.
+	
+	Для тестирования API запросов были написаны следующие тест-кейсы:
+	
+	\subsubsection{Регистрация}
+	\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			1 & Регистрация пользователя & Пользователь неавторизован & Пользователь отправляет запрос POST /api/signup с персональными данными в формате app.forms.SignUpForm & Status code 200. Cookies в хэдере \\ \hline
+			2 & Регистрация пользователя с уже зарегистрированным email или логином & Пользователь неавторизован. В БД системы уже существует пользователь с вводимым логином и/или email. & Пользователь отправляет запрос POST /api/signup с персональными данными, которые совпадают с login и/или email другого пользователя в базе данных системы. & Status code 409. Сообщение об ошибке <<User Already Exists Message>> \\ \hline
+		\end{tabular}
+	\caption{Тест кейсы: регистрация}
+	\end{table}
+	
+	\clearpage
+	\subsubsection{Авторизация}
+	\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			1 & Авторизация пользователя & Пользователь неавторизован в системе. Пользователь был ранее зарегистрирован в системе & Пользователь отправляет запрос на POST /api/signin с персональными данными в формате app.forms.SignInForm & Status code 200. Cookies в хэдере \\ \hline
+			2 & Авторизация пользователя с неправильным паролем  & Пользователь неавторизован в системе. Пользователь был ранее зарегистрирован в системе. & Пользователь отправляет запрос на POST /api/signin с персональными данными (email, пароль) так, что пароль не совпадает с уже введенным при регистрации. & Status code 403. \\
+			\hline
+			3 & Авторизация пользователя с несуществующими в системе credentials & Пользователь неавторизован в системе. Пользователь был ранее зарегистрирован в системе. & Пользователь отправляет запрос на POST /api/signin с персональными данными (email, пароль), которые не совпадают ни с одной парой credentials, хранящихся в БД. & Status code 409. \\ \hline
+		\end{tabular}
+	\caption{Тест кейсы: авторизация}
+	\end{table}
+
+    \clearpage
+	\subsubsection{Проекты (\ref{terms:project})}
+	
+	\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			1 & Запрос на список проектов без пагинации & Пользователь авторизован в системе. У пользователя имеются 20 проектов. & Пользователь отправляет запрос GET /api/projects/10 для получения первых 10-и из списка проектов, к которому у него есть доступ. & Status code 200. Json со списком проектов, к которым у пользователя есть как минимум readonly access, в хронологическом порядке их создания. \\ \hline
+			2 & Запрос на список проектов с пагинацией & Пользователь авторизован в системе. У пользователя имеются 20 проектов. & Пользователь отправляет запрос GET с query argument limit=10 и id для получения 10-и проектов из списка, которые в хронологическом порядке (по дате создания) располагаются раньше чем указанный проект id. & Status code 200. Json со списком проектов, к которым у пользователя есть как минимум readonly access, id которых >= idProject \\ 	\hline
+\end{tabular}
+	\caption{Тест кейсы: просмотр списка проектов}
+	\end{table}
+	
+\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			3 & Создание проекта & Пользователь авторизован. & Пользователь отправляет запрос POST /api/projects с телом запроса в виде app.forms.ProjectCreForm &  Status code 200 и json с id созданного проекта. \\ \hline
+			
+\end{tabular}
+	\caption{Тест кейсы: создание проекта}
+	\end{table}
+	
+\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			4 & Редактирова- ние проекта & Пользователь авторизован. У пользователя есть хотя бы 1 созданный проект. Пользователь имеет owner доступ к проекту. & Пользователь отправляет запрос PUT /api/projects/{id} с указанием id проекта для редактирования, с телом запроса в виде app.forms.ProjectForm. & Status code 200 и json с id созданного проекта. В таблице projects должна обновиться запись с id созданного проекта, где name, description, spiderSettings совпадают с переданными пользователем. \\ \hline
+			5 & Редактирова- ние проекта: доступ пользователя readonly & Пользователь авторизован. У пользователя доступ к проекту id - readonly & Пользователь с отправляет PUT /api/projects/{id} с корректным телом запроса (см. п. 4) & Status code 403 \\ \hline
+			6 & Редактирова- ние проекта: доступ пользователя writeandread & Пользователь авторизован. У пользователя доступ к проекту id - writeandread & Пользователь с отправляет PUT /api/projects/{id} с корректным телом запроса (см. п. 4) & Status code 200. Информация о проекте успешно обновлена \\ \hline 
+\end{tabular}
+	\caption{Тест кейсы: проекты - редактирование метаданных}
+	\end{table}
+\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			7 & Удаление проекта владельцем & Пользователь авторизован. У пользователя есть доступ к проекту id с правами owner. (таблица membership) & Пользователь отправляет  DELETE   /api/projects/:projectId
+запрос. & Status code 200, в таблице membership нет никаких записей о проекте с id, в таблице project тоже. \\ \hline
+            8 & Удаление проекта: неверный id & Пользователь авторизован. Id проекта нет в таблице membership.  & Пользователь отправляет  DELETE   /api/projects/:projectId
+запрос. & Status code 403 \\ \hline
+            9 & Удаление проекта: права на проект НЕ owner & Пользователь авторизован. У пользователя права на проект НЕ owner. & Пользователь отправляет  DELETE   /api/projects/:projectId
+запрос. & Status code 403 \\ \hline
+\end{tabular}
+	\caption{Тест кейсы: проект DELETE}
+	\end{table}
+\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+            10 & Deploy архива проекта & Пользователь авторизован. У пользователя есть права на редактирование проекта (либо owner, либо writeandread) & Пользователь делает запрос по адресу PUT      /api/projects/:projectId/ deploy с телом eggFile: <файл с расширением egg> & Status code 200. В таблице проектов у проекта с id появился bytes в колонке eggFile \\ \hline
+            11 & Deploy архива проекта: файл неверного формата & Пользователь авторизован. У пользователя есть права на редактирование проекта (либо owner, либо writeandread) & Пользователь делает запрос по адресу PUT      /api/projects/:projectId/ deploy с телом eggFile: файл не того формата (не egg). & Status code 422 \\ \hline
+            12 & Deploy архива проекта: права доступа не позволяют менять проект & Пользователь авторизован. У пользователя есть права на редактирование проекта readonly & Пользователь делает запрос по адресу PUT      /api/projects/:projectId/ deploy с телом eggFile: <файл с расширением egg> & Status code 403 \\ \hline
+			
+		\end{tabular}
+	\caption{Тест кейсы: проект PUT - deploy}
+	\end{table}
+	\clearpage
+	
+	\subsubsection{Краулеры (\ref{terms:spider})}
+	
+	\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+            1 &  Отображения списка краулеров  & Пользователь авторизован и имеет доступ к проекту id минимум readonly. & Пользователь отправляет запрос GET      /api/projects/:projectId /crawlers с id проекта.
+ & Status code 200, список пауков в проекте из БД \\ \hline
+            2 & Отображение списка краулеров: нет доступа к проекту & Пользователь авторизован и не имеет доступ к проекту id & Пользователь отправляет запрос GET      /api/projects/:projectId /crawlers с id проекта. & Status code 403 \\ \hline
+			
+		\end{tabular}
+	\caption{Тест кейсы: краулеры GET}
+	\end{table}
+	
+	
+	\begin{table}[htb]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			1 & Изменение настроек паука & Пользователь авторизован. У пользователя есть write или owner доступ к проекту. & Пользователь отправляет запрос PUT /api/project/:projectId /crawlers. & Status code 200 \\ \hline
+			2 & Изменение настроек паука: нет прав доступа к редактированию & Пользователь авторизован. У пользователя есть readonly к проекту. & Пользователь отправляет запрос PUT /api/project/:projectId /crawlers. & Status code 403 \\ \hline
+			3 & Изменение настроек паука: не совпадает id проекта с id паука & Пользователь авторизован. & Пользователь отправляет запрос PUT /api/project/:projectId /crawlers. & Status code 403 \\ \hline
+	
+	\end{tabular}
+	\caption{Тест кейсы: краулеры PUT}
+	\end{table}
+	
+	
+	\subsubsection{Запуски (\ref{terms:job})}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+            1 &  Список джобов  & Пользователь авторизован. У пользователя есть список из 20 запущенных job-ов в статусе finished, запущенных с пауками из разных проектов. & Пользователь отправляет запрос GET      /api/projects/jobs/:limit, где указывает limit=10 и тип джобы finished. После этого отправляет тот же запрос со статусом running
+ & Status code 200. Возвращается массив джобов со статусами finished и длиной 10. Отсортирован по id.  \\ \hline
+            2 & Список джобов: пагинация & Пользователь авторизован. У пользователя есть список из 20 запущенных job-ов в статусе finished, запущенных с пауками из разных проектов. & Пользователь отправляет запрос GET      /api/projects/jobs/:limit, где указывает limit=10, excludiveFrom=3 и тип джобы finished
+ & Status code 200. Возвращается массив джобов со статусами finished и длиной 2. Отсортирован по id. \\ \hline
+			
+		\end{tabular}
+	\caption{Тест кейсы: список запусков GET}
+	\end{table} 
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+	3 & Создание запуска & Пользователь авторизован. Имеет ReadAndWrite или Owner доступ к проекту projectId.	& Клиент отправляет запрос POST     /api/projects/:projectId/ jobs & Status 200. Результат - id созданной задачи. При запросе GET /api/jobs status = Running задача c id возвращается. \\ \hline
+	
+	4 & Создание запуска: ReadOnly доступ & Пользователь авторизован. Имеет ReadOnly доступ к проекту projectId. & Клиент отправляет запрос POST     /api/projects/:projectId/ jobs & Status 403. Сообщение об ошибке <<NoPermission>>. \\ \hline
+	
+	5 & Создание запуска: id краулера не соответсвует id проекта & Пользователь авторизован. Имеет ReadAndWrite доступ к проекту projectId. Id паука не соответсвует id проекта. & Клиент отправляет запрос POST     /api/projects/:projectId/ jobs & Status 403. Сообщение об ошибке <<Crawler Doesnt Correspond To Project>> \\ \hline
+	
+	\end{tabular}
+	\caption{Тест кейсы: создание запуска POST}
+	\end{table} 
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+	6 & Отмена джобы & Пользователь запустил джобу. Работа находится в статусе pending или running. & Клиент отправляет запрос PUT      /api/projects/:projectId/ jobs/:jobScrapydId/:jobId, где jobScrapydId, jobId - id джобы в статусе running. & Status 200. Возвращается объект JobExecution с обновленными данными: status = finished. \\ \hline
+	
+	7 & Отмена джобы: id проекта не совпадает с id джобы & Пользователь авторизован в приложении. В проекте с id нет запущенных джоб. & Клиент отправляет запрос PUT      /api/projects/:projectId/ jobs/:jobId. & Status 403. Сообщение об ошибке <<No Project Found>>. \\ \hline
+	
+	8 &  Отмена джобы: у пользователя readonly права & Пользователь авторизован в приложении. Имеет readonly access к проекту projectId. & Клиент отправляет запрос PUT      /api/projects/:projectId/ jobs/:jobId. & Status 403. Сообщение об ошибке <<No Permission>>. \\ \hline
+	
+	\end{tabular}
+	\caption{Тест кейсы: отмена запуска PUT}
+	\end{table} 
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+	9 & Удаление запуска & Пользователь авторизован. Имеет ReadAndWrite доступ к проекту projectId. Джоба находится в статусе finished. & Клиент отправляет запрос DELETE   /api/projects/ :projectId/ jobs/:jobId & Status 200. Результат - id удаленной джобы.  \\ \hline 
+	
+	10 & Удаление запуска: джоба в статусе running/ pending & Пользователь авторизован. Имеет ReadAndWrite доступ к проекту projectId. Джоба находится в статусе running/pending. & Клиент отправляет запрос DELETE   /api/projects/ :projectId/ jobs/:jobId & Status 422. Сообщение об ошибке <<Couldn't delete job execution>>. \\ \hline
+	
+	11 & Удаление запуска: ReadOnly доступ к проекту & Пользователь авторизован. Имеет ReadOnly доступ к проекту projectId. Джоба находится в статусе finished. & Клиент отправляет запрос DELETE   /api/projects/ :projectId/ jobs/:jobId  & Status 403. Сообщение об ошибке <<No access>>. \\ \hline
+	
+	12 & Удаление запуска: id работы не соответсвует id проекта & Пользователь авторизован. Имеет ReadAndWrite доступ к проекту projectId. Id джобы не соответсвует id проекта. & Клиент отправляет запрос DELETE   /api/projects/ :projectId/ jobs/:jobId & Status 403. Сообщение об ошибке <<Job Execution Doesnt Correspond To Project>> \\ \hline
+	
+	\end{tabular}
+	\caption{Тест кейсы: удаление запуска DELETE}
+	\end{table} 
+	
+	\clearpage
+	\subsubsection{Периодические задачи (\ref{terms:pjob})}
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.25\linewidth}|p{0.25\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			1 & Список периодических задач & Пользователь авторизован и имеет Owner доступ к проекту с номером projectId.  &  Пользователь отправляет запрос GET api/projects/:projectId/  periodicJobs/:limit, где limit = 5 & Статус-код 200. Json с массивом из 5 периодических задач проекта в порядке убывания id. \\ \hline
+			2 & Список периодических задач c пагинацией & Пользователь авторизован и имеет Owner доступ к проекту с номером pId. Всего периодических задач в проекте 10 штук.  & Пользователь отправляет запрос GET api/projects/:projectId/  periodicJobs/:limit/ :exclusiveFrom, где limit = 5, exclusiveFrom = 2. & Статус-код 200. Json с массивом из 2 периодических задач проекта в порядке убывания id (2, 1). \\ \hline
+			3 & Список периодических задач: доступа нет & Пользователь авторизован и не имеет доступа к проекту с номером pId. & Пользователь отправляет запрос GET api/projects/:projectId/ periodicJobs/ :limit с любым параметром limit. & Статус-код 403. Сообщение “NoPermission” \\ \hline
+			\end{tabular}
+	\caption{Тест кейсы: список периодических задач GET}
+	\end{table} 
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.15\linewidth}|p{0.2\linewidth}|p{0.3\linewidth}|p{0.2\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			1 & Создание периодического запуска & Пользователь авторизован и имеет доступ ReadAndWrite к проекту projectId. & Пользователь отправляет запрос POST     /api/projects/:projectId/ periodicJobs с телом запроса PeriodicJobCreateForm. & Статус-код 200. Возвращается JSON с id созданной периодической задачи. \\ \hline
+			
+			2 & Создание периодического запуска: некорректный cron-expression & Пользователь авторизован и имеет доступ ReadAndWrite к проекту projectId.  & Пользователь отправляет запрос POST     /api/projects/:projectId/ periodicJobs с телом запроса PeriodicJobCreateForm, но cron-expression указывает в теле запроса некорректный (прим. <<text>>). & Статус-код 420. Возвращается сообщение с ошибкой <<invalid cron expression>>. \\ \hline
+			
+			3 & Создание периодического запуска: права ReadOnly & Пользователь авторизован и имеет доступ ReadOnly к проекту projectId.  &  Пользователь отправляет запрос POST     /api/projects/:projectId/ periodicJobs с телом запроса PeriodicJobCreateForm. & Статус-код 403. Сообщение об ошибке <<NoPermission>> \\ \hline
+			
+			4 & Создание периодического запуска: паук не соответсвует проекту & Пользователь авторизован и имеет доступ ReadAndWrite к проекту projectId. Id паука в теле запроса не соответствует projectId. & Пользователь отправляет запрос POST     /api/projects/:projectId /periodicJobs с телом запроса PeriodicJobCreateForm. & Статус-код 403. Сообщение об ошибке <<No Corresponding Crawler>> \\ \hline
+	\end{tabular}
+	\caption{Тест кейсы: создание периодических запусков POST}
+	\end{table} 	
+	
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.2\linewidth}|p{0.25\linewidth}|p{0.28\linewidth}|p{0.15\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			
+			1 & Редактирование периодического запуска & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId, в котором есть периодическая задача periodicJobId, а также паук crawlerId. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId с телом запроса PeriodicJobChangeForm. & Статус-код 200. \\ \hline
+			
+			2 & Редактирование периодического запуска: некорректный cron-expression & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId, в котором есть периодическая задача periodicJobId, а также паук crawlerId. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId с телом запроса PeriodicJobChangeForm, но cron-expression указывает в теле запроса некорректный (прим. “text”). & Статус-код 422. Сообщение об ошибке <<invalid cron expression>> \\ \hline
+			
+			3 & Редактирование периодического запуска: в проекте нет паука & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId, в котором есть периодическая задача periodicJobId. В проекте нет паука с crawlerId. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId с телом запроса PeriodicJobChangeForm с некорректным crawlerId в теле. & Статус-код 403 и сообщение об ошибке. \\ \hline
+			
+			4 & Редактирование периодического запуска: пользователь имеет ReadOnly доступ к проекту & Пользователь авторизован и имеет ReadOnly доступ к проекту projectId. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId с телом запроса PeriodicJobChangeForm. & Статус-код 403 и сообщение об ошибке. \\ \hline
+			
+			5 & Редактирование периодического запуска: в проекте нет редактируемой периодической задачи & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId. В проекте нет редактируемой задачи periodicJobId. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId с телом запроса PeriodicJobChangeForm. & Статус-код 403 и сообщение об ошибке. \\ \hline
+	\end{tabular}
+	\caption{Тест кейсы: редактирование информации о периодическом запуске PUT}
+	\end{table} 
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.17\linewidth}|p{0.25\linewidth}|p{0.28\linewidth}|p{0.15\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			
+			1 & Отмена запусков периодической задачи & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId, у которого есть периодическая задача periodicJobId в статусе Enabled. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId/disable. & Статус-код 200. \\ \hline
+	
+	        2 & Отмена запусков периодической задачи: задача уже отменена & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId, у которого есть периодическая задача periodicJobId в статусе Disabled. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId/disable. &  Статус-код 422.  \\ \hline
+	        
+	\end{tabular}
+	\caption{Тест кейсы: отмена запуска периодических задач PUT}
+	\end{table} 
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.17\linewidth}|p{0.25\linewidth}|p{0.28\linewidth}|p{0.15\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+			
+			1 & Возобновление запусков периодической задачи & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId, у которого есть периодическая задача periodicJobId в статусе Enabled. & Пользователь отправляет запрос PUT      /api/projects/:projectId/ periodicJobs/ :periodicJobId/enable. & Статус-код 200. \\ \hline
+	
+	        2 & Возобновление запусков периодической задачи: задача уже в статусе enabled & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId, у которого есть периодическая задача periodicJobId в статусе Disabled. & Пользователь отправляет запрос PUT      /api/projects/ :projectId/ periodicJobs/ :periodicJobId/enable. &  Статус-код 422.  \\ \hline
+	        
+	\end{tabular}
+	\caption{Тест кейсы: возобновление запусков периодических задач по расписанию PUT}
+	\end{table} 
+	
+	
+	\begin{table}[hbt]
+		\centering
+		\begin{tabular}{|p{0.02\linewidth}|p{0.17\linewidth}|p{0.25\linewidth}|p{0.28\linewidth}|p{0.15\linewidth}|} 
+			\hline
+			\textbf{№} & \textbf{Название} & \textbf{Предусловие} & \textbf{Описание} & \textbf{Ожидаемый результат} \\ \hline
+	
+	        1 & Удаление периодической задачи & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId. У проекта есть периодическая задача periodicJobId в статусе enabled. & Пользователь отправляет запрос DELETE   /api/projects/:projectId/ periodicJobs/ :periodicJobId. & Статус код 200. \\ \hline
+	        
+	        2 & Удаление периодической задачи: задача в статусе disabled  & Пользователь авторизован и имеет ReadAndWrite доступ к проекту projectId. У проекта есть периодическая задача periodicJobId в статусе disabled. & Пользователь отправляет запрос DELETE   /api/projects/:projectId/ periodicJobs/ :periodicJobId. & Статус код 200. Возвращается id удаленной задачи. \\ \hline
+	        
+	        3 & Удаление периодической задачи: доступ Readonly & Пользователь авторизован и имеет ReadOnly доступ к проекту projectId. & Пользователь отправляет запрос DELETE   /api/projects/:projectId/ periodicJobs/ :periodicJobId. & Статус код 403. Сообщение об ошибке <<NoPermission>> \\ \hline
+	\end{tabular}
+	\caption{Тест кейсы: удаление периодических зада DELETE}
+	\end{table} 
+	
+	
+	
+	\clearpage
+	\subsubsection{Результаты тестирования}
+	
+    \input{tex/test_log}
+	
+	\subsection{Проверка требований к программной документации}
+	Вся документация, представленная в требованиях, готова.
+	
+	\addition{Используемые понятия и определения}
+	\input{tex/terms}
+	                            \newpage
+	%\section{Источники, использованные при разработке}
+	\renewcommand{\refname}{Список источников}
+	\addcontentsline{toc}{section}{\refname}
+	\begin{thebibliography}{7}
+		\bibitem{scrapyd} Github scrapyd/scrapyd [Электронный ресурс] URL: \url{https://github.com/scrapy/scrapyd} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{scalatestplus} ScalaTest+Play [Электронный ресурс] URL:\url{http://www.scalatest.org/plus}(Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{playsilhouettetestkit} Testing - silhouette [Электронный ресурс] URL:\url{https://www.silhouette.rocks/docs/testing} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{postgresql} Postgresql [Электронный ресурс] URL:\url{https://www.postgresql.org} (Дата обращения: 16.04.2020, режим доступа: свободный)
+	\end{thebibliography}
 						\newpage
 	\listRegistration
 	\addcontentsline{toc}{section}{Лист регистрации изменений}

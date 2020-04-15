@@ -1,0 +1,300 @@
+\protect\hypertarget{cancel}{}{}
+
+
+
+\begin{verbatim}
+put /api/projects/{projectId}/jobs/{jobScrapydId}/{jobId}
+\end{verbatim}
+
+Cancel running and pending tasks ({cancel})
+
+It moves both of the statuses to finished
+
+\hypertarget{path-parameters-5}{%
+\subsubsection*{Path parameters}\label{path-parameters-5}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+jobScrapydId (required)
+
+{Path Parameter} --- format: uuid
+
+jobId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{return-type-7}{%
+\subsubsection*{Return type}\label{return-type-7}}
+
+UUID
+
+\hypertarget{example-data-7}{%
+\subsubsection*{Example data}\label{example-data-7}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+"046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+\end{verbatim}
+
+\hypertarget{responses-7}{%
+\subsubsection*{Responses}\label{responses-7}}
+
+\hypertarget{section-24}{%
+\paragraph{200}\label{section-24}}
+
+successful operation \protect\hyperlink{UUID}{UUID}
+
+\hypertarget{section-25}{%
+\paragraph{401}\label{section-25}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-26}{%
+\paragraph{403}\label{section-26}}
+
+NoAccess \protect\hyperlink{}{}
+
+\hypertarget{section-27}{%
+\paragraph{422}\label{section-27}}
+
+WrongStatus \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{deleteJob}{}{}
+
+
+
+\begin{verbatim}
+delete /api/projects/{projectId}/jobs/{jobScrapydId}/{jobId}
+\end{verbatim}
+
+Deletes finished job execution instance ({deleteJob})
+
+It removes all the information from DB
+
+\hypertarget{path-parameters-6}{%
+\subsubsection*{Path parameters}\label{path-parameters-6}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+jobScrapydId (required)
+
+{Path Parameter} --- format: uuid
+
+jobId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{return-type-8}{%
+\subsubsection*{Return type}\label{return-type-8}}
+
+UUID
+
+\hypertarget{example-data-8}{%
+\subsubsection*{Example data}\label{example-data-8}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+"046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+\end{verbatim}
+
+\hypertarget{responses-8}{%
+\subsubsection*{Responses}\label{responses-8}}
+
+\hypertarget{section-28}{%
+\paragraph{200}\label{section-28}}
+
+successful operation \protect\hyperlink{UUID}{UUID}
+
+\hypertarget{section-29}{%
+\paragraph{401}\label{section-29}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-30}{%
+\paragraph{403}\label{section-30}}
+
+User doesn't have at least ReadAndWrite access \protect\hyperlink{}{}
+
+\hypertarget{section-31}{%
+\paragraph{422}\label{section-31}}
+
+Couldn't delete job execution \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{getJobsExecutions}{}{}
+
+
+
+\begin{verbatim}
+get /api/projects/jobs/{limit}/{status}
+\end{verbatim}
+
+Get list of job executions with pagination ({getJobsExecutions})
+
+\begin{verbatim}
+    With pagination. Get all of the current jobs for all user's project.
+\end{verbatim}
+
+\hypertarget{path-parameters-7}{%
+\subsubsection*{Path parameters}\label{path-parameters-7}}
+
+limit (required)
+
+{Path Parameter} --- Limit for request format: int32
+
+status (required)
+
+{Path Parameter} --- Status of job
+
+\hypertarget{query-parameters-1}{%
+\subsubsection*{Query parameters}\label{query-parameters-1}}
+
+fromId (optional)
+
+{Query Parameter} --- ID excludeFrom format: int64
+
+\hypertarget{return-type-9}{%
+\subsubsection*{Return type}\label{return-type-9}}
+
+array{[}\protect\hyperlink{Job}{Job}{]}
+
+\hypertarget{example-data-9}{%
+\subsubsection*{Example data}\label{example-data-9}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+[ {
+  "jobInstanceId" : 6,
+  "scrapydId" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "project" : {
+    "name" : "name",
+    "id" : 2
+  },
+  "startTime" : 1,
+  "id" : 0,
+  "endTime" : 5,
+  "spider" : {
+    "name" : "name",
+    "id" : 5
+  },
+  "status" : { }
+}, {
+  "jobInstanceId" : 6,
+  "scrapydId" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "project" : {
+    "name" : "name",
+    "id" : 2
+  },
+  "startTime" : 1,
+  "id" : 0,
+  "endTime" : 5,
+  "spider" : {
+    "name" : "name",
+    "id" : 5
+  },
+  "status" : { }
+} ]
+\end{verbatim}
+
+\hypertarget{responses-9}{%
+\subsubsection*{Responses}\label{responses-9}}
+
+\hypertarget{section-32}{%
+\paragraph{200}\label{section-32}}
+
+successful operation
+
+\hypertarget{section-33}{%
+\paragraph{401}\label{section-33}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-34}{%
+\paragraph{500}\label{section-34}}
+
+Couldn't get jobs \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{schedule}{}{}
+
+
+
+\begin{verbatim}
+post /api/projects/{projectId}/jobs
+\end{verbatim}
+
+Schedule onetime job ({schedule})
+
+User has to have \texttt{ReadAndWrite} access to project. Initial status
+of the job = \texttt{pending}.Creates and starts new job with chosen
+crawler
+
+\hypertarget{path-parameters-8}{%
+\subsubsection*{Path parameters}\label{path-parameters-8}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{request-body-2}{%
+\subsubsection*{Request body}\label{request-body-2}}
+
+body \protect\hyperlink{OnetimeJobForm}{OnetimeJobForm} (required)
+
+{Body Parameter} --- Form with settings of onetime job for scheduling
+
+\hypertarget{return-type-10}{%
+\subsubsection*{Return type}\label{return-type-10}}
+
+\protect\hyperlink{ActionOnetimeJobForm}{ActionOnetimeJobForm}
+
+\hypertarget{example-data-10}{%
+\subsubsection*{Example data}\label{example-data-10}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-10}{%
+\subsubsection*{Responses}\label{responses-10}}
+
+\hypertarget{section-35}{%
+\paragraph{200}\label{section-35}}
+
+successful operation
+\protect\hyperlink{ActionOnetimeJobForm}{ActionOnetimeJobForm}
+
+\hypertarget{section-36}{%
+\paragraph{400}\label{section-36}}
+
+Bad format OnetimeJobForm \protect\hyperlink{}{}
+
+\hypertarget{section-37}{%
+\paragraph{401}\label{section-37}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-38}{%
+\paragraph{403}\label{section-38}}
+
+Can't schedule job due to access right permission \protect\hyperlink{}{}
+
+\hypertarget{section-39}{%
+\paragraph{409}\label{section-39}}
+
+Couldn't schedule job \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}

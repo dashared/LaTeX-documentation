@@ -1,0 +1,149 @@
+
+
+\protect\hypertarget{listSpiders}{}{}
+
+
+
+\begin{verbatim}
+get /api/projects/{projectId}/crawlers
+\end{verbatim}
+
+List spiders ({listSpiders})
+
+List spiders of project without pagination
+
+\hypertarget{path-parameters}{%
+\subsubsection*{Path parameters}\label{path-parameters}}
+
+projectId (required)
+
+{Path Parameter} --- Project ID format: int64
+
+\hypertarget{query-parameters}{%
+\subsubsection*{Query parameters}\label{query-parameters}}
+
+version (optional)
+
+{Query Parameter} --- Version of the project
+
+\hypertarget{return-type}{%
+\subsubsection*{Return type}\label{return-type}}
+
+array{[}\protect\hyperlink{Crawler}{Crawler}{]}
+
+\hypertarget{example-data}{%
+\subsubsection*{Example data}\label{example-data}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+[ {
+  "settings" : { },
+  "name" : "name",
+  "id" : 0,
+  "projectId" : 6
+}, {
+  "settings" : { },
+  "name" : "name",
+  "id" : 0,
+  "projectId" : 6
+} ]
+\end{verbatim}
+
+\hypertarget{responses}{%
+\subsubsection*{Responses}\label{responses}}
+
+\hypertarget{section-1}{%
+\paragraph{200}\label{section-1}}
+
+successful operation
+
+\hypertarget{section-2}{%
+\paragraph{401}\label{section-2}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-3}{%
+\paragraph{403}\label{section-3}}
+
+Couldn't get project's spiders due to access rights permission
+\protect\hyperlink{}{}
+
+\hypertarget{section-4}{%
+\paragraph{422}\label{section-4}}
+
+Coulnd't get spiders from DB \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{updateSpider}{}{}
+
+
+
+\begin{verbatim}
+put /api/projects/{projectId}/crawlers/{crawlerId}
+\end{verbatim}
+
+Update spider's settings ({updateSpider})
+
+Updates only spider's settings. \texttt{projectId} should match
+\texttt{spiderId}
+
+\hypertarget{path-parameters-1}{%
+\subsubsection*{Path parameters}\label{path-parameters-1}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+crawlerId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{request-body}{%
+\subsubsection*{Request body}\label{request-body}}
+
+body \protect\hyperlink{SpiderChangeForm}{SpiderChangeForm} (required)
+
+{Body Parameter} --- Form with new settings
+
+\hypertarget{return-type-1}{%
+\subsubsection*{Return type}\label{return-type-1}}
+
+\protect\hyperlink{ActionSpiderChangeForm}{ActionSpiderChangeForm}
+
+\hypertarget{example-data-1}{%
+\subsubsection*{Example data}\label{example-data-1}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-1}{%
+\subsubsection*{Responses}\label{responses-1}}
+
+\hypertarget{section-5}{%
+\paragraph{200}\label{section-5}}
+
+successful operation
+\protect\hyperlink{ActionSpiderChangeForm}{ActionSpiderChangeForm}
+
+\hypertarget{section-6}{%
+\paragraph{400}\label{section-6}}
+
+Bad format SpiderChangeForm \protect\hyperlink{}{}
+
+\hypertarget{section-7}{%
+\paragraph{401}\label{section-7}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-8}{%
+\paragraph{403}\label{section-8}}
+
+Can't change spider's data due to access right permission
+\protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}

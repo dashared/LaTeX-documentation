@@ -1,0 +1,395 @@
+\protect\hypertarget{addPeriodicJob}{}{}
+
+
+
+\begin{verbatim}
+post /api/projects/{projectId}/periodicJobs
+\end{verbatim}
+
+Creates periodic job (jobInstance) ({addPeriodicJob})
+
+Creates JonInstance in DB. Schedules jobs according to specified
+\texttt{cron\ expression}. Checks for user access rights.
+
+\hypertarget{path-parameters-9}{%
+\subsubsection*{Path parameters}\label{path-parameters-9}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{request-body-3}{%
+\subsubsection*{Request body}\label{request-body-3}}
+
+body \protect\hyperlink{PeriodicJobCreateForm}{PeriodicJobCreateForm}
+(required)
+
+{Body Parameter} --- Form to create periodic job
+
+\hypertarget{return-type-11}{%
+\subsubsection*{Return type}\label{return-type-11}}
+
+UUID
+
+\hypertarget{example-data-11}{%
+\subsubsection*{Example data}\label{example-data-11}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+"046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+\end{verbatim}
+
+\hypertarget{responses-11}{%
+\subsubsection*{Responses}\label{responses-11}}
+
+\hypertarget{section-40}{%
+\paragraph{200}\label{section-40}}
+
+successful operation \protect\hyperlink{UUID}{UUID}
+
+\hypertarget{section-41}{%
+\paragraph{401}\label{section-41}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-42}{%
+\paragraph{403}\label{section-42}}
+
+Dont have at least write access to specified project
+\protect\hyperlink{}{}
+
+\hypertarget{section-43}{%
+\paragraph{422}\label{section-43}}
+
+Couldn't create job instance \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{changePeriodicJob}{}{}
+
+
+
+\begin{verbatim}
+put /api/projects/{projectId}/periodicJobs/{periodicJobId}
+\end{verbatim}
+
+Changes the periodic Job data ({changePeriodicJob})
+
+Checks for user access rights and job-project connection.
+
+\hypertarget{path-parameters-10}{%
+\subsubsection*{Path parameters}\label{path-parameters-10}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+periodicJobId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{request-body-4}{%
+\subsubsection*{Request body}\label{request-body-4}}
+
+body \protect\hyperlink{PeriodicJobChangeForm}{PeriodicJobChangeForm}
+(required)
+
+{Body Parameter} --- Form to change periodic job data
+
+\hypertarget{return-type-12}{%
+\subsubsection*{Return type}\label{return-type-12}}
+
+\protect\hyperlink{ActionPeriodicJobChangeForm}{ActionPeriodicJobChangeForm}
+
+\hypertarget{example-data-12}{%
+\subsubsection*{Example data}\label{example-data-12}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-12}{%
+\subsubsection*{Responses}\label{responses-12}}
+
+\hypertarget{section-44}{%
+\paragraph{200}\label{section-44}}
+
+successful operation
+\protect\hyperlink{ActionPeriodicJobChangeForm}{ActionPeriodicJobChangeForm}
+
+\hypertarget{section-45}{%
+\paragraph{401}\label{section-45}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-46}{%
+\paragraph{403}\label{section-46}}
+
+Dont have at least write access to specified project or job-project
+don't correspond \protect\hyperlink{}{}
+
+\hypertarget{section-47}{%
+\paragraph{422}\label{section-47}}
+
+Couldn't change job instance \protect\hyperlink{}{}
+
+\hypertarget{section-48}{%
+\paragraph{500}\label{section-48}}
+
+Error performing the update in DB \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{deletePeriodicJob}{}{}
+
+
+
+\begin{verbatim}
+delete /api/projects/{projectId}/periodicJobs/{periodicJobId}
+\end{verbatim}
+
+Delete periodic job ({deletePeriodicJob})
+
+Deletes periodic job instance (changed type to Onetime) and cancels all
+of the future job scheduled.
+
+\hypertarget{path-parameters-11}{%
+\subsubsection*{Path parameters}\label{path-parameters-11}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+periodicJobId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{return-type-13}{%
+\subsubsection*{Return type}\label{return-type-13}}
+
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{example-data-13}{%
+\subsubsection*{Example data}\label{example-data-13}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-13}{%
+\subsubsection*{Responses}\label{responses-13}}
+
+\hypertarget{section-49}{%
+\paragraph{200}\label{section-49}}
+
+successful operation
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{section-50}{%
+\paragraph{401}\label{section-50}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-51}{%
+\paragraph{403}\label{section-51}}
+
+NoPermission \protect\hyperlink{}{}
+
+\hypertarget{section-52}{%
+\paragraph{422}\label{section-52}}
+
+JobCouldn'tBeDeleted \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{disable}{}{}
+
+
+
+\begin{verbatim}
+put /api/projects/{projectId}/periodicJobs/{periodicJobId}/disable
+\end{verbatim}
+
+Sets status of periodicJob to disabled. ({disable})
+
+Cancels all of the future job scheduled. Does not modify running type,
+only running status.
+
+\hypertarget{path-parameters-12}{%
+\subsubsection*{Path parameters}\label{path-parameters-12}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+periodicJobId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{return-type-14}{%
+\subsubsection*{Return type}\label{return-type-14}}
+
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{example-data-14}{%
+\subsubsection*{Example data}\label{example-data-14}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-14}{%
+\subsubsection*{Responses}\label{responses-14}}
+
+\hypertarget{section-53}{%
+\paragraph{200}\label{section-53}}
+
+successful operation
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{enable}{}{}
+
+
+
+\begin{verbatim}
+put /api/projects/{projectId}/periodicJobs/{periodicJobId}/enable
+\end{verbatim}
+
+Enable scheduling jobs. ({enable})
+
+Continues to schedule job executions. Does not modify running type, only
+running status.
+
+\hypertarget{path-parameters-13}{%
+\subsubsection*{Path parameters}\label{path-parameters-13}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+periodicJobId (required)
+
+{Path Parameter} --- format: int64
+
+\hypertarget{return-type-15}{%
+\subsubsection*{Return type}\label{return-type-15}}
+
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{example-data-15}{%
+\subsubsection*{Example data}\label{example-data-15}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-15}{%
+\subsubsection*{Responses}\label{responses-15}}
+
+\hypertarget{section-54}{%
+\paragraph{200}\label{section-54}}
+
+successful operation
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\protect\hypertarget{getPeriodicJobs}{}{}
+
+
+
+\begin{verbatim}
+get /api/projects/{projectId}/periodicJobs/{limit}
+\end{verbatim}
+
+Get list of periodic jobs with pagination ({getPeriodicJobs})
+
+Gets data from DB. No requests to scrapyd needed. User has to have
+access (at least \texttt{readonly}) to requested project
+
+\hypertarget{path-parameters-14}{%
+\subsubsection*{Path parameters}\label{path-parameters-14}}
+
+projectId (required)
+
+{Path Parameter} --- format: int64
+
+limit (required)
+
+{Path Parameter} --- format: int32
+
+\hypertarget{query-parameters-2}{%
+\subsubsection*{Query parameters}\label{query-parameters-2}}
+
+exclusiveFrom (optional)
+
+{Query Parameter} --- format: int64
+
+\hypertarget{return-type-16}{%
+\subsubsection*{Return type}\label{return-type-16}}
+
+array{[}\protect\hyperlink{JobInstance}{JobInstance}{]}
+
+\hypertarget{example-data-16}{%
+\subsubsection*{Example data}\label{example-data-16}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+[ {
+  "cron" : "cron",
+  "settings" : { },
+  "description" : "description",
+  "id" : 0,
+  "title" : "title",
+  "priority" : { },
+  "projectId" : 6,
+  "spider" : 1
+}, {
+  "cron" : "cron",
+  "settings" : { },
+  "description" : "description",
+  "id" : 0,
+  "title" : "title",
+  "priority" : { },
+  "projectId" : 6,
+  "spider" : 1
+} ]
+\end{verbatim}
+
+\hypertarget{responses-16}{%
+\subsubsection*{Responses}\label{responses-16}}
+
+\hypertarget{section-55}{%
+\paragraph{200}\label{section-55}}
+
+successful operation
+
+\hypertarget{section-56}{%
+\paragraph{401}\label{section-56}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\hypertarget{section-57}{%
+\paragraph{403}\label{section-57}}
+
+Dont have at least read access to specified project
+\protect\hyperlink{}{}
+
+\hypertarget{section-58}{%
+\paragraph{500}\label{section-58}}
+
+Couldn't get list of periodic jobs \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}

@@ -1,0 +1,96 @@
+
+\protect\hypertarget{signIn}{}{}
+
+
+
+\begin{verbatim}
+post /api/auth/signin
+\end{verbatim}
+
+Get authentication token ({signIn})
+
+\hypertarget{request-body-1}{%
+\subsubsection*{Request body}\label{request-body-1}}
+
+body \protect\hyperlink{SignIn}{SignIn} (required)
+
+{Body Parameter} --- Credentials
+
+\hypertarget{return-type-2}{%
+\subsubsection*{Return type}\label{return-type-2}}
+
+\protect\hyperlink{Cookie}{Cookie}
+
+\hypertarget{example-data-2}{%
+\subsubsection*{Example data}\label{example-data-2}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{
+  "cookie" : "cookie",
+  "login" : "login"
+}
+\end{verbatim}
+
+\hypertarget{responses-2}{%
+\subsubsection*{Responses}\label{responses-2}}
+
+\hypertarget{section-9}{%
+\paragraph{200}\label{section-9}}
+
+successful operation \protect\hyperlink{Cookie}{Cookie}
+
+\hypertarget{section-10}{%
+\paragraph{400}\label{section-10}}
+
+SignInBadRequest \protect\hyperlink{}{}
+
+\hypertarget{section-11}{%
+\paragraph{403}\label{section-11}}
+
+InvalidCredentialsProvided \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+
+\protect\hypertarget{logout}{}{}
+
+
+
+\begin{verbatim}
+get /api/auth/logout
+\end{verbatim}
+
+Logout ({logout})
+
+\hypertarget{return-type-3}{%
+\subsubsection*{Return type}\label{return-type-3}}
+
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{example-data-3}{%
+\subsubsection*{Example data}\label{example-data-3}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{ }
+\end{verbatim}
+
+\hypertarget{responses-3}{%
+\subsubsection*{Responses}\label{responses-3}}
+
+\hypertarget{section-12}{%
+\paragraph{200}\label{section-12}}
+
+successful operation
+\protect\hyperlink{ActionAnyContent}{ActionAnyContent}
+
+\hypertarget{section-13}{%
+\paragraph{401}\label{section-13}}
+
+Unauthorized \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+

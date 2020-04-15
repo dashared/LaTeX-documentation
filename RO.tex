@@ -4,41 +4,98 @@
 
 \begin{document} % конец преамбулы, начало документа
 	
-	\docNumber{RU.17701729.04.03-01 34 01-1}
+	\year{2020}
+	\docNumber{RU.17701729.04.13-01 34 01-1}
 	\docFormat{Руководство оператора}
 	\student{БПИ 174}{Д. Ю. Редникина}
-	\supervisor{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
-	{М. К. Горденко}
+	\supervisor{Профессор департамента \vfill программной инженерии  факультета компьютерных наук, к.т.н}
+	{Е. М. Гринкруг}
+	\project{СИСТЕМА УПРАВЛЕНИЯ ЗАДАНИЯМИ ПО АВТОМАТИЧЕСКОМУ СБОРУ ДАННЫХ ИЗ СЕТИ ИНТЕРНЕТ}
 	
 	\firstPage
-						\newpage
+	\newpage
 	\secondPage
-						\newpage
+	\newpage
 	\thirdPage
-						\newpage
+	\newpage
 	\section{Назначение программы}
-	\subsubsection{Функциональное назначение }
-	\subsubsection{Эксплуатационное назначение}
-	\subsubsection{Состав выполняемых функций}
+	\subsection{Функциональное назначение}
+	\input{tex/functionalPurpose}
+	\subsection{Эксплуатационное назначение}
+	\input{tex/operationalPurpose}
+	\subsection{Состав выполняемых функций}
+	Следующие требования зафиксированы в документе <<Cистема управления заданиями по автоматическому сбору данных из сети Интернет. Техническое задание>> к составу выполняемых функций:
+	\input{tex/req}
 	
-					\newpage
+	\newpage
 	\section{Условия выполнения программы}
-	\subsection{Минимальный состав аппаратурных средств
-	}
-	\subsubsection{Минимальный состав аппаратных средств}
-	\subsubsection{Требования к персоналу}
-	
+	\subsection{Минимальный состав аппаратных средств}
+	Минимальный состав технических конмпонент, необходимых для нормального функционирования программы:
+	\input{tex/tech}
+	\subsection{Минимальный состав программных средств}
+	Для нормального функционирования программы требуется компьютер, оснащенный следующими программными компонентами:
+	\input{tex/prog}
+	\subsection{Требования к персоналу}
+	Минимальное количество персонала, требуемого для работы программы, должно составлять не менее 1 штатной единицы со следующими навыками:    
+    
+    \begin{enumerate}
+        \item Базовые навыки администрирования Unix~\cite{unix} систем;
+        \item Базовые навыки администрирования базы данных PostgreSQL~\cite{postgresql};
+        \item Базовые навыки работы с sbt~\cite{sbt}.
+    \end{enumerate}
 					\newpage 
 	\section{Выполнение программы}
-	\subsection{Запуск программы}
-	\subsection{Задание графа пользователем}
-	\subsubsection{Сохранение и открытие файлов представления графа}
-	\subsubsection{Получение результата}
-	\subsection{Элементы управления}
 	
-						\newpage
-	\section{Сообщения оператору}
+	\subsection{Подготовка проекта}
+	В комплект поставки программы входит техническая документация, приложение (исполняемые файлы, примеры запросов и прочие необходимые для работы программы файлы) и презентацию проекта.
+	\subsubsection{Запуск scrapyd}
+	
+	В директории проекта (или в любой другой директории на компьютере) надо создать пустую папку с произвольным названием.
+	
+	В пустой папке надо запустить предустановленный сервер командой \textt{scrapyd} (см. листинг ~\ref{scrapdyDir}). 
+	
+	\begin{lstlisting}[frame=single, basicstyle=\footnotesize\ttfamily,caption=Запуск scrapyd,captionpos=b,label=scrapdyDir]
+> mkdir scrapyd_server
+> cd scrapyd_server
+> ls
 
+> scrapyd
+\end{lstlisting}
+	
+	\subsubsection{Создание таблиц}
+	
+	Для корректной работы сервера необходимо запустить и проинициализировать базу данных PostgreSQL~\cite{postgresql}.
+	
+	Для этого в директории проекта необходимо запустить следующую комманду из листинга ниже \ref{sbtMain}:
+	
+	\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,caption=Создание и инициализация таблиц,captionpos=b,label=sbtMain]
+> sbt "runMain models.common.DBCreator"
+\end{lstlisting}
+	
+	\subsection{Запуск программы}
+
+	Для запуска сервера необходимо выполнить команду, находясь в директории проекта, из листинга \ref{sbtrun}.
+
+\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,caption=Запуск сервера,captionpos=b,label=sbtrun]
+> sbt run
+\end{lstlisting}
+
+    \addition{Используемые понятия и определения}
+	\input{tex/terms}
+	                            \newpage
+	%\section{Источники, использованные при разработке}
+	\renewcommand{\refname}{Список источников}
+	\addcontentsline{toc}{section}{\refname}
+	\begin{thebibliography}{7}
+		\bibitem{scrapyd} Github scrapyd/scrapyd [Электронный ресурс] URL: \url{https://github.com/scrapy/scrapyd} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{scalatestplus} ScalaTest+Play [Электронный ресурс] URL:\url{http://www.scalatest.org/plus}(Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{playsilhouettetestkit} Testing - silhouette [Электронный ресурс] URL:\url{https://www.silhouette.rocks/docs/testing} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{postgresql} Postgresql [Электронный ресурс] URL:\url{https://www.postgresql.org} (Дата обращения: 16.04.2020, режим доступа: свободный)
+		\bibitem{unix} Unix [Электронный ресурс] URL: \url{https://en.wikipedia.org/wiki/Unix} (дата обращения: 10.10.2018).
+		\bibitem{sbt} SBT [Электронный ресурс] URL: \uel{https://www.scala-sbt.org} (Дата обращения: 16.04.2020, режим доступа: свободный)
+	\end{thebibliography}
+						
 						\newpage
 	\listRegistration
 	\addcontentsline{toc}{section}{Лист регистрации изменений}

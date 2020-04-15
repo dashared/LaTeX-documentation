@@ -1,0 +1,57 @@
+\protect\hypertarget{signUp}{}{}
+
+
+\begin{verbatim}
+post /api/auth/signup
+\end{verbatim}
+
+Get authentication token ({signUp})
+
+\hypertarget{request-body-7}{%
+\subsubsection*{Request body}\label{request-body-7}}
+
+body \protect\hyperlink{SignUp}{SignUp} (required)
+
+{Body Parameter} --- Credentials
+
+\hypertarget{return-type-22}{%
+\subsubsection*{Return type}\label{return-type-22}}
+
+\protect\hyperlink{Cookie}{Cookie}
+
+\hypertarget{example-data-22}{%
+\subsubsection*{Example data}\label{example-data-22}}
+
+Content-Type: application/json
+
+\begin{verbatim}
+{
+  "cookie" : "cookie",
+  "login" : "login"
+}
+\end{verbatim}
+
+\hypertarget{responses-22}{%
+\subsubsection*{Responses}\label{responses-22}}
+
+\hypertarget{section-77}{%
+\paragraph{200}\label{section-77}}
+
+successful operation \protect\hyperlink{Cookie}{Cookie}
+
+\hypertarget{section-78}{%
+\paragraph{400}\label{section-78}}
+
+SignUp body bad request \protect\hyperlink{}{}
+
+\hypertarget{section-79}{%
+\paragraph{403}\label{section-79}}
+
+EmailWrongFormat \protect\hyperlink{}{}
+
+\hypertarget{section-80}{%
+\paragraph{409}\label{section-80}}
+
+UserAlreadyExistsMessage \protect\hyperlink{}{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}

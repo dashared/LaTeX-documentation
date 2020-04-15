@@ -1,17 +1,22 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage{styledoc19}
 
+\programmingLanguage{Scala}
+\lstset{
+    basicstyle=\ttfamily,
+    breaklines=true,
+}
+
 
 \begin{document} % конец преамбулы, начало документа
 	
-	\docNumber{RU.17701729.04.03-01 12 01-1}
+	\year{2020}
+	\docNumber{RU.17701729.04.13-01 12 01-1}
 	\docFormat{Текст программы}
 	\student{БПИ 174}{Д. Ю. Редникина}
-	
-	%\project{IOS-ПРИЛОЖЕНИЕ <<СОЦИАЛЬНАЯ СЕТЬ ДЛЯ СОТРУДНИКОВ НИУ ВШЭ>>}
-	
-	\supervisor{Преподаватель департамента \vfill программной инженерии  факультета компьютерных наук}
-	{М. К. Горденко}
+	\supervisor{Профессор департамента \vfill программной инженерии  факультета компьютерных наук, к.т.н}
+	{Е. М. Гринкруг}
+	\project{СИСТЕМА УПРАВЛЕНИЯ ЗАДАНИЯМИ ПО АВТОМАТИЧЕСКОМУ СБОРУ ДАННЫХ ИЗ СЕТИ ИНТЕРНЕТ}
 	
 	\firstPage
 	\newpage
@@ -19,14 +24,13 @@
 	\newpage
 	\thirdPage
 	\newpage
-	\newpage
-	\section{Текст программы}
-	\subsection{Класс 1}
-	\subsection{Класс 1}
-	\subsection{Класс 1}
 	
-
-						\newpage
+	\section{App}
+	\input{tex/tp/app}
+	\section{Test}
+	\input{tex/tp/test}
+	\newpage
 	\listRegistration
 	\addcontentsline{toc}{section}{Лист регистрации изменений}
-\end{document} % конец документа
+	
+\end{document}
