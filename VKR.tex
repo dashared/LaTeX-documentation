@@ -1,0 +1,232 @@
+\documentclass[a4paper,12pt,reqno]{article}
+
+\usepackage{styledoc19}
+
+\begin{document}
+
+\year{2021}
+\student{БПИ 174}{Д. Ю. Редникина}
+	
+\project{CRM-система для благотворительного фонда <<AIAIN>>. Web-приложение для сотрудников фонда}
+
+\supervisor{Доцент департамента \vfill образовательной программы  \vfill <<Программная инженерия>>}
+	{Х. М. Салех}
+
+\VKR
+
+\newpage
+
+\clearPage
+
+\section*{Реферат}
+
+\newpage
+
+\section*{Abstract}
+
+\newpage
+
+\section*{Основные определения, термины и сокращения}
+\label{s:terms}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\anonsection{Введение}
+
+\setcounter{section}{1}
+
+\sectionVKR{Обзор предметной области}
+
+\subsection{Рамки проекта}
+
+\subsection{Проблема}
+
+\subsection{Роль в команде}
+
+\subsection{Потенциальные пользователи и заинтересованные лица}
+
+\subsubsection{Устройство рынка}
+
+\subsubsection{Пользовательская среда}
+
+\subsubsection{Список пользователей} \label{sec: listusers}
+
+\subsection{Анализ существующих аналогов}
+
+\subsubsection{Краткое описание существующих решений}
+
+
+\subsubsection{Анализ конкурентов}
+
+
+\subsection{Преимущества ПО по сравнению с аналогами}
+
+\anonsubsection{Выводы по главе}
+
+
+\clearpage
+\newpage
+
+
+\setcounter{section}{2}
+\setcounter{subsection}{0}
+
+\sectionVKR{Описание разработанных моделей и алгоритмов}
+
+\subsection{Сценарии использования} \label{usecase}
+
+\subsection{Модель предметной области} \label{sec: application}
+
+
+\subsection{Модель обработки заявки} \label{sec: bpmn_status}
+
+\subsection{Модель голосования по заявке} \label{sec: vote}
+
+\subsection{Процесс получения собранных средств}
+
+\subsection{Процесс выплаты закята}
+
+
+
+\subsection{Ролевая модель} \label{theory-rbac}
+
+\subsubsection*{Преимущества подхода}
+
+
+\subsubsection*{Роли}
+
+
+
+\subsubsection*{Адаптация подхода к приложению}
+
+
+\anonsubsection{Выводы по главе}
+
+
+\newpage
+
+\setcounter{section}{3}
+\setcounter{subsection}{0}
+\sectionVKR{Проектирование Web-приложения} \label{sec: 3}
+
+
+\subsection{Выбор технологий} \label{sec: tech}
+
+
+\subsubsection{Выбор языка разработки} \label{sec:lang}
+
+
+\paragraph*{Сравнение языков для разработки\\}
+
+
+
+\paragraph*{Обоснование выбора\\}
+
+
+\subsubsection{Выбор фреймворков}
+
+\paragraph*{Обоснование выбора\\}
+
+\subsubsection{Выбор библиотек} \label{sec: libr}
+
+
+\subsection{Архитектура приложения}
+
+\subsection{Клиент-серверное взаимодействие}
+
+
+\subsection{Дизайн модель}
+
+\subsection{Диаграмма компонентов}
+
+
+
+\subsection{Диаграмма развертывания}
+
+\subsection{Диаграммы последовательности}
+
+\subsubsection{Обработка заявки} \label{sec: sequence_status}
+
+
+\subsubsection{Голосование по заявке} \label{sec: vote_seq}
+
+
+\subsection{Реализация ролевой модели}
+
+
+
+\subsection{Используемые паттерны}
+
+
+\anonsubsection{Выводы по главе}
+
+
+\anonsection{Заключение}
+
+
+\newpage
+	%\section{Источники, использованные при разработке}
+	%\renewcommand{\refname}{Список источников}
+	% \addcontentsline{toc}{subsection}{\refname}
+	\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+	\anonsection{Список источников}
+	\begin{thebibliography}{27}
+	    \bibitem{statistics} Digital population worldwide URL:\url{ttps://www.statista.com/statistics/617136/digital-population-worldwide/} [Электронный ресурс] (Дата обращения: 16.11.2020, режим доступа: свободный)
+	    \bibitem{ieee} Saleh H., Sergey Avdoshin, Azamat Dzhonov. Platform for Tracking Donations of Charitable Foundations based on Blockchain Technology, in: Actual Problems of Systems and Software Engineering APSSE 2019 (Invited Papers). Los Alamitos, Washington, Tokyo : IEEE Computer Society, 2019. P. 182-187 [Электронный ресурс] URL:\url{https://ieeexplore.ieee.org/document/8943788} (Дата обращения: 16.11.2020, режим доступа: свободный)
+
+	    
+	    \bibitem{runok} How to attract donors? URL:\url{https://www.entrepreneur.com/article/233106} (Дата обращения: 16.11.2020, режим доступа: свободный)
+	    \bibitem{competitors} How to identify your competitors? - ONCE Interactive [Электронный ресурс] URL:\url{https://onceinteractive.com/blog/how-to-identify-your-competitors/} (Дата обращения: 26.04.2021, режим доступа: свободный)
+	    \bibitem{researchcrm} 
+		Fundraising magazine crm survey, 2020 [Электронный ресурс] URL: 
+		\url{https://www.beaconcrm.org/offer/fundraising-magazine-crm-survey-2020} (Дата обращения: 16.04.2021, режим доступа: свободный)
+		\bibitem{uml} ГОСТ Р ИСО 15745-1-2014 URL:\url{https://docs.cntd.ru/document/1200119214} (Дата обращения: 26.04.2021, режим доступа: свободный)
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{lms} 
+		LMS [Электронный ресурс] URL: 
+		\url{https://lms.hse.ru} (Дата обращения: 16.11.2020, режим доступа: свободный)
+		\bibitem{json} JSON [Электронный ресурс] URL: \url{https://www.json.org} (Дата обращения: 16.11.2020, режим доступа: свободный)
+		
+		\bibitem{webapp} Top 7 Languages for Web App Development [Электронный ресурс] URL: \url{https://fortyseven47.com/news/top-7-languages-for-web-app-development/} (Дата обращения: 16.04.2021, режим доступа: свободный)
+		\bibitem{md} Markdown Guide URL: \url{https://www.markdownguide.org} (Дата обращения: 16.04.2021).
+		\bibitem{api} Swagger Charity API, v0.2 [Электронный ресурс] (Дата обращения: 31.05.2021, режим доступа: свободный) URL:\url{https://app.swaggerhub.com/apis/charity-crm/Charity/0.2}
+		\bibitem{mostpoplang} The best Web-application development languages in 2021 [Электронный ресурс] (Дата обращения: 31.05.2021, режим доступа: свободный) URL:\url{https://medium.com/@inverita/the-best-web-application-development-languages-in-2021-6b6eb5944925}
+		
+		\bibitem{rbac} Role-Based Access Control, Auth0  [Электронный ресурс] (Дата обращения: 31.05.2021, режим доступа: свободный) URL:\url{https://auth0.com/docs/authorization/rbac/#Handling-Authorization-in-React-Apps--the-Naive-Way}
+		
+		\bibitem{performance} React-Angular-Elm-Ember performance comparison [Электронный ресурс] (Дата обращения: 31.05.2021, режим доступа: свободный) URL:\url{https://github.com/evancz/react-angular-ember-elm-performance-comparison/blob/master/readme.md}
+		\bibitem{assets} Elm lang - small assets without the headache [Электронный ресурс] (Дата обращения: 31.05.2021, режим доступа: свободный) URL:\url{https://elm-lang.org/news/small-assets-without-the-headache}
+		\bibitem{elm-ports} Elm lang - Ports [Электронный ресурс] (Дата обращения: 31.05.2021, режим доступа: свободный) URL:\url{https://guide.elm-lang.org/interop/ports.html}
+		\bibitem{ts-frameworks} RealWorldApp - Typescript [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL: \url{https://codebase.show/projects/realworld?category=frontend&language=typescript}
+		
+		\bibitem{realworld} A RealWorld Comparison 2020 [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL: \url{https://medium.com/dailyjs/a-realworld-comparison-of-front-end-frameworks-2020-4e50655fe4c1}
+		
+		\bibitem{bpmn} Business Process Model and Notation - Wikipedia [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://en.wikipedia.org/wiki/Business_Process_Model_and_Notation}
+		
+		\bibitem{cool} State of JS 2020 [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://2020.stateofjs.com/en-US/technologies/front-end-frameworks/}
+		
+		\bibitem{axios} Axios - Promise based library [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://github.com/axios/axios}
+		
+		\bibitem{curi} Curi Router - Documentation [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://curi.js.org}
+		
+		\bibitem{openapi} OpenAPI - Codegen [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://github.com/OpenAPITools/openapi-generator}
+		
+		\bibitem{rest} REST - Wikipedia [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://en.wikipedia.org/wiki/Representational_state_transfer}
+		
+		\bibitem{swaggerhub} SwaggerHub - Swagger API [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://app.swaggerhub.com/search}
+		
+		\bibitem{spa} SPA (Single-page application), MDN Web Docs [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://developer.mozilla.org/en-US/docs/Glossary/SPA}
+		
+		\bibitem{cocos} CoCoS 2021 - Дипломанты конференции [Электронный ресурс] (Дата обращения 31.05.2021, режим доступа: свободный) URL:\url{https://cs.hse.ru/studconf/2021/winners}
+	\end{thebibliography}
+
+\newpage
+
+\addition{Техническое задание}{additiontz}
+Представлено отдельным документом <<Техническое задание. TODO>>. 
+
+\end{document}

@@ -10,13 +10,18 @@
 %%% Дополнительная работа с математикой
 \usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools} % AMS
 \usepackage{icomma} % "Умная" запятая: $0,2$ --- число, $0, 2$ --- перечисление
+\usepackage{amsthm}
 
+\usepackage{enumitem}
 %% Номера формул
 %\mathtoolsset{showonlyrefs=true} % Показывать номера только у тех формул, на которые есть \eqref{} в тексте.
 %\usepackage{leqno} % Нумерация формул слева
  
 % for tables added 12.11.18
 %\usepackage[format=simple,labelsep=space,tableposition=below]{caption} 
+
+\usepackage{float} % for H and HT options
+\usepackage[section]{placeins}
 \usepackage{caption} 
 \DeclareCaptionLabelSeparator{emdash}{ --- }
 \captionsetup{
@@ -35,6 +40,7 @@
 
 \usepackage{titlesec}
 \usepackage{hyperref}
+\usepackage{cleveref}
 \usepackage{etoolbox}
 \usepackage{lastpage}
 
@@ -52,10 +58,16 @@
 \setlength\fboxrule{1pt} % Толщина линий рамки \fbox{}
 \usepackage{wrapfig} % Обтекание рисунков текстом
 
+%%% BF for row
+\newcommand{\rowstyle}[1]{\gdef\currentrowstyle{#1}%
+#1\ignorespaces
+}
 %%% Работа с таблицами
 \usepackage{array,tabularx,tabulary,booktabs} % Дополнительная работа с таблицами
 \usepackage{longtable}  % Длинные таблицы
 \usepackage{multirow} % Слияние строк в таблице
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} % centered version of 'p' column type
 
 %%% Теоремы
 \theoremstyle{plain} % Это стиль по умолчанию, его можно не переопределять.
@@ -184,8 +196,13 @@
 
 \newcommand{\sectionbreak}{\clearpage}
 
+
+\newcommand{\customlabel}[2]{%
+    \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{\thepage}{#2}{#1}{}} }%
+  \hypertarget{#1}{}
+}
 %%% addition. example: ПРИЛОЖЕНИЕ А
-\newcommand{\addition}[1]{%
+\newcommand{\addition}[2]{%
 	\clearpage
 	\newpage
 	\@startAdditions
@@ -197,6 +214,7 @@
 	\setcounter{secnumdepth}{0}
 	\section[Приложение \Alph{@tempSection}]{#1}
 	\setcounter{secnumdepth}{4}
+	\customlabel{#2}{\Alph{section}}
 }
 
 %% [#1]: ref id 
@@ -249,10 +267,22 @@
 	\end{table}
 }
 
+\newcommand{\academicTeacherVKR}{
+    \vspace{1cm}
+    \hfill\begin{tabular}{>{\centering\arraybackslash}p{0.45\textwidth} }
+		\textsl{УТВЕРЖДАЮ}\\  
+		Академический руководитель образовательной программы «Программная инженерия» 
+		профессор департамента программной инженерии, канд. техн. наук\\ 
+		 \\
+		 \underline{\hspace{4cm}} В. В. Шилов\\ 
+		<<\underline{\hspace{1cm}}>> \underline{\hspace{3cm}} \@year{} г.\\
+	\end{tabular}
+}
+
 \newcommand{\secondPage}{
 	\pagestyle{fancy}
 	\lhead{УТВЕРЖДЕН \newline
-		\@docNumber{}}
+		\@docNumber{}-ЛУ}
 	\vspace*{9cm}
 	\begingroup
 	\centering
@@ -266,6 +296,12 @@
 	\vspace*{\fill}
 }
 
+\newcommand{\anonsection}[1]{\section*{#1}\addcontentsline{toc}{section}{#1}}
+
+\newcommand{\anonsubsection}[1]{\subsection*{#1}\addcontentsline{toc}{subsection}{#1}}
+
+\newcommand{\sectionVKR}[1]{\section*{Глава \thesection. #1}\addcontentsline{toc}{section}{Глава \thesection. #1}}
+
 \newcommand{\thirdPage}{
 	\lhead{ }
 	\chead{\vfill \thepage \vfill  \@docNumber{}}
@@ -275,11 +311,68 @@
 	\tableofcontents
 }
 
+\newcommand{\thirdPageWithoutTOC}{
+	\lhead{ }
+	\chead{\vfill \thepage \vfill  \@docNumber{}}
+	\rhead{ }
+	\cfoot{ }
+	\cfoot{\tabForTZ}
+}
+
+\newcommand{\clearPage}{
+	\lhead{ }
+	\chead{ }
+	\rhead{ }
+	\cfoot{ }
+	\cfoot{\thepage}
+}
+
 \newcommand{\projectName}[1]{
 	\begin{center}
 		\large{\textsc{\textbf{#1}}}
 	\end{center}
 }
+
+\newcommand{\projectNameDraft}[1]{
+    \vspace*{3cm}
+	\begin{center}
+		\large{ОТЧЕТ \\
+	    по преддипломной практике \\
+	    Подготовка ВКР на тему \\
+	    \vspace*{1cm}
+	    \textsc{\textbf{#1}}}
+	\end{center}
+	\vspace*{1cm}
+}
+
+\newcommand{\projectNameVKR}[1]{
+    \vspace*{2cm}
+	\begin{center}
+		\large{\textbf{Выпускная квалификационная работа} на тему \\
+	    \vspace*{0.5cm}
+	    \textbf{<<#1>>} \\
+	    \vspace*{0.5cm}
+	    по направлению подготовки 09.03.04 <<Программная инженерия>>
+	    }
+	\end{center}
+	\vspace*{2cm}
+}
+
+\newcommand{\checked}[3]{
+	\vspace{15mm}
+	\begin{tabular}{p{0.33\textwidth} p{0.33\textwidth} p{0.33\textwidth}}
+		\multicolumn{3}{l}{\textbf{#2}}\\
+		\multicolumn{3}{l}{#3}\\
+		\multicolumn{3}{l}{}\\
+		Дата: {#1} & $\underset{\text{(оценка)}}{\underline{\hspace{4cm}}}$  &  $\underset{\text{(подпись)}}{\underline{\hspace{4cm}}}$ \\
+	\end{tabular}
+	\begin{tabular}{p{0.33\textwidth} p{0.33\textwidth} p{0.33\textwidth}}
+		\multicolumn{3}{l}{\textbf{Оценка комиссии}}\\
+		\multicolumn{3}{l}{}\\
+		$\underset{\text{(дата)}}{\underline{\hspace{4cm}}}$ & $\underset{\text{(оценка)}}{\underline{\hspace{4cm}}}$  &  $\underset{\text{(подпись)}}{\underline{\hspace{4cm}}}$  \\
+	\end{tabular}
+}
+
 
 %\renewcommand{\familydefault}{\sfdefault} % Начертание шрифта
 
@@ -291,7 +384,7 @@
 \textbf{
 	ЛИСТ УТВЕРЖДЕНИЯ}
 \par\vspace{6mm}
-\textbf{\@docNumber{}}
+\textbf{\@docNumber{}-ЛУ}
 \par\vspace{60mm}
 \end{center}}
 
@@ -310,6 +403,55 @@
 	\titleList
 	\nameOfAuthor
 	\tabForFirstPage
+}
+
+\newcommand{\draftVKR}{
+    \itsHSE
+    \projectNameDraft{\@project{}}
+    \nameOfAuthorDraft
+    \checked{26.04.21}{Руководитель практики от НИУ ВШЭ}{Доцент департамента программной инженерии Салех Хади Мухаммед}
+}
+
+
+\newcommand{\VKR}{
+    \itsHSE
+    \academicTeacherVKR
+    \projectNameVKR{\@project{}}
+    \nameOfAuthorVKR
+}
+
+\newcommand{\nameOfAuthorDraft}{
+	\hfill\begin{tabular}{r}
+		\\ 
+		Выполнила студентка
+		\\
+		образовательной программы
+		\\
+		09.03.04 <<Программная инженерия>>
+		\\
+		  группы \@groupName{} 
+		\\ 
+		 \@student{}
+		\\ 
+		<<\underline{\hspace{1cm}}>> \underline{\hspace{3cm}} \@year{} г.  
+	    \end{tabular} 
+	   \vspace{1cm}
+}
+
+
+
+\newcommand{\nameOfAuthorVKR}{
+    \begin{table}[h]
+    	\begin{flushleft}
+    		\begin{tabular}{ >{\arraybackslash}p{0.5\textwidth}  >{\arraybackslash}p{0.45\textwidth} }
+    			
+    			\@supervPos{} &  Выполнила студентка \vfill образовательной программы \vfill 09.03.04  <<Программная инженерия>> \vfill группы \@groupName{} \\ 
+    			\@supervName{} & \@student{} \\ 
+    			& \\
+    			$\underset{\text{(дата, подпись)}}{\underline{\hspace{5cm}}}$ &  $\underset{\text{(дата, подпись)}}{\underline{\hspace{5cm}}}$ \\ 
+    		\end{tabular}
+    	\end{flushleft}
+    \end{table}
 }
 
 \newcommand{\nameOfAuthor}{
@@ -332,58 +474,6 @@
 	\hline
 	\multirow{2}{*}{Изм.} & \multicolumn{4}{c|}{Номера листов} & Всего листов в документе& $\text{№}$ документа& Входящий $\text{№}$ сопроводит. докум. и дата& Под-пись& Дата\\[5ex] \cline{2-5}
 	&из-ме-нен-ных&заме-нен-ных&но-вых&аннул-лиро-ван-ных&  &  &  &  & \\[10ex]  
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
-	\hline
-	& & & & & & & & & \\[5ex]
 	\hline
 	& & & & & & & & & \\[5ex]
 	\hline
