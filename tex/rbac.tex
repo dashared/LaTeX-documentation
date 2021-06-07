@@ -1,0 +1,96 @@
+\begin{center}
+\begin{longtable}{|p{0.2\linewidth}|p{0.2\linewidth}|p{0.05\linewidth}|p{0.05\linewidth}|p{0.05\linewidth}|p{0.05\linewidth}|p{0.05\linewidth}|p{0.05\linewidth}|}
+\caption{Таблица с распределением возможностей пользователей по ролям} 
+\label{table: rbac} \\
+
+\hline
+\multicolumn{1}{|c|}{\textbf{\tiny{Действие}}} &
+\multicolumn{1}{c|}{\textbf{\tiny{Описание}}} &
+\multicolumn{1}{c|}{\textbf{\tiny{Admin}}} & \multicolumn{1}{c|}{\textbf{\tiny{S.manager}}} &
+\multicolumn{1}{c|}{\textbf{\tiny{Manager}}} & \multicolumn{1}{c|}{\textbf{\tiny{Operator}}} & \multicolumn{1}{c|}{\textbf{\tiny{C.manager}}} & \multicolumn{1}{c|}{\textbf{\tiny{Visitor}}} \\ \hline
+\endfirsthead
+
+\multicolumn{8}{r}%
+{{ \tablename\ \thetable{} -- продолжение}} \\ 
+\hline 
+\multicolumn{1}{|c|}{\textbf{\tiny{Действие}}} &
+\multicolumn{1}{c|}{\textbf{\tiny{Описание}}} &
+\multicolumn{1}{c|}{\textbf{\tiny{Admin}}} & \multicolumn{1}{c|}{\textbf{\tiny{S.manager}}} &
+\multicolumn{1}{c|}{\textbf{\tiny{Manager}}} & \multicolumn{1}{c|}{\textbf{\tiny{Operator}}} & \multicolumn{1}{c|}{\textbf{\tiny{C.manager}}} & \multicolumn{1}{c|}{\textbf{\tiny{Visitor}}} \\ 
+\hline
+\endhead
+
+\multicolumn{8}{r}{{Продолжение на следующей странице}} \\ 
+\endfoot
+
+\hline 
+\endlastfoot
+
+\texttt{auth:login} & Авторизация & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} \\ \hline
+
+\texttt{faq:pretty} & Просмотр FAQ & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{green}{ДА}} \\ \hline
+
+\texttt{faq:edit} & Изменение FAQ & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} \\ \hline
+
+\texttt{fund:edit} & Изменение информации о фонде & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} \\ \hline
+
+
+\texttt{fund:description} & Просмотр информации о фонде & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{green}{ДА}} \\ \hline
+
+\texttt{fund:index} & Просмотр аналитики о фонде & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{news:index} & Просмотр новостей о фонде & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{news:edit} & Изменение новостей о фонде & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{news:create} & Создание новостей о фонде & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} & {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{applications: show} & Просмотр заявки & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} &  {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{applications: create} & Создание заявки & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+
+\texttt{applications: index} & Просмотр списка заявок & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{applications: edit} & Редактирование заявки & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{applications: can-vote} & Голосование за активацию заявки & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{categories: index} & Проосмотр, редактирование категорий & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{transactions: index} & Список транзакций & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{transactions: show} & Просмотр информации о транзакции & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{transactions: create} & Создание ручной транзакции & {\color{red}{НЕТ}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{settings:index} & Изменение личного профиля & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} &  {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{settings:index} & Изменение личного профиля & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} &  {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{notifications: index} & Просмотр уведомлений & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} &  {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{users:show} & Просмотр профиля пользователя & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{green}{ДА}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+
+\texttt{users:index} & Просмотр списка пользователей системы & {\color{green}{ДА}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{users:create} & Регистрация пользователей в системе & {\color{green}{ДА}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{users:edit} & Изменение информации о пользователе & {\color{green}{ДА}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{logs:index} & Просмотр логов в системе & {\color{green}{ДА}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{managers:index} & Просмотр списка менеджеров системы &  {\color{red}{НЕТ}} &  {\color{green}{ДА}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{managers:show} & Просмотр профиля менеджера &  {\color{red}{НЕТ}} &  {\color{green}{ДА}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{managers:show} & Просмотр профиля менеджера &  {\color{red}{НЕТ}} &  {\color{green}{ДА}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{chat:show} & Просмотр диалога с пользователем &  {\color{red}{НЕТ}} &   {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+\texttt{chat:index} & Просмотр списка диалогов с пользователем &  {\color{red}{НЕТ}} &   {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} &  {\color{red}{НЕТ}} & {\color{green}{ДА}} &  {\color{red}{НЕТ}} \\ \hline
+
+
+\end{longtable}
+\end{center}

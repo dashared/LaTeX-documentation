@@ -1,8 +1,10 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,12pt,reqno]{article}
+
 \usepackage{styledoc19}
 
 
 \begin{document} % конец преамбулы, начало документа
+	
 	
 	\year{2021}
     \docNumber{RU.17701729.09.09-62 34 01-1}
@@ -21,30 +23,515 @@
 						\newpage
 	\thirdPage
 						\newpage
+						
 	\section{Назначение программы}
-	\subsection{Функциональное назначение }
+	\subsection{Функциональное назначение}
+	\input{tex/functionalPurpose}
 	\subsection{Эксплуатационное назначение}
+	\input{tex/operationalPurpose}
+	\subsection{Область применения}
+	\input{tex/projectScope}
 	\subsection{Состав выполняемых функций}
+	\input{tex/req}
 	
-					\newpage
+	\newpage
 	\section{Условия выполнения программы}
-	\subsection{Минимальный состав аппаратурных средств
-	}
-	\subsubsection{Минимальный состав аппаратных средств}
-	\subsubsection{Требования к персоналу}
+	\subsection{Минимальный состав аппаратурных средств}
+	Для надежной и бесперебойной работы программы требуется следующий состав аппаратурных средств:
+	\input{tex/tech}
 	
-					\newpage 
+	\subsection{Минимальный состав программных средств}
+	Для надежной и бесперебойной работы программы требуется следующий состав программных средств:
+	\input{tex/prog_null}
+	
+	\subsection{Требования к персоналу}
+	Сотрудники фонда <<AIAIN>> должны быть ознакомлены с терминологией, представленной в Приложении \ref{additionterms}. Также они должны быть ознакомлены с бизнес-процессом обработки заявки, представленным в Приложении \ref{status}, и с существующими статусами заявки, представленными в Приложении \ref{statustable}. Также сотрудники фонда должны быть знакомы на базовом уровне с аппатурными средствами;
+	
+	\newpage 
 	\section{Выполнение программы}
-	\subsection{Запуск программы}
-	\subsection{Задание графа пользователем}
-	\subsubsection{Сохранение и открытие файлов представления графа}
-	\subsubsection{Получение результата}
-	\subsection{Элементы управления}
+	\subsection{Загрузка и запуск программы}
 	
-						\newpage
-	\section{Сообщения оператору}
+	После распаковки архива, скаченного из электронной системы LMS~\cite{lms}, и перехода в корневую папку проекта, при исполнении команды \texttt{ls -al} в папке проекта должна быть видна следующий список файлов, представленный на изображении \ref{pic: ls}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.9\linewidth]{img/ro/ls.png}
+		\caption{Список файлов корневой папки проекта}
+		\label{pic: ls}
+	\end{figure}
 
-						\newpage
+    Далее с помощью механизмов Docker можно поднять локальную версию Web-приложения следующим образом: в файле \texttt{docker-compose.yml} поменять переменные окружения на \texttt{REACT\_APP\_API\_URL = https://charity.infostrategic.com} и  \texttt{REACT\_APP\_WEBSOCKET = charity.infostrategic.com}. Далее с помощью команды \texttt{docker-compose up -d} развернутое приложение будет доступна по адресу \texttt{localhost:80}.
+	
+	\subsection{Выполнение программы}
+	
+	\subsubsection{Стартовая страница}
+	
+	Для неавторизованных пользователей доступен экран лэндинга приложения (относительный путь \texttt{/}), с описанием модулей CRM-системы для благотворительных фондов <<AIAIN>>. На экране располагается навигационный элемент для перехода на страницу авторизации (кнопка <<Login>>), а также хэдер с возможностью перехода на страницы часто задаваемых вопросов и просмотра информации о фонде (см. скриншоты \ref{pic: landing}).
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/landing.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/faq_unauthorized.png}
+		\end{subfigure}
+		\caption{Скриншоты лэндинговой страницы и FAQ для неавторизованных пользователей}
+		\label{pic: landing}
+	\end{figure}
+	
+	\subsubsection{Авторизация}
+	
+	Авторизация в системе происходит со страницы с относительным url \texttt{/login}. На данную страницу можно попасть, нажав на кнопку <<Login>> на лэндинговой странице (см. скриншот \ref{pic: landing}). При авторизации в системе зарегистрированный пользователь должен ввести свой email и пароль в поля в форме (см. скриншот \ref{pic: login}). При неудачной попытке авторизации система продемонстрирует нотификации с текстом, соответствующим причине возникшей ошибки.  
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/login.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/login_error.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы авторизации}
+		\label{pic: login}
+	\end{figure}
+	
+	\subsubsection{Настройки} \label{sec: settings}
+	
+	Авторизованный пользователь с любой ролью в системе имеет доступ к странице  настроек через url \texttt{/settings} или боковое меню. По кнопке в правом верхнем углу <<Обновить данные>> можно сохранить выбранную информацию о своем профиле, а также изменить язык в системе, выбрав один из двух языков (см. скриншоты \ref{pic: settings}).
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/settings.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/settings_lang.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы настроек}
+		\label{pic: settings}
+	\end{figure}
+	
+	\subsubsection{Уведомления}
+	
+	Авторизованный пользователь с любой ролью в системе имеет доступ к странице  уведомлений через url \texttt{/notifications} или колокольчик в хэдере. По переключению табов можно увидеть как все пуш-уведомления в системе, так и статусы операций в блокчейн системе (см. скриншоты \ref{pic: notifications}).
+	
+	\begin{figure}[H]
+		\centering
+% 		\begin{subfigure}[b]{0.475\linewidth}
+% 			\includegraphics[width=\linewidth]{img/ro/settings.png}
+% 		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/notifications_blockckain.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы уведомлений}
+		\label{pic: notifications}
+	\end{figure}
+	
+	\subsubsection{Функционал администратора}
+	
+	При авторизации под аккаунтом пользователя с ролью <<Администратор>>, пользователь попадает на страницу с относительным url \texttt{/users} со списком пользователей системы (см. скриншоты \ref{pic: users}). Есть возможность отсортировать, а также отфильтровать пользователей по роли.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/users.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/users_filtered.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы списка пользователей}
+		\label{pic: users}
+	\end{figure}
+	
+	В верхнем правом углу расположена кнопка <<Зарегистрировать>>, нажав на которую администратор может зарегистрировать пользователя в системе, указав его ФИО, почту, желаемую роль и назначенные категории (только для пользователей с ролью <<Член комисии>>). Страница располагается по относительному адресу \texttt{/users/create}. Кнопка <<Очистить>> позволяет очистить ранее заполненные поля формы. При успешной регистрации по кнопке <<Зарегистрировать>> пользователь попадает на страницу \texttt{/users} со списком пользователей, в котором можно увидеть только что зарегистрированного пользователя (см. скриншоты \ref{pic: users}).
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/reg_filled.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/reg_success.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы регистрации пользователей}
+		\label{pic: users}
+	\end{figure}
+	
+	Перейдя на страницу пользователя из списка пользователей по клику на соответствующий ряд, администратор может как посмотреть полную информацию о пользователе (см. скриншот \ref{pic: user}), так и отредактировать ее (только те поля, которые доступны для редактирования) по кнопке в правом верхнем углу <<Обновить данные>>. 
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/user_upd.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/user_upd_success.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы редактирования пользователя}
+		\label{pic: user}
+	\end{figure}
+	
+	Также администратор через боковую панель или по относительному пути \texttt{/logs} может перейти в список логов (см. скриншот \ref{pic: logs}). Можно также раскрыть каждую ячейку в таблице для получения более полной информации о залогированном событии.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/logs.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/logs_open.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы логов}
+		\label{pic: logs}
+	\end{figure}
+	
+	\subsubsection{Функционал менеджера контента}
+	
+	Менеджер-контента может перейти на страницу с информацией о фонда через относительный url \texttt{/fund/description} или через соответствующее боковое навигационное меню <<Описание>>. На странице с информацией о фонде можно как просмотреть уже заполненные данные (см. скриншот \ref{pic: fund_description}), так и отредактировать информацию, нажав на кнопку <<Сохранить>> в правом верхнем углу.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/fund_description.png}
+		\end{subfigure}
+		\caption{Скриншот описания фонда}
+		\label{pic: fund_description}
+	\end{figure}
+	
+	Также контент-менеджер может перейти на страницу со списком новостей фонда через боковую панель или через относительный url \texttt{/news}. По кнопке в правом верхнем углу менеджер может перейти на экран публикации новости (или через относительный путь \texttt{/news/create}), после, заполнив необходимые поля (см. скриншот \ref{pic: news}) по кнопке в правом верхнем углу <<Опубликовать>> новость будет размещена в списке новостей. Также в списке новостей в ряду с информацией о каждой новости есть кнопки для удаления и редактирования.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/news.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/news_publish.png}
+		\end{subfigure}
+		\caption{Скриншоты публикации и списка новостей}
+		\label{pic: news}
+	\end{figure}
+	
+	Контент-менеджер может перейти на страницу со списком новостей фонда через боковую панель или через относительный url \texttt{/faq}. В редакторе в формате markdown~\cite{md} пользователь может просмотреть или отредактировать текст, сохранив изменения по кнопке <<Сохранить>>, расположенной в верхнем правом углу (см. скриншоты \ref{pic: faq}).
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/faq.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/faq_1.png}
+		\end{subfigure}
+		\caption{Скриншоты редактировании часто задаваемых вопросов}
+		\label{pic: faq}
+	\end{figure}
+	
+	\subsubsection{Функционал менеджера} \label{sec: man}
+	
+	При авторизации в приложении пользователи с ролью <<Менеджер>> попадают на страницу со списком заявок с относительным адресом \texttt{/applications}. У менеджеров есть возможность пофильтровать заявки по статусам и по признаку назначена ли эта заявка на менеджера (см. скриншоты \ref{pic: applications_m}). 
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/applications_manager.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/applications_m_filter.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы заявок, менеджер}
+		\label{pic: applications_m}
+	\end{figure}
+	
+	По нажатию на одну из заявок в списке менеджер попадает на страницу заявки (см. скриншот \ref{pic: application_tabs}). По кнопке в правом верхнем углу <<Действия с заявкой>> менеджер может инициировать открытие бокового меню, в котором есть возможность выбрать один из статусов для перевода заявки. Также менеджер может добавить комментарий к изменению статуса заявки, который потом будет отображаться в общем списке комментариев к заявке (см. скриншот \ref{pic: application_tabs}).
+	
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/application.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/application_edit.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/application_drawer.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/application_comments.png}
+		\end{subfigure}
+		\caption{Скриншоты страницы заявки, менеджер}
+		\label{pic: application_tabs}
+	\end{figure}
+	
+	В табах, расположенных слева от описания заявки можно увидеть историю смены статусов заявки, а также комментарии. Результаты голосования можно увидеть в правой панели карточки, когда заявка находится в статусе <<Ждет подтверждения>> (от члена комиссии) (см. скриншот \ref{pic: application_tabs_1}).
+		
+	\begin{figure}[H]
+	\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/application_history.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/application_m_vote.png}
+		\end{subfigure}
+		\caption{Скриншоты голосования и истории статусов заявки, менеджер}
+		\label{pic: application_tabs_1}
+	\end{figure}
+	
+
+    \subsubsection{Функционал члена комисии}
+    
+    При авторизации в системе пользователь с ролью <<Член комисии>> попадает на страницу авторизации с относительным url \texttt{/applications} со списком заявок на сбор средств, поступивших в систему (см. скриншоты \ref{pic: app_super}). Есть возможность отсортировать, а также отфильтровать заявки по статусу, по признаку назначена ли на данного члена комиссии заявка и требует ли она от него подтверждения.
+    
+    \begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/app_super.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/app_super_filter.png}
+		\end{subfigure}
+		\caption{Скриншоты списка заявок, член комисии}
+		\label{pic: app_super}
+	\end{figure}
+	
+	При просмотре карточки заявки для члена комиссии доступна функциональность, аналогичная функционалу менеджера, описанного в разделе \ref{sec: man}. Остановимся на функциональности, не упомянутой в предыдущем разделе. У члена комиссии, назначенная категория которого (данную информацию о назначенных категориях можно посмотреть в настройках профиля, см. раздел \ref{sec: settings}) совпадает с категорией заявки, есть возможность проголосовать за активацию заявки. Процесс голосования изображен на скриншотах \ref{pic: vote}.
+	
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/not_voted.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/vote_for.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/vote_against.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/vote_accepted.png}
+		\end{subfigure}
+		\caption{Скриншоты голосования за активацию заявки, член комисии}
+		\label{pic: vote}
+	\end{figure}
+	
+	После того, как голосование по заявке в статусе <<Ждет подтверждения>> завершено, ей можно поменять статус с помощью правой панели на <<Ждет активации>> (от пользователя). Таким образом, доведя ее до состояния активации (см. скриншоты \ref{pic: active}).
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/activate.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/active_page.png}
+		\end{subfigure}
+		\caption{Активирование заявки}
+		\label{pic: active}
+	\end{figure}
+	
+	Также член комисии имеет доступ к просмотру часто задаваемых вопросов к фонду по url \texttt{/faq} (или через меню в левой панели), см. скриншот \ref{pic: faq_super}. 
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/faq_super.png}
+		\end{subfigure}
+		\caption{Просмотр FAQ}
+		\label{pic: faq_super}
+	\end{figure}
+	
+	Также у члена комисии есть доступ к странице со списком категорий по адресу \texttt{/categories} или по клику в левом навигационном меню, с возможностью просмотра списка и его редактирования (см. скриншоты \ref{pic: categories}). По кнопке <<Подтвердить изменения>> сохраняются внесенные изменения в указанные категории. 
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/categories.png}
+		\end{subfigure}
+		\caption{Скриншот просмотра и редактирования категорий}
+		\label{pic: categories}
+	\end{figure}
+	
+	У члена комисии есть доступ к странице со списком менеджеров фонда по адресу \texttt{/managers} или по клику в левом навигационном меню, с возможностью просмотра списка и его фильтрации (см. скриншоты \ref{pic: managers}). Перейдя на страницу сотрудника можно увидеть над какими заявками он сейчас работает и информацию о нем.
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/managers.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/manager_page.png}
+		\end{subfigure}
+		\caption{Скриншоты списка менеджеров фонда и просмотра информации о них}
+		\label{pic: managers}
+	\end{figure}
+	
+   У члена комисии есть доступ к странице со списком пожертвований фонда по адресу \texttt{/transactions} или по клику в левом навигационном меню, с возможностью просмотра списка транзакций (см. скриншоты \ref{pic: transactions}). 
+    
+    \begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/transactions.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/donation.png}
+		\end{subfigure}
+		\caption{Скриншоты списка транзакции и просмотра информации об одной из них}
+		\label{pic: transactions}
+	\end{figure}
+	
+	По кнопке <<Ввести пожертвование>> можно зарегистрировать пожертвование, поступившее в Фонд напрямую от донора, не через систему. Введя базовые данные в форму пожертвование регистрируется от имени самого фонда (см. скриншоты \ref{pic: manual_donation}). 
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/donation_manual.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/donation_from_fund.png}
+		\end{subfigure}
+		\caption{Скриншоты регистрации ручной заявки}
+		\label{pic: manual_donation}
+	\end{figure}
+	
+	По кнопке <<Распределить средства>> можно распределить средства с баланса фонда напрямую заявке. Введя данные заявки и сумму можно совершить пожертвование от имени фонда (см. скриншоты \ref{pic: distribute}). 
+	
+		\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/donation_distribute_form.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/donation_distribute.png}
+		\end{subfigure}
+		\caption{Скриншоты распределения средств}
+		\label{pic: distribute}
+	\end{figure}
+     
+	\subsubsection{Функционал оператора}
+	
+	При авторизации в приложении пользователи с ролью <<Оператор>> попадают на страницу со списком диалогов с относительным адресом \texttt{/chats}. У операторов есть возможность перейти в чат с пользователем и ответить на его/ее сообщения (см. скриншоты \ref{pic: chats}). 
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/chats.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/one_chat.png}
+		\end{subfigure}
+		\caption{Скриншоты чатов с пользователями}
+		\label{pic: chats}
+	\end{figure}
+	
+	\subsubsection{Выход из приложения}
+	
+	Для пользователей с любой ролью выход из приложения доступен через хэдер и выпадающее меню в правом верхнем углу (см. скриншот \ref{pic: logout} и выделенную красным область).
+	
+	
+	\begin{figure}[H]
+	    \centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/logout.png}
+		\end{subfigure}
+		\caption{Скриншот выхода из приложения}
+		\label{pic: logout}
+	\end{figure}
+	
+	\section{Сообщения оператору}
+	
+	При незаполнении форм в системе с обязательными полями, система выводит предупреждающее сообщение под каждым из незаполненных полей (см. скриншоты \ref{pic: form_obl}).
+	
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.35\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/login_error_password.png}
+			\caption{\label{pic: invalid_login} Незаполненный пароль в форме авторизации}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.35\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/create_application_form.png}
+			\caption{\label{pic: success} Незаполенные обязетальные поля в форме создания заявки}
+		\end{subfigure}
+		\caption{\label{pic: form_obl} Сообщения оператору, подписи в форме}
+	\end{figure}
+	
+	При успехе, ошибке совершенной операции (например, при попытке авторизоваться - см. скриншот \ref{pic: invalid}) система отображает уведомление в левом нижнем углу с текстом описания совершенной операции/выявленной проблемы. При получении уведомления с красным фоном стоит повторить попытку. Примеры других уведомлений можно увидеть на скриншотах \ref{pic: wr}.
+	
+	\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/login_error.png}
+			\caption{\label{pic: invalid} Неверный логин и пароль}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/reg_success.png}
+			\caption{\label{pic: success} Уведомление об успехе совершенной операции}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.315\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/info.png}
+			\caption{\label{pic: wrong_code} Уведомление об отмене операции}
+		\end{subfigure}
+		\caption{\label{pic: wr} Сообщения оператору, уведомления}
+	\end{figure}
+	
+	Так как в системе используются пуш-уведомления для оповещения о совершенных операциях, то соответствующие нотификации появляются в верхнем правом углу. Пуш-уведомления приходят при смене статуса заявки, которую обрабатывает менеджер, а также оператору при получении новых сообщений (см. скриншот \ref{pic: firebase}).
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.45\linewidth}
+			\includegraphics[width=\linewidth]{img/ro/push.png}
+			\caption{\label{pic: firebase_push} Уведомление о смене статуса заявки}
+		\end{subfigure}
+		\caption{\label{pic: firebase} Сообщения оператору, пуш-уведомления}
+	\end{figure}
+	
+	\newpage
+	%\section{Источники, использованные при разработке}
+	%\renewcommand{\refname}{Список источников}
+	% \addcontentsline{toc}{subsection}{\refname}
+	\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+	\anonsection{Список источников}
+	\begin{thebibliography}{3}
+		\bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{lms} 
+		LMS [Электронный ресурс] URL: 
+		\url{https://lms.hse.ru} (Дата обращения: 18.04.2021, режим доступа: свободный)
+		\bibitem{json} JSON [Электронный ресурс] URL: \url{https://www.json.org} (Дата обращения: 18.04.2021, режим доступа: свободный)
+		\bibitem{md} Markdown Guide URL: \url{https://www.markdownguide.org} (Дата обращения: 16.04.2021).
+		\bibitem{api} Swagger Charity API, v0.2 [Электронный ресурс] (Дата обращения: 18.04.2021, режим доступа: свободный) URL:\url{https://app.swaggerhub.com/apis/charity-crm/Charity/0.2}
+		\bibitem{chrome} 
+		Google Chrome [Электронный ресурс] URL: 
+		\url{https://www.google.com/chrome} (Дата обращения: 18.04.2021, режим доступа: свободный)
+	\end{thebibliography}
+	
+	\newpage
+	\addition{Используемые понятия и определения}{additionterms}
+	\input{tex/terms}
+	
+	\newpage
+	\addition{Роли сотрудников фонда}{stuff}
+	\input{tex/stuff}
+	
+	
+	\newpage
+	\addition{Статусы заявки}{statustable} 
+	\input{tex/status.tex}
+
+	
+	\newpage
+	\addition{Диаграмма жизненного цикла заявки}{status} 
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.9\linewidth]{img/statusflow.pdf}
+		\caption{Диаграмма статусов}
+		\label{pic: status}
+	\end{figure}
+	
+	                    \newpage
+	\addition{Статусы заявки}{statustable} 
+	\input{tex/status.tex}
+	
+	\newpage
 	\listRegistration
-	\addcontentsline{toc}{section}{Лист регистрации изменений}
-\end{document} % конец документа
+						
+\end{document}

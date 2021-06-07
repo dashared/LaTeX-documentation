@@ -1,0 +1,71 @@
+\begin{center}
+\begin{longtable}{|C{30mm}|C{30mm}|*{2}{C{30mm}|}}  % set suitable column widths
+
+\caption{Переходы заявки в различные статусы}
+
+\hline
+& & \multicolumn{2}{c|}{\textbf{Статус}} \\
+\cline{3-4}
+\textbf{Кто} & \textbf{Действие} & \multicolumn{1}{c|}{\textit{Предыдущий}} & \multicolumn{1}{c|}{\textit{Следующий}} \\ \hline
+\endfirsthead
+
+\multicolumn{4}{r}%
+{{ \tablename\ \thetable{} -- продолжение}} \\ 
+\hline 
+& & \multicolumn{2}{c|}{\textbf{Статус}} \\
+\cline{3-4}
+\textbf{Кто} & \textbf{Действие} & \multicolumn{1}{c|}{\textit{Предыдущий}} & \multicolumn{1}{c|}{\textit{Следующий}} \\ \hline
+\endhead
+
+\hline
+\multicolumn{4}{r}{{Продолжение на следующей странице}} \\ 
+\endfoot
+
+\hline 
+\endlastfoot
+\label{table: statusflow}
+
+Менеджер & \multirow{2}{30mm}{Взятие заявки в обработку} & \multirow{2}{*}{Новая} & \multirow{2}{*}{В обработке} \\ \cline{1-1}
+Член комиссии & & & \\ \hline
+
+\multirow{2}{30mm}{Член комиссии} & \multirow{2}{30mm}{Отклонение заявки} & \multirow{1}{*}{В обработке} & \multirow{2}{*}{Отклонена} \\ \cline{3-3}
+& & Ждет активации & \\ \hline
+
+
+Менеджер & \multirow{2}{30mm}{Отправление заявки на доработку} & В обработке & На доработке \\ \cline{1-1} \cline{3-4}
+\multirow{2}{30mm}{Член комиссии} & & Ждет активации & \multirow{2}{*}{На доработке} \\ \cline{3-3}
+ & & В обработке & \\ \hline
+ 
+Менеджер & Отправление заявки на активацию / отклонение & В обработке & Ждет активации \\ \hline
+
+\multirow{2}{30mm}{Член комиссии} & \multirow{2}{30mm}{Активация заявки} & Ждет активации & \multirow{2}{30mm}{Ждет подтверждения} \\ \cline{3-3}
+
+ & & В обработке & \\ \hline
+ 
+\multirow{2}{30mm}{Менеджер} & \multirow{3}{30mm}{Пометка заявки как спам} & Новая & \multirow{3}{*}{Спам} \\ \cline{3-3}
+
+& & В обработке & \\ \cline{1-1} \cline{3-3} 
+Член комиссии & & Ждет активации & \\ \hline
+
+Член комиссии & Закончился сбор средств (либо автоматически закрывается сбор) & Активная & Архив \\ \hline
+
+Член комиссии & \multirow{3}{30mm}{Вернуть заявку статуса "спам" в предыдущий} & \multirow{3}{30mm}{Спам} & Новая \\ \cline{1-1} \cline{4-4} 
+
+\multirow{2}{30mm}{Менеджер} & & & В обработке \\ \cline{4-4}
+
+& & & Ждет активации \\ \hline
+
+
+Менеджер & \multirow{2}{30mm}{Отказаться от обработки} & \multirow{2}{*}{В обработке} & \multirow{2}{*}{Новая} \\ \cline{1-1}
+
+Член комиссии & & & \\ \hline
+
+
+Менеджер & \multirow{2}{30mm}{Отменить доработку} & \multirow{2}{*}{На доработке} & В обработке \\ \cline{1-1} \cline{4-4}
+
+Член комиссии & & & Ждет активации \\ \hline
+
+Член комиссии & Изменение assignee у заявки & В обработке & В обработке \\ \hline
+
+\end{longtable}
+\end{center}

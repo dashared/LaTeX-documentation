@@ -1,6 +1,16 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage{styledoc19}
 
+\programmingLanguage{Scala}
+\lstset{
+    basicstyle=\ttfamily,
+    breaklines=true,
+}
+
+\usepackage[T1]{fontenc}
+\catcode`\_=12
+
+\renewcommand{\numberline}[1]{#1~}
 
 \begin{document} % конец преамбулы, начало документа
 	
@@ -13,11 +23,10 @@
 	
 	\supervisor{Доцент департамента \vfill образовательной программы  \vfill <<Программная инженерия>>}
 	{Х. М. Салех}
-
+	
 	\firstPage
 	\newpage
 	\secondPage
-	\newpage
 	\newpage
 	\thirdPageWithoutTOC
 	\section*{Аннотация}
@@ -28,8 +37,8 @@
 	
 	\section*{Исходный код}
 	
-	Исходный код программы находится в Gitlab репозитории по адресу \url{https://git.infostrategic.com/xx/xx}. Полное описание модулей программы представлено в README.md файле проекта, который можно найти по ссылке \url{https://git.infostrategic.com/xx/xx/-/blob/master/README.md}.
+	Исходный код программы находится в Gitlab репозитории по адресу \url{https://git.infostrategic.com/hsecharity/ui}. Полное описание модулей программы представлено в README.md файле проекта, который можно найти по ссылке \url{https://git.infostrategic.com/hsecharity/ui/-/blob/master/README.md}.
 
 	\newpage
 	\listRegistration
-\end{document} % конец документа
+\end{document}

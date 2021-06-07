@@ -1,8 +1,10 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,12pt,reqno]{article}
+
 \usepackage{styledoc19}
 
 
 \begin{document} % конец преамбулы, начало документа
+	
 	
 	\year{2021}
     \docNumber{RU.17701729.09.09-62 51 01-1}
@@ -16,42 +18,210 @@
 	{Х. М. Салех}
 	
 	\firstPage
-	\newpage
+						\newpage
 	\secondPage
-	\newpage
+						\newpage
 	\thirdPage
-	\newpage
-	
+						\newpage
+						
+						
 	\section{Объекты испытаний}
 	\subsection{Наименование программы}
+	\input{tex/rusTitle} (\input{tex/engTitle})
 	\subsection{Область применения программы}
-	
+	\subsubsection{Функциональное назначение}
+	\input{tex/functionalPurpose}
+	\subsubsection{Эксплуатационное назначение}
+	\input{tex/operationalPurpose}
+	\subsubsection{Область применения}
+	\input{tex/projectScope}
 					\newpage
+					
 	\section{Цель испытаний}
+	Проверка на соответствие требованиям, указанным в документе <<\input{tex/rusTitle}. Техническое задание>>.
 	
-					\newpage 
 	\section{Требования к программе}
 	\subsection{Требования к функциональным характеристикам}
+	Программа выполняется в рамках темы выпускной курсовой работы в соответствии с учебным планом подготовки бакалавров по направлению 09.03.04 «Программная инженерия» Национального исследовательского университета «Высшая школа экономики», факультет компьютерных наук.
+	
+	Программа должна удовлетворять следующим требованиям:
+	
+	\input{tex/req}
+	
 	\subsection{Требования к интерфейсу}
+	Цветовая гамма интерфейса должена быть выполнена в голубых тонах. Разработанный интерфейс должен соответствовать макетам (см. Приложение \ref{figma}).
+	
 	\subsection{Требования к надежности}
 	
-						\newpage
-	\section{Требования к программной документации}
-	\subsection{Состав программной документации}
+	\newlist{nfr}{enumerate}{10}
+ 
+    \setlist[nfr, 1]{label=\textbf{NFR-\arabic*.}}
+    \setlist[nfr, 2]{label*=\textbf{\arabic*.}}
+    \setlist[nfr, 3]{label=\arabic*.}
 	
-						\newpage
+	\begin{nfr}
+	    \item Система должна сохранять работоспособность и обеспечивать восстановление своих функций при возникновении следующих внештатных ситуаций:
+	    \begin{nfr}
+	    \item При ошибках работы сервера, к которому по API отправляет запросы Web-приложение, программа должна отображать сообщения в формате уведомлений в UI и продолжать корректную работу;
+        \item При ошибках в сбоях аппаратных средств (кроме носителей данных) восстановление работоспособности возлагается на ОС;
+        \item При ошибках, связанных с веб-браузером, восстановление работоспособности возлагается на ОС;
+	\end{nfr}
+	\item Компоненты защиты программы от несанкционированного доступа к данным и функционалу должны обеспечивать:
+	\begin{nfr}
+	\item Идентификацию пользователя;
+	\item Проверку полномочий пользователя при работе с системой;
+	\item Разграничение прав доступа пользователей на уровне задач и доступа к данным;
+    \end{nfr}
+	\end{nfr}
+    
+    \section{Требования к программной документации}
+	\subsection{Состав программной документации}
+	\input{tex/documents}
+	
+	\newpage
 	\section{Средства и порядок испытаний}
 	\subsection{Технические средства, используемые во время испытаний}
+	\input{tex/tech}
 	\subsection{Программные средства, используемые во время испытаний}
+	\input{tex/prog}
+	Тестирование производилось с развернутым Web-приложением и API~\cite{api} на стенде, по адресу \url{https://charity.infostrategic.com/}.
+	
+	
 	\subsection{Порядок проведения испытаний}
+	В процессе разработки программы были написаны unit-тесты, а также автотесты, тестирующие интеграционное взаимодействие Web-клиента и сервера~\cite{api}.
 	
-						\newpage
+	Unit-тесты были написаны с помощью фреймворка Jest~\cite{jest}. При разработке приложения был использован сервис Gitlab, а также встроенный в Gitlab механизм CI/CD~\cite{cicd}. Разработка была построена следующим образом: на каждом коммите в пулл реквесте запускался пайплайн, который состоял из следующих этапов: Eslint, Prettier, Test. Первые два шага - линтеры, которые осуществляли проверку файлов проекта на код-стайл. На последнем этапе пайплана запускались unit-тесты проекта.
+	
+	Для автоматизации тестирования UI использовался фреймворк Silenium IDE~\cite{silenium}. С помощью этого фреймворка были написаны интеграционные авто-тесты, покрывающие основные бизнес-требования, отраженные на диаграмме прецедентов в Приложении. \ref{keyUsecase}.
+	
+	\newpage
 	\section{Методы испытаний}
-	\subsection{Проверка требований к функциональным характеристикам}
-	\subsection{Проверка требований к надежности}
-	\subsection{Проверка требований к программной документации}
 	
-						\newpage
+	Этап Test пайаплайна CI/CD автоматически запускает тесты проекта с помощью команды: \texttt{yarn test}. На изображении \ref{pic: test} можно увидеть успешный результат прохождения тестов в проекте.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = \linewidth]{img/test.png}
+		\caption{Тестирование. CI job.}
+		\label{pic: test}
+	\end{figure}
+	
+	
+	\subsection{Проверка требований к функциональным характеристикам}
+	
+	При тестировании Веб-приложения был использован фреймворк Silenium IDE~\cite{silenium}. С помощью плагина, установленного в браузер Google Chrome~\cite{chrome}, были записаны тесты, проверяющие удовлетворение проекта составленным требованиям.
+	
+	Для тестирования ключевых бизнес-процессов, выделенных на диаграмме прецедентов цветом (см. Приложение \ref{keyUsecase}), были составлены следующие тест-кейсы. По данным тест-кейсам были созданы тесты Silenium:
+	
+	\input{tex/testcase}
+	
+	Результаты UI тестов Silenium можно увидеть на рисунке \ref{pic: silenium}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = \linewidth]{img/silenium.png}
+		\caption{Silenium IDE. Проект с тестами}
+		\label{pic: silenium}
+	\end{figure}
+	
+	Также было проведено регрессионное ручное тестирование сложных и многоэтапных бизнес-процессов, включающих активацию заявки и голосование по заявке. Данные сценарии невозможно автоматизировать с помощью Silenium IDE, так как их невозможно завершить (проверить полностью) без использования Android-клиента (или совершения запросов через консоль-клиент). 
+	
+	Для проверки требований и бизнес-сценариев были написаны следующие тест-кейсы:
+	
+	\input{tex/regressiontest}
+	
+	Для подтверждения успеха проведенного тестирования в Приложении \ref{test_1} и \ref{test_2} представить фотографии экрана Web-приложения по тест кейсу TC-9 и TC-10.
+	
+	\subsection{Проверка требований к программной документации}
+	Вся документация, представленная в требованиях, готова.
+	
+	\newpage
+	%\section{Источники, использованные при разработке}
+	%\renewcommand{\refname}{Список источников}
+	% \addcontentsline{toc}{subsection}{\refname}
+	\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+	\anonsection{Список источников}
+	\begin{thebibliography}{3}
+	    \bibitem{md} Markdown Guide URL: \url{https://www.markdownguide.org} (Дата обращения: 16.04.2021).
+	    \bibitem{gost}Единая система программной документации – М.: ИПК, Издательство стандартов, 2000, 125 стр.
+		\bibitem{chrome} 
+		LMS [Электронный ресурс] URL: 
+		\url{https://www.google.com/chrome} (Дата обращения: 31.05.2021, режим доступа: свободный)
+		\bibitem{api} Swagger Charity API, v0.2 [Электронный ресурс]  URL:\url{https://app.swaggerhub.com/apis/charity-crm/Charity/0.2} (Дата обращения: 31.05.2021, режим доступа: свободный)
+		\bibitem{jest} Jest - testing URL:\url{https://jestjs.io} (Дата обращения: 31.05.2021, режим доступа: свободный)
+		
+		\bibitem{cicd} Gitlab - CI/CD URL:\url{https://docs.gitlab.com/ee/ci/} (Дата обращения: 31.05.2021, режим доступа: свободный)
+		
+		\bibitem{silenium} Silenium IDE URL:\url{https://www.selenium.dev/selenium-ide/}(Дата обращения: 31.05.2021, режим доступа: свободный)
+	\end{thebibliography}
+	
+	\newpage
+	\addition{Макеты интерфейса}{figma} 
+	
+	\input{tex/figma}
+	
+	\newpage
+	\addition{Ключевые прецеденты}{keyUsecase} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.9\linewidth]{img/key-usecase.pdf}
+		\caption{Диаграмма прецедентов}
+    \end{figure}
+    
+    \newpage
+	\addition{Тест кейс активации заявки}{test_1}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/test/1.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/test/2.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/test/3.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/test/4.png}
+		\end{subfigure}
+		\caption{Скриншоты проведенного тестирорования TC-9}
+	\end{figure}
+	
+		\newpage
+	\addition{Тест кейс голосования по заявке}{test_2}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/test/5.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/test/6.png}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.475\linewidth}
+			\includegraphics[width=\linewidth]{img/test/7.png}
+		\end{subfigure}
+		\caption{Скриншоты проведенного тестирорования TC-10}
+	\end{figure}
+	
+	\newpage
+	\addition{Роли сотрудников фонда}{stuff}
+	\input{tex/stuff}
+	
+	\newpage
+	\addition{Диаграмма жизненного цикла заявки}{status} 
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.9\linewidth]{img/statusflow.pdf}
+		\caption{Диаграмма статусов}
+		\label{pic: status}
+	\end{figure}
+	
+	
+	
+	\newpage
 	\listRegistration
-	\addcontentsline{toc}{section}{Лист регистрации изменений}
-\end{document} % конец документа
+	
+\end{document}

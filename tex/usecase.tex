@@ -1,0 +1,89 @@
+\begin{center}
+\begin{longtable}{|p{0.1\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.45\linewidth}|}
+\caption{Акторы диаграммы прецедентов} \label{table:usecase} \\
+
+\hline
+\multicolumn{1}{|c|}{\textbf{№}} & \multicolumn{1}{c|}{\textbf{Название}} & \multicolumn{1}{c|}{\textbf{Актор(ы)}} & \multicolumn{1}{c|}{\textbf{Описание}} \\ \hline
+\endfirsthead
+
+\multicolumn{4}{r}%
+{{ \tablename\ \thetable{} -- продолжение}} \\
+\hline 
+\multicolumn{1}{|c|}{\textbf{№}} & \multicolumn{1}{c|}{\textbf{Название}} & \multicolumn{1}{c|}{\textbf{Актор(ы)}} & \multicolumn{1}{c|}{\textbf{Описание}} \\ 
+\hline
+\endhead
+
+\hline \multicolumn{4}{r}{{Продолжение на следующей странице}} \\
+\endfoot
+
+\hline \hline
+\endlastfoot
+
+\multicolumn{4}{|c|}{\textbf{Аутентификация}} \\ \hline
+
+1 & Sign In & General User & 
+Авторизация всех пользователей в приложении происходит с помощью ввода почты и пароля, указанных при регистрации в системе \\ \hline
+
+
+\multicolumn{4}{|c|}{\textbf{Управление пользователями}} \\ \hline
+
+2 & CRU of users & Admin & 
+Создание, редактирование, просмотр пользователей системы. Администратор имеет возможность: зарегистрировать пользователя в системе, просмотреть список пользователей и информацию о каждом, изменить информацию: заблокировать или разблокировать пользователя;  \\ \hline
+
+3 & See logs & Admin & Просмотр действий пользователей в системе: авторизация, действия по заявкам, совершенные пожертвования и т.д;
+ \\ \hline
+ 
+4 & View fund employees & Supermanager & Член комиссии имеет возможность просматривать информацию о сотрудниках фонда, а также их заявки \\ \hline
+ 
+\multicolumn{4}{|c|}{\textbf{Заявки}} \\ \hline
+
+5 & CRUD application comments & Manager, Supermanager & Менеджер, комиссия и пользователь могут оставлять комментарии под заявками. Менеджер и комиссия могут это делать для всех заявок. \\ \hline
+
+6 & Approve application & Supermanager & Комиссия может одобрять заявки, таким образом они становятся активны и на них пользователи могут жертвовать деньги, после одобрения заявка передается в блокчейн. \\ \hline
+
+7 & Update and read application & Manager & Менеджер может просматривать заявки, а также переводить заявки в разные статусы, редактировать ее. \\ \hline
+
+8 & Create and activate application & Supermanager & Член комиссии имеет возможность создать заявку за другого человека, при создании заявки она автоматически появляется в реестре как активная \\ \hline
+
+9 & Vote fot the application & Supermanager & Член комиссии, назначенные категории которого совпадают с категорией заявки, имеет возможность проголосовать за или против активации заявки \\ \hline
+
+\multicolumn{4}{|c|}{\textbf{Пожертвования}} \\ \hline
+
+10 & Read donation & Supermanager & Комиссия фонда может просматривать все совершенные транзакции в рамках системы.
+ \\ \hline
+ 
+11 & Distribute collected money & Supermanager & Комиссия фонда может направить собранные средства со счета фонда на одну из заявок.
+ \\ \hline
+ 
+12 & Create donation & Supermanager & Комиссия фонда может создать запись о пожертвовании, совершенном вне системы. \\ \hline
+
+\multicolumn{4}{|c|}{\textbf{Личный профиль}} \\ \hline
+
+13 & Update and read profile & General User & Все пользователи системы могут просматривать информацию о себе, а также ее менять. \\ \hline
+
+\multicolumn{4}{|c|}{\textbf{Категории}} \\ \hline
+
+14 & CRUD categories & Supermanager & Суперменеджеры могут изменять категории, которые ассоциируются с заявками. \\ \hline
+
+\multicolumn{4}{|c|}{\textbf{Информация о фонде, чаты}} \\ \hline
+
+15 & CRU support chat & Operator & При возникших вопросах пользователь приложения может обратиться за помощью, написав в чат, где операторы ответят на все его интересующие вопросы. \\ \hline
+
+16 & CRU fund info & Content manager & Контент-менеджер может редактировать информацию о фонде \\ \hline
+
+17 & CRU faq & Content manager & Контент-менеджер может редактировать часто задаваемые вопросы о фонде \\ \hline
+
+18 & CRU news & Content manager & Контент-менеджер может редактировать новостную ленту \\ \hline
+
+19 & Get fund info, FAQ, news & General User & Пользователи системы могут получить информацию о фонде \\ \hline
+
+\multicolumn{4}{|c|}{\textbf{Нотификации}} \\ \hline
+
+20 & Notify about status change & Firebase & Рассылка уведомлений об изменении статуса заявки пользователю, создавшему заявку. \\ \hline
+
+21 & Receive notifications & General User & Пользователь может получать нотификации от системы. \\ \hline
+
+22 & Read blockchain status change & General User & Пользователь может просматривать информацию о смене статусов операций в системе. \\ 
+
+\end{longtable}
+\end{center}
